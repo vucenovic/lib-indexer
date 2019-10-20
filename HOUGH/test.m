@@ -3,7 +3,7 @@
     correction
 %}
 
-function [] = testHough(fn,thres,peaks)
+function [] = testHough(fn,thres,peakCount)
     baseImage = imread(fn);
     baseImageGray = rgb2gray(im2double(baseImage));
     %edgeImage = edge(baseImageGray,"canny",[0.1,0.38]);
@@ -11,18 +11,18 @@ function [] = testHough(fn,thres,peaks)
     %Only take horizontal Edges
     %make sure to extend edges and not zero pad them to avoid detecting
     %edges along the image borders
-    edgeImageHorizontal = imbinarize(abs(imfilter(baseImageGray,[1,2,1;0,0,0;-1,-2,-1],"replicate")));
+    edgeImageHorizontal = bwareaopen(imbinarize(abs(imfilter(baseImageGray,[1,2,1;0,0,0;-1,-2,-1],"replicate"))),100);
     edgeImageVertical = imbinarize(abs(imfilter(baseImageGray,[1,2,1;0,0,0;-1,-2,-1]',"replicate")));
 
     %Transpose Image to reduce the houghspace to -20 to +20 degrees instead
     %of having to use a full -90 to 89 degrees
-    [H,T,R] = hough(edgeImageHorizontal','RhoResolution',0.5,'Theta',-20:0.5:20);
+    [H,T,R] = hough(edgeImageHorizontal','RhoResolution',0.5,'Theta',-32:0.5:32);
     
     imshow(H,[],'XData',T,'YData',R,'InitialMagnification','fit');
     xlabel('\theta'), ylabel('\rho');
     axis on, axis normal, hold on;
 
-    P  = houghpeaks(H,peaks,'threshold',ceil(thres*max(H(:))));
+    P  = houghpeaks(H,peakCount,'threshold',ceil(thres*max(H(:))));
     x = T(P(:,2)); y = R(P(:,1));
     plot(x,y,'s','color','white');
 
@@ -48,12 +48,13 @@ function [] = testHough(fn,thres,peaks)
     %why no work
     %why does it explode into infinity once you start changing two axes
     transformMatrix = fitgeotrans(...
-        [0 0; 0 1; 0.9 0.999; 0.9 0],...
+        [0 0; 0 1; 0.5 1; 0.5 0],...
         [0 0; 0 1; 1 1; 1 0],...
         "projective");
+    transformMatrix = projective2d([1,0,0;0.125,1,0;0.05,0,1]'); %this very matrix works if I do the math
+    %the matrix should be working shown in PerspectiveMatrix.ggb (geogebra file)
     tranformImageOutputBounds=imref2d(size(baseImageGray),[1 size(baseImageGray,2)],[1 size(baseImageGray,1)]);
-    transformedImage = imwarp(baseImageGray,transformMatrix,"OutputView", tranformImageOutputBounds);
-    
+    transformedImage = imwarp(baseImageGray,transformMatrix); %"OutputView", tranformImageOutputBounds
     figure();
     imshow(transformedImage);
 end
