@@ -45,16 +45,13 @@ function [] = testHough(fn,thres,peakCount)
        end
     end
     
-    %why no work
-    %why does it explode into infinity once you start changing two axes
     transformMatrix = fitgeotrans(...
-        [0 0; 0 1; 0.5 1; 0.5 0],...
         [0 0; 0 1; 1 1; 1 0],...
+        [0 0; 0 1; 0.8 4; 0.8 -1],...
         "projective");
-    transformMatrix = projective2d([1,0,0;0.125,1,0;0.05,0,1]'); %this very matrix works if I do the math
-    %the matrix should be working shown in PerspectiveMatrix.ggb (geogebra file)
+    tranformCoordsys = imref2d(size(baseImage),[0,1],[0,1]);
     tranformImageOutputBounds=imref2d(size(baseImageGray),[1 size(baseImageGray,2)],[1 size(baseImageGray,1)]);
-    transformedImage = imwarp(baseImageGray,transformMatrix); %"OutputView", tranformImageOutputBounds
+    transformedImage = imwarp(baseImageGray,tranformCoordsys,transformMatrix); %"OutputView", tranformImageOutputBounds
     figure();
     imshow(transformedImage);
 end
