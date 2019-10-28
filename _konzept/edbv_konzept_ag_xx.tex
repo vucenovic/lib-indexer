@@ -43,13 +43,6 @@ Das Projekt soll Bücher in einem Bücherregal erkennen, in Bücher-Koordinaten 
 
 \section{Eingabe}
 JPG-Bild eines Bücherregals mit Büchern, auf denen eindeutige Labels (schwarz-auf-weiß) kleben.
-\begin{itemize}
-  \item Die Bücher müssen gerade stehen.
-  \item Das Bild darf nicht mehr als 30° von der Waagrechte abweichen.
-  \item Das Bild muss eine für die Texterkennung der Labels ausreichende Auflösung aufweisen (Abhängig von der Entfernung).
-  \item Das Bild muss farbig sein.
-\end{itemize}
-
 
 \section{Ausgabe}
 visuell:\\
@@ -72,7 +65,12 @@ Strukturierte Klartext-Datei mit Inhalt:
 
 \section{Voraussetzungen und Bedingungen}
 
-TODO: Anni's Teil einfügen\\
+\begin{itemize}
+  \item Die Bücher müssen gerade (+- 5°) stehen.
+  \item Das Bild darf nicht mehr als 30° von der Waagrechte abweichen.
+  \item Das Bild muss eine für die Texterkennung der Labels ausreichende Auflösung aufweisen (Abhängig von der Entfernung).
+  \item Das Bild muss farbig sein.
+\end{itemize}
 
 Voraussetzungen für Eingabe definieren, anhand dieser werden Datensätze erstellt\\
 \textit{Kommentar: Welche Eigenschaften muss der Input erfüllen, damit ihr damit arbeiten könnt (zB.: Kameraeinstellungen, Hintergrundeigenschaften, etc.)?}
@@ -83,10 +81,10 @@ Methodik- Pipeline
 		\textit{Finden der Regalfächer zum Korrigieren der Perspektive}
 	\item Persprektivenkorrektur\\
 		\textit{Mittels Transformationsmatrix aus HT berechnet}
-	\item Morpholigische Erosion auf schwarze Bereiche im Bild\\
-		\textit{Entfernung des Labeltexts auf den Labels}
-	\item Integral imaging\\
-		\textit{Finden von weißen Rechtecken (Labels)}
+	\item Kantenfilter \& Finden von Interest Points\\
+		\textit{Finden der Ecken von Labels}
+	\item Integral imaging auf IPs\\
+		\textit{Finden von Labels innerhalb eines Akzeptanzbereichs}
 	\item Eigene Heuristik\\
 		\textit{Einordnen von Labels in Buch-Koordinaten}
 	\item Optical Character Recognition\\
@@ -132,11 +130,11 @@ Methodik- Pipeline
 		\hline
 		Meilenstein & abgeschlossen am & Arbeitsaufwand in h\\
 		\hline
-		Prototyp & 27.10. & 30\\
+		Prototyp & 10.11. & 30\\
 		\hline
-		Hough-Transformation & 15.11. & 50\\
+		Hough-Transformation & 17.11. & 50\\
 		\hline
-		Perspektivenkorrektur & 15.11. & 6\\
+		Perspektivenkorrektur & 17.11. & 6\\
 		\hline
 		Labelerkennung & 25.11. & 80\\
 		\hline
@@ -150,7 +148,7 @@ Methodik- Pipeline
 		\hline
 		Tests & 18.12. & 5\\
 		\hline
-		Evaluierung & 20.12. & 5\\
+		Evaluierung & 20.12. & 5 \\
 		\hline
 		\end{tabular}
 \end{table}

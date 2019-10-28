@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.20 (MiKTeX 2.9.6960 64-bit) (preloaded format=pdflatex 2019.1.30)  20 OCT 2019 17:28
+This is pdfTeX, Version 3.14159265-2.6-1.40.19 (MiKTeX 2.9.6930 64-bit) (preloaded format=pdflatex 2019.1.26)  28 OCT 2019 10:20
 entering extended mode
 **./edbv_konzept_ag_xx.tex
 (edbv_konzept_ag_xx.tex
@@ -6,18 +6,17 @@ LaTeX2e <2018-12-01>
 
 ("C:\Users\laure\AppData\Local\Programs\MiKTeX 2.9\tex/latex/koma-script\scrart
 cl.cls"
-Document Class: scrartcl 2019/02/01 v3.26b KOMA-Script document class (article)
-
+Document Class: scrartcl 2019/10/12 v3.27 KOMA-Script document class (article)
 
 ("C:\Users\laure\AppData\Local\Programs\MiKTeX 2.9\tex/latex/koma-script\scrkba
 se.sty"
-Package: scrkbase 2019/02/01 v3.26b KOMA-Script package (KOMA-Script-dependent 
-basics and keyval usage)
+Package: scrkbase 2019/10/12 v3.27 KOMA-Script package (KOMA-Script-dependent b
+asics and keyval usage)
 
 ("C:\Users\laure\AppData\Local\Programs\MiKTeX 2.9\tex/latex/koma-script\scrbas
 e.sty"
-Package: scrbase 2019/02/01 v3.26b KOMA-Script package (KOMA-Script-independent
- basics and keyval usage)
+Package: scrbase 2019/10/12 v3.27 KOMA-Script package (KOMA-Script-independent 
+basics and keyval usage)
 
 ("C:\Users\laure\AppData\Local\Programs\MiKTeX 2.9\tex/latex/graphics\keyval.st
 y"
@@ -26,29 +25,29 @@ Package: keyval 2014/10/28 v1.15 key=value parser (DPC)
 )
 ("C:\Users\laure\AppData\Local\Programs\MiKTeX 2.9\tex/latex/koma-script\scrlfi
 le.sty"
-Package: scrlfile 2019/02/01 v3.26b KOMA-Script package (loading files)
+Package: scrlfile 2019/10/12 v3.27 KOMA-Script package (loading files)
 )))
 ("C:\Users\laure\AppData\Local\Programs\MiKTeX 2.9\tex/latex/koma-script\tocbas
 ic.sty"
-Package: tocbasic 2019/02/01 v3.26b KOMA-Script package (handling toc-files)
+Package: tocbasic 2019/10/12 v3.27 KOMA-Script package (handling toc-files)
 \scr@dte@tocline@numberwidth=\skip41
 \scr@dte@tocline@numbox=\box27
 )
 Package tocbasic Info: omitting babel extension for `toc'
 (tocbasic)             because of feature `nobabel' available
-(tocbasic)             for `toc' on input line 134.
+(tocbasic)             for `toc' on input line 137.
 Class scrartcl Info: File `scrsize11pt.clo' used instead of
-(scrartcl)           file `scrsize11.clo' to setup font sizes on input line 216
-2.
+(scrartcl)           file `scrsize11.clo' to setup font sizes on input line 220
+8.
 
 ("C:\Users\laure\AppData\Local\Programs\MiKTeX 2.9\tex/latex/koma-script\scrsiz
 e11pt.clo"
-File: scrsize11pt.clo 2019/02/01 v3.26b KOMA-Script font size class option (11p
-t)
+File: scrsize11pt.clo 2019/10/12 v3.27 KOMA-Script font size class option (11pt
+)
 )
 ("C:\Users\laure\AppData\Local\Programs\MiKTeX 2.9\tex/latex/koma-script\typear
 ea.sty"
-Package: typearea 2019/02/01 v3.26b KOMA-Script package (type area)
+Package: typearea 2019/10/12 v3.27 KOMA-Script package (type area)
 \ta@bcor=\skip42
 \ta@div=\count80
 \ta@hblk=\skip43
@@ -71,7 +70,7 @@ Package typearea Info: These are the values describing the layout:
 (typearea)              \topskip        = 11.0pt
 (typearea)              \footskip       = 47.6pt
 (typearea)              \baselineskip   = 13.6pt
-(typearea)              on input line 1715.
+(typearea)              on input line 1716.
 )
 \c@part=\count81
 \c@section=\count82
@@ -81,46 +80,46 @@ Package typearea Info: These are the values describing the layout:
 \c@subparagraph=\count86
 \scr@dte@section@maxnumwidth=\skip47
 Class scrartcl Info: using compatibility default `runin=bysign'
-(scrartcl)           for `\section on input line 4489.
+(scrartcl)           for `\section on input line 4702.
 Class scrartcl Info: using compatibility default `afterindent=bysign'
-(scrartcl)           for `\section on input line 4489.
+(scrartcl)           for `\section on input line 4702.
 \scr@dte@part@maxnumwidth=\skip48
 Class scrartcl Info: using compatibility default `afterindent=false'
-(scrartcl)           for `\part on input line 4497.
+(scrartcl)           for `\part on input line 4710.
 \scr@dte@subsection@maxnumwidth=\skip49
 Class scrartcl Info: using compatibility default `runin=bysign'
-(scrartcl)           for `\subsection on input line 4507.
+(scrartcl)           for `\subsection on input line 4720.
 Class scrartcl Info: using compatibility default `afterindent=bysign'
-(scrartcl)           for `\subsection on input line 4507.
+(scrartcl)           for `\subsection on input line 4720.
 \scr@dte@subsubsection@maxnumwidth=\skip50
 Class scrartcl Info: using compatibility default `runin=bysign'
-(scrartcl)           for `\subsubsection on input line 4517.
+(scrartcl)           for `\subsubsection on input line 4730.
 Class scrartcl Info: using compatibility default `afterindent=bysign'
-(scrartcl)           for `\subsubsection on input line 4517.
+(scrartcl)           for `\subsubsection on input line 4730.
 \scr@dte@paragraph@maxnumwidth=\skip51
 Class scrartcl Info: using compatibility default `runin=bysign'
-(scrartcl)           for `\paragraph on input line 4527.
+(scrartcl)           for `\paragraph on input line 4740.
 Class scrartcl Info: using compatibility default `afterindent=bysign'
-(scrartcl)           for `\paragraph on input line 4527.
+(scrartcl)           for `\paragraph on input line 4740.
 \scr@dte@subparagraph@maxnumwidth=\skip52
 Class scrartcl Info: using compatibility default `runin=bysign'
-(scrartcl)           for `\subparagraph on input line 4537.
+(scrartcl)           for `\subparagraph on input line 4750.
 Class scrartcl Info: using compatibility default `afterindent=bysign'
-(scrartcl)           for `\subparagraph on input line 4537.
+(scrartcl)           for `\subparagraph on input line 4750.
 \abovecaptionskip=\skip53
 \belowcaptionskip=\skip54
 \c@pti@nb@sid@b@x=\box28
 Package tocbasic Info: omitting babel extension for `lof'
 (tocbasic)             because of feature `nobabel' available
-(tocbasic)             for `lof' on input line 5781.
+(tocbasic)             for `lof' on input line 5969.
 \scr@dte@figure@maxnumwidth=\skip55
 \c@figure=\count87
 Package tocbasic Info: omitting babel extension for `lot'
 (tocbasic)             because of feature `nobabel' available
-(tocbasic)             for `lot' on input line 5793.
+(tocbasic)             for `lot' on input line 5981.
 \scr@dte@table@maxnumwidth=\skip56
 \c@table=\count88
-Class scrartcl Info: Redefining `\numberline' on input line 5957.
+Class scrartcl Info: Redefining `\numberline' on input line 6145.
 \bibindent=\dimen102
 )
 ("C:\Users\laure\AppData\Local\Programs\MiKTeX 2.9\tex/generic/babel\babel.sty"
@@ -608,26 +607,22 @@ LaTeX Font Info:    Try loading font information for U+msb on input line 37.
 ("C:\Users\laure\AppData\Local\Programs\MiKTeX 2.9\tex/latex/amsfonts\umsb.fd"
 File: umsb.fd 2013/01/14 v3.01 AMS symbols B
 )
-<input.jpg, id=1, 1505.625pt x 1129.21875pt>
+<input.jpg, id=1, 3035.34pt x 2441.12pt>
 File: input.jpg Graphic file (type jpg)
 <use input.jpg>
-Package pdftex.def Info: input.jpg  used on input line 60.
-(pdftex.def)             Requested size: 167.29967pt x 125.47226pt.
+Package pdftex.def Info: input.jpg  used on input line 53.
+(pdftex.def)             Requested size: 167.29967pt x 134.54137pt.
 
-Underfull \hbox (badness 10000) in paragraph at lines 55--63
+Underfull \hbox (badness 10000) in paragraph at lines 48--56
 
  []
 
 [1
 
 
-{C:/Users/laure/AppData/Local/MiKTeX/2.9/pdftex/config/pdftex.map}]
-Underfull \hbox (badness 10000) in paragraph at lines 75--76
-
- []
-
-[2 <./input.jpg>]
-Overfull \hbox (6.11674pt too wide) in paragraph at lines 110--113
+{C:/Users/laure/AppData/Local/MiKTeX/2.9/pdftex/config/pdftex.map}] [2 <./input
+.jpg>]
+Overfull \hbox (6.11674pt too wide) in paragraph at lines 108--111
 \OT1/cmr/m/n/10.95 Ergebnis:|  B[]ucher-Koordinatensystem als 2D-Array mit Ur-s
 prung links-
  []
@@ -635,34 +630,32 @@ prung links-
 [3]
 File: input.jpg Graphic file (type jpg)
 <use input.jpg>
-Package pdftex.def Info: input.jpg  used on input line 124.
-(pdftex.def)             Requested size: 167.29967pt x 125.47226pt.
-
-No file edbv_konzept_ag_xx.bbl.
-
-Underfull \hbox (badness 10000) in paragraph at lines 159--168
+Package pdftex.def Info: input.jpg  used on input line 122.
+(pdftex.def)             Requested size: 167.29967pt x 134.54137pt.
+ (edbv_konzept_ag_xx.bbl
+Underfull \hbox (badness 10000) in paragraph at lines 157--1
 
  []
 
 
-Overfull \hbox (12.859pt too wide) in paragraph at lines 159--168
+Overfull \hbox (12.859pt too wide) in paragraph at lines 157--1
 \OT1/cmr/m/it/10.95 fe-ren-zen im Bibtex-Format: http://verbosus.com/bibtex-sty
 le-examples.html?lang=de). Die-
  []
 
-[4] [5] (edbv_konzept_ag_xx.aux)
+[4]) [5] (edbv_konzept_ag_xx.aux)
 
 LaTeX Warning: There were multiply-defined labels.
 
  ) 
 Here is how much of TeX's memory you used:
- 7028 strings out of 492946
- 117827 string characters out of 3126266
- 296872 words of memory out of 3000000
- 10813 multiletter control sequences out of 15000+200000
+ 7479 strings out of 492946
+ 132682 string characters out of 3126266
+ 311812 words of memory out of 3000000
+ 11262 multiletter control sequences out of 15000+200000
  13363 words of font info for 51 fonts, out of 3000000 for 9000
  1141 hyphenation exceptions out of 8191
- 51i,8n,52p,9126b,323s stack positions out of 5000i,500n,10000p,200000b,50000s
+ 51i,9n,61p,10106b,323s stack positions out of 5000i,500n,10000p,200000b,50000s
  <C:\Users\laure\AppData\Local\MiKTeX\2.9\fonts/pk/ljfour/jknappen/ec/dpi600\
 tcrm1095.pk><C:/Users/laure/AppData/Local/Programs/MiKTeX 2.9/fonts/type1/publi
 c/amsfonts/cm/cmbx10.pfb><C:/Users/laure/AppData/Local/Programs/MiKTeX 2.9/font
@@ -672,7 +665,7 @@ KTeX 2.9/fonts/type1/public/amsfonts/cm/cmr10.pfb><C:/Users/laure/AppData/Local
 ppData/Local/Programs/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmssbx10.pfb><C
 :/Users/laure/AppData/Local/Programs/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/
 cmti10.pfb>
-Output written on edbv_konzept_ag_xx.pdf (5 pages, 618662 bytes).
+Output written on edbv_konzept_ag_xx.pdf (5 pages, 6482273 bytes).
 PDF statistics:
  49 PDF objects out of 1000 (max. 8388607)
  0 named destinations out of 1000 (max. 500000)

@@ -1,0 +1,14 @@
+\begin{thebibliography}{1}
+
+\bibitem{test123}
+Peter Adams.
+\newblock The title of the work.
+\newblock {\em The name of the journal}, 4(2):201--213, 7 1993.
+\newblock An optional note.
+
+\bibitem{lowe2004}
+David~G Lowe.
+\newblock Distinctive image features from scale-invariant keypoints.
+\newblock {\em International journal of computer vision}, 60(2):91--110, 2004.
+
+\end{thebibliography}
