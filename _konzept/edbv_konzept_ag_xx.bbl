@@ -1,14 +1,30 @@
 \begin{thebibliography}{1}
 
-\bibitem{test123}
-Peter Adams.
-\newblock The title of the work.
-\newblock {\em The name of the journal}, 4(2):201--213, 7 1993.
-\newblock An optional note.
+\bibitem{harris}
+Mike~Stephens Chris~Harris.
+\newblock A combined corner and edge detector.
+\newblock {\em Alvey Vision Conference}, 1988.
+\newblock Zugriff 28.10.2019; Verantwortliche: Laurenz E. Fiala, Anna
+  Nieto-Berezhinskaya.
 
 \bibitem{lowe2004}
 David~G Lowe.
 \newblock Distinctive image features from scale-invariant keypoints.
 \newblock {\em International journal of computer vision}, 60(2):91--110, 2004.
+
+\bibitem{evcScriptMorph}
+Robert Sablatnig.
+\newblock Evc-cv-11. morphologische operationen und bildsegmentierung slides.
+\newblock {\em Computer Vision Lab, Technische Universität Wien}, 2019.
+\newblock Zugriff 28.10.2019; Verantwortliche: Laurenz E. Fiala, Anna
+  Nieto-Berezhinskaya.
+
+\bibitem{evcScriptEdge}
+Robert Sablatnig.
+\newblock Evc-cv-8. bildmerkmale - interest points slides.
+\newblock {\em Computer Vision Lab, Technische Universität Wien}, pages
+  17--36, 2019.
+\newblock Zugriff 28.10.2019; Verantwortliche: Laurenz E. Fiala, Anna
+  Nieto-Berezhinskaya.
 
 \end{thebibliography}

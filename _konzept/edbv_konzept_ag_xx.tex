@@ -81,10 +81,10 @@ Methodik- Pipeline
 		\textit{Finden der Regalfächer zum Korrigieren der Perspektive}
 	\item Persprektivenkorrektur\\
 		\textit{Mittels Transformationsmatrix aus HT berechnet}
-	\item Kantenfilter \& Finden von Interest Points\\
+	\item Eckenerkennung\\
 		\textit{Finden der Ecken von Labels}
-	\item Integral imaging auf IPs\\
-		\textit{Finden von Labels innerhalb eines Akzeptanzbereichs}
+	\item Integral imaging\\
+		\textit{Finden von Labels innerhalb eines Akzeptanzbereichs, es werden nur Bereiche zwischen verschiedenen, zuvor erkannten, Ecken überprüft}
 	\item Eigene Heuristik\\
 		\textit{Einordnen von Labels in Buch-Koordinaten}
 	\item Optical Character Recognition\\
@@ -92,16 +92,18 @@ Methodik- Pipeline
 \end{enumerate}
 \textit{Kommentar: Die folgenden Fragen sollten hier bedacht und beantwortet werden: Welche Arbeitsschritte sind notwendig um für den gegebenen Input den entsprechenden Output zu berechnen? Wozu sind die jeweiligen Methoden notwendig – d.h. welche konkrete Methoden wird für diese Arbeitsschritte verwendet?}
 \section{Evaluierung}
+
+Qualitative Evaluierungsfragen:
 \begin{itemize}
 	\item \textbf{Werden die Regalfächer korrekt erkannt?}\\
-		  Voraussetzungen:\tab Seite von Regalfächer, die zur Kamera zeigt, ist schwarz.\\
+		  Voraussetzungen:\tab Seite der Regalfächer, die zur Kamera zeigt, ist schwarz.\\
 		  Ergebnis:\tab[2.2cm] An jedem Fach liegt eine Gerade an.
 	\item \textbf{Wird die Perspektive korrekt angepasst?}\\
 		  Voraussetzungen:\tab Korrekte Geraden der Regalfächer.\\
 		  Ergebnis:\tab[2.2cm] Bücher und Labels sind im Bild weitestgehend rechteckig.
 	\item \textbf{Werden alle Labels erkannt?}\\
 		  Voraussetzungen:\tab Perspektivenkorrigiertes Bild\\
-		  Ergebnis:\tab[2.2cm] Es müssen mindestens alle Labels erkannt werden (false-positives sind erwartet da die Filterung mittels OCR passiert)
+		  Ergebnis:\tab[2.2cm] Bounding-Boxes der gefundenen Labels
 	\item \textbf{Sind die Bounding Boxes der gefundenen Labels korrekt? Ist der gesamte Text darin enthalten?}\\
 		  Voraussetzungen:\tab Korrekt erkanntes Label oder ein false-positive.\\
 		  Ergebnis:\tab[2.2cm] Vier Vektoren, die den gesamten Text umschließen (und nicht mehr). Bei false-positives ist das Ergebnis nicht relevant, jedoch sollte es nicht zu groß sein (z.B. das gesamte Bild überdecken).
@@ -114,6 +116,15 @@ Methodik- Pipeline
 	\item \textbf{Wird die Wahrscheinlichkeit der Label-Korrektheit angemessen berechnet?}\\
 		  Voraussetzungen:\tab Korrekt in Text umgewandeltes Label.\\
 		  Ergebnis:\tab[2.2cm] Floating-point Wert im Intervall [0, 1]. Alle Labels mit Wahrscheinlichkeit 0 wurden entfernt.
+\end{itemize}
+
+Quantitative Evaluierungsfragen:
+\begin{itemize}
+	\item \textbf{Wieviele Bücher erkennen wir durchschnittlich?}\\
+	\item \textbf{Welche Auflösung ist notwendig, um akzeptable Ergebnisse zu erzielen?}\\
+	\item \textbf{Wie wirkt sich der Winkel, in dem das Foto aufgenommen wurde auf die Verwertbarkeit der Labels aus (Erkennung \& OCR)?}\\
+	\item \textbf{Wie wirkt sich der Grad der Befülltheit des Regals auf die Label-Erkennung aus?}\\
+	\item \textbf{Wie wirken sich die Farben und Kontraste der Bücher auf unseren OCR aus?}\\
 \end{itemize}
 \textit{Kommentar: Eine qualitative Evaluierung basiert auf der subjektiven Wahrnehmung einer Person (Ist ein Ergebnis gut oder schlecht?). Ihr sollte hier aber vor allem auch eine quantitative Evaluierung durchführen, d.h. eine objektive Evaluierung durch Vergleich eurer (Zwischen-)Ergebnisse mit ground truth (ein klassisches Beispiel: Für wie viele der Test-Datensätze wurde für Aufgabe xy ein korrektes Ergebnis erzielt?).}
 \section{Datenbeispiel}
