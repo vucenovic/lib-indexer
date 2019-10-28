@@ -4,27 +4,33 @@
 Mike~Stephens Chris~Harris.
 \newblock A combined corner and edge detector.
 \newblock {\em Alvey Vision Conference}, 1988.
-\newblock Zugriff 28.10.2019; Verantwortliche: Laurenz E. Fiala, Anna
-  Nieto-Berezhinskaya.
+\newblock Zugriff 28.10.2019; Verantwortliche: Anna Nieto-Berezhinskaya,
+  Laurenz E. Fiala.
 
-\bibitem{lowe2004}
-David~G Lowe.
-\newblock Distinctive image features from scale-invariant keypoints.
-\newblock {\em International journal of computer vision}, 60(2):91--110, 2004.
+\bibitem{CHUNG2004953}
+Kuo-Liang Chung, Teh-Chuan Chen, and Wen-Ming Yan.
+\newblock New memory- and computation-efficient hough transform for detecting
+  lines.
+\newblock {\em Pattern Recognition}, 37(5):953 -- 963, 2004.
+
+\bibitem{illingworth1987survey}
+John Illingworth and Josef Kittler.
+\newblock A survey of efficient hough transform methods.
+\newblock In {\em Alvey Vision Conference}, pages 1--8, 1987.
 
 \bibitem{evcScriptMorph}
 Robert Sablatnig.
 \newblock Evc-cv-11. morphologische operationen und bildsegmentierung slides.
 \newblock {\em Computer Vision Lab, Technische Universität Wien}, 2019.
-\newblock Zugriff 28.10.2019; Verantwortliche: Laurenz E. Fiala, Anna
-  Nieto-Berezhinskaya.
+\newblock Zugriff 28.10.2019; Verantwortliche: Anna Nieto-Berezhinskaya,
+  Laurenz E. Fiala.
 
 \bibitem{evcScriptEdge}
 Robert Sablatnig.
 \newblock Evc-cv-8. bildmerkmale - interest points slides.
 \newblock {\em Computer Vision Lab, Technische Universität Wien}, pages
   17--36, 2019.
-\newblock Zugriff 28.10.2019; Verantwortliche: Laurenz E. Fiala, Anna
-  Nieto-Berezhinskaya.
+\newblock Zugriff 28.10.2019; Verantwortliche: Anna Nieto-Berezhinskaya,
+  Laurenz E. Fiala.
 
 \end{thebibliography}
