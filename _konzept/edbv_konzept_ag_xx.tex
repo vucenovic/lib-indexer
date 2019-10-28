@@ -93,7 +93,7 @@ Methodik- Pipeline
 \textit{Kommentar: Die folgenden Fragen sollten hier bedacht und beantwortet werden: Welche Arbeitsschritte sind notwendig um für den gegebenen Input den entsprechenden Output zu berechnen? Wozu sind die jeweiligen Methoden notwendig – d.h. welche konkrete Methoden wird für diese Arbeitsschritte verwendet?}
 \section{Evaluierung}
 
-Qualitative Evaluierungsfragen:
+Unsere Meilensteine:
 \begin{itemize}
 	\item \textbf{Werden die Regalfächer korrekt erkannt?}\\
 		  Voraussetzungen:\tab Seite der Regalfächer, die zur Kamera zeigt, ist schwarz.\\
@@ -116,6 +116,16 @@ Qualitative Evaluierungsfragen:
 	\item \textbf{Wird die Wahrscheinlichkeit der Label-Korrektheit angemessen berechnet?}\\
 		  Voraussetzungen:\tab Korrekt in Text umgewandeltes Label.\\
 		  Ergebnis:\tab[2.2cm] Floating-point Wert im Intervall [0, 1]. Alle Labels mit Wahrscheinlichkeit 0 wurden entfernt.
+\end{itemize}
+
+Qualitative Evaluierungsfragen:
+\begin{itemize}
+	\item \textbf{Welche Muster müssen wir in unseren Daten initial erkennen?}\\
+	\item \textbf{Wie müssen die Labels modifiziert werden, um Template Matching zu ermöglichen?}\\
+	\item \textbf{Wie versichern wir, dass unser Bild perspektivisch korrekt transformiert wurde?}\\
+	\item \textbf{Welches Indexing ist sinnvoll, und wie signalisieren wir dem User die Bedeutung unserer Indexe?(Buch- Koordinaten)}\\
+	\item \textbf{Welches Pre-Processing ist notwendig, um eine Texterkennung zu ermöglichen?}\\
+	\item \textbf{Werden die Labels der TU-Bibliothek korrekt gelesen und in Text umgewandelt?}\
 \end{itemize}
 
 Quantitative Evaluierungsfragen:
