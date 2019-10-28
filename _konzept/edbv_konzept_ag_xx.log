@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.19 (MiKTeX 2.9.6930 64-bit) (preloaded format=pdflatex 2019.1.26)  28 OCT 2019 17:05
+This is pdfTeX, Version 3.14159265-2.6-1.40.19 (MiKTeX 2.9.6930 64-bit) (preloaded format=pdflatex 2019.1.26)  28 OCT 2019 17:11
 entering extended mode
 **./edbv_konzept_ag_xx.tex
 (edbv_konzept_ag_xx.tex
@@ -627,7 +627,7 @@ Underfull \hbox (badness 10000) in paragraph at lines 48--55
 
 {C:/Users/laure/AppData/Local/MiKTeX/2.9/pdftex/config/pdftex.map}] [2 <./input
 .jpg>]
-Overfull \hbox (6.11674pt too wide) in paragraph at lines 109--112
+Overfull \hbox (6.11674pt too wide) in paragraph at lines 108--111
 \OT1/cmr/m/n/10.95 Ergebnis:|  B[]ucher-Koordinatensystem als 2D-Array mit Ur-s
 prung links-
  []
@@ -635,22 +635,18 @@ prung links-
 [3]
 File: input.jpg Graphic file (type jpg)
 <use input.jpg>
-Package pdftex.def Info: input.jpg  used on input line 141.
+Package pdftex.def Info: input.jpg  used on input line 140.
 (pdftex.def)             Requested size: 167.29967pt x 134.54137pt.
-
-
-LaTeX Warning: `!h' float specifier changed to `!ht'.
-
-(edbv_konzept_ag_xx.bbl [4]) [5] (edbv_konzept_ag_xx.aux)
+ [4] (edbv_konzept_ag_xx.bbl) [5] (edbv_konzept_ag_xx.aux)
 
 LaTeX Warning: There were multiply-defined labels.
 
  ) 
 Here is how much of TeX's memory you used:
- 7482 strings out of 492946
- 132739 string characters out of 3126266
- 311824 words of memory out of 3000000
- 11265 multiletter control sequences out of 15000+200000
+ 7483 strings out of 492946
+ 132748 string characters out of 3126266
+ 310824 words of memory out of 3000000
+ 11266 multiletter control sequences out of 15000+200000
  13363 words of font info for 51 fonts, out of 3000000 for 9000
  1141 hyphenation exceptions out of 8191
  51i,8n,61p,10106b,323s stack positions out of 5000i,500n,10000p,200000b,50000s
@@ -663,7 +659,7 @@ KTeX 2.9/fonts/type1/public/amsfonts/cm/cmr10.pfb><C:/Users/laure/AppData/Local
 ppData/Local/Programs/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmssbx10.pfb><C
 :/Users/laure/AppData/Local/Programs/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/
 cmti10.pfb>
-Output written on edbv_konzept_ag_xx.pdf (5 pages, 6476319 bytes).
+Output written on edbv_konzept_ag_xx.pdf (5 pages, 6476244 bytes).
 PDF statistics:
  49 PDF objects out of 1000 (max. 8388607)
  0 named destinations out of 1000 (max. 500000)
