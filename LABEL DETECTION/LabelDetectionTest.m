@@ -83,7 +83,7 @@ function result = check_if_label(integral_image, target_coords, target_coords_2,
     
     ii_bright_dark_ratio = ii_brightness / ii_darkness;
     
-    result = ii_bright_dark_ratio >= brights_darks_ratio_range(1) &
+    result = ii_bright_dark_ratio >= brights_darks_ratio_range(1) & ...
              ii_bright_dark_ratio <= brights_darks_ratio_range(2);
 
 end
