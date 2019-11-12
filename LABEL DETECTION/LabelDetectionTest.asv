@@ -2,9 +2,7 @@ img = imread('input2.jpg');
 img_double = im2double(img);
 img_grey = rgb2gray(img_double);
 
-img_threshold = (img_grey > 0.85) & (img_grey < 0.95);
-
-integral_img = integralImage(img_threshold);
+test_img_threshold = (img_grey > 0.85) & (img_grey < 0.95);
 
 %{
 imshow(img_threshold);
@@ -30,10 +28,7 @@ end
 hold off;
 
 %% INTEGRAL IMAGING
-img_inverse = imcomplement(img_grey);
-
-integral_img_brights = integralImage(img_grey);
-integral_img_darks = integralImage(img_inverse);
+img_integral = generate_integral_image(img_grey);
 
 %% FIND LABELS
 brights_darks_ratio_range = [10, 20];   % ratio between II brightness sum/II darkness sum [min acceptable, max acceptable]
@@ -50,13 +45,44 @@ for c = 1:size(corners, 1)              % for every corner, find neighbors withi
 
     neighbors = find_neighbors(corners, corners(c), x_diff_range, y_diff_range);
     for n = 1:size(neighbors, 1)
-        if check_if_label(neighbors(1))
+        if check_if_label(img_integral, corners(c), neighbors(1), brights_darks_ratio_range)
             labels = [labels; neighbors(1)];
         end
     end
     
 end
 
-% labels contains
+% labels contains final result
 
+%% FUNCTIONS
+function result = find_neighbors(coords, target_coords, x_diff_range, y_diff_range)
+    % find nearest neighbors in range (e.g. with quadtree)
+end
+
+function result = check_if_label(integral_image, target_coords, target_coords_2, brights_darks_ratio_range)
+    % calculate brightness/darkness values
+    % I(D) + I(A) - I(B) - I(C)
+    integral_image()
+    
+end
+
+%{
+    Returns an integral image (also called summed area table) from the
+    given grayscale image (2-dimensional, [0, 1]-image).
+%}
+function result = generate_integral_image(greyscale_image)
+    
+    result = greyscale_image;
+    for x = 1:size(greyscale_image, 1)
+       for y = 1:size(greyscale_image, 2)
+           
+           result(x, y) =   result( max(x-1, 1),    max(y-1, 1)) + ...
+                            result(           x,    max(y-1, 1)) + ...
+                            result( max(x-1, 1),              y) + ...
+                            result(           x,              y);
+           
+       end
+    end
+
+end
 
