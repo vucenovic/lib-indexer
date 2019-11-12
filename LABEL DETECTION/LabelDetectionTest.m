@@ -66,6 +66,11 @@ end
     Sources:
         http://delivery.acm.org/10.1145/810000/808600/p207-crow.pdf
         accessed on 2019/11/12
+
+        https://en.wikipedia.org/wiki/Summed-area_table#/media/File:Summed_area_table.png
+        used only for variable naming
+        accessed on 2019/11/12
+
     Author:
         Laurenz Edmund Fiala (11807869)
 %}
@@ -95,6 +100,7 @@ end
     Sources:
         http://delivery.acm.org/10.1145/810000/808600/p207-crow.pdf
         accessed on 2019/11/12
+
     Author:
         Laurenz Edmund Fiala (11807869)
 %}
