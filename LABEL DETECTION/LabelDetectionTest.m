@@ -46,7 +46,7 @@ for c = 1:size(corners, 1)              % for every corner, find neighbors withi
     neighbors = find_neighbors(corners, corners(c), x_diff_range, y_diff_range);
     for n = 1:size(neighbors, 1)
         if check_if_label(img_integral, corners(c), neighbors(1), brights_darks_ratio_range)
-            labels = [labels; neighbors(1)];
+            labels = [labels; corners(c), neighbors(1)];
         end
     end
     
@@ -59,16 +59,44 @@ function result = find_neighbors(coords, target_coords, x_diff_range, y_diff_ran
     % find nearest neighbors in range (e.g. with quadtree)
 end
 
+%{
+    Returns true if the two target vectors could describe a label (based on
+    a heuristic), or false if it is no label that can be detected.
+
+    Sources:
+        http://www.florian-oeser.de/wordpress/wp-content/2012/10/crow-1984.pdf
+        accessed on 2019/11/12
+    Author:
+        Laurenz Edmund Fiala (11807869)
+%}
 function result = check_if_label(integral_image, target_coords, target_coords_2, brights_darks_ratio_range)
-    % calculate brightness/darkness values
-    % I(D) + I(A) - I(B) - I(C)
-    integral_image()
     
+    A = integral_image(target_coords);
+    B = integral_image([target_coords(1), target_coords_2(2)]);
+    C = integral_image([target_coords(2), target_coords_2(1)]);
+    D = integral_image(target_coords_2);
+    
+    target_diff   = diff([target_coords(1), target_coords_2(1), target_coords(2), target_coords_2(2)]);
+    ii_max_value  = target_diff(1) * target_diff(2);
+    ii_brightness = D + A - B - C;
+    ii_darkness   = ii_max_value - ii_brightness;
+    
+    ii_bright_dark_ratio = ii_brightness / ii_darkness;
+    
+    result = ii_bright_dark_ratio >= brights_darks_ratio_range(1) &
+             ii_bright_dark_ratio <= brights_darks_ratio_range(2);
+
 end
 
 %{
     Returns an integral image (also called summed area table) from the
     given grayscale image (2-dimensional, [0, 1]-image).
+
+    Sources:
+        http://www.florian-oeser.de/wordpress/wp-content/2012/10/crow-1984.pdf
+        accessed on 2019/11/12
+    Author:
+        Laurenz Edmund Fiala (11807869)
 %}
 function result = generate_integral_image(greyscale_image)
     
