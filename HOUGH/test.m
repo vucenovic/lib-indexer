@@ -6,19 +6,19 @@
 function [] = testHough(fn,thres,peakCount)
     baseImage = imread(fn);
     baseImageGray = rgb2gray(im2double(baseImage));
-    %edgeImage = edge(baseImageGray,"canny",[0.1,0.38]);
     
     %Only take horizontal Edges
     %make sure to extend edges and not zero pad them to avoid detecting
     %edges along the image borders
     edgeImageHorizontal = bwareaopen(imbinarize(abs(imfilter(baseImageGray,[1,2,1;0,0,0;-1,-2,-1],"replicate"))),100);
-    edgeImageVertical = bwareaopen(imbinarize(abs(imfilter(baseImageGray,[1,2,1;0,0,0;-1,-2,-1]',"replicate"))),500);
+    edgeImageVertical = bwmorph(imdilate(bwareaopen(imbinarize(abs(imfilter(baseImageGray,[1,2,1;0,0,0;-1,-2,-1]',"replicate"))),500),strel("diamond",10)),"skel",Inf);
 
     %Transpose Image to reduce the houghspace to -20 to +20 degrees instead
     %of having to use a full -90 to 89 degrees
-    [H,T,R] = hough(edgeImageHorizontal','RhoResolution',0.5,'Theta',-32:0.5:32);
+    [H,T,R] = hough(edgeImageHorizontal','RhoResolution',0.5,'Theta',-32.25:0.5:32);
     
-    [H2,T2,R2] = hough(edgeImageHorizontal,'RhoResolution',0.5,'Theta',-32:0.5:32);
+    %Removing the zero angle seems to improve the results quite significantly
+    [H2,T2,R2] = hough(edgeImageHorizontal,'RhoResolution',0.5,'Theta',-32.25:0.5:32);
     
     figure, imshow(H,[],'XData',T,'YData',R,'InitialMagnification','fit');
     xlabel('\theta'), ylabel('\rho');
