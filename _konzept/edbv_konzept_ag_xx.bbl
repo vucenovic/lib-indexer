@@ -20,6 +20,12 @@ John Illingworth and Josef Kittler.
 \newblock In {\em Alvey Vision Conference}, pages 1--8, 1987.
 \newblock Zugriff 28.10.2019; Verantwortliche: Anand Eichner, Jansen Wu.
 
+\bibitem{ocrTreir}
+ANIL K.~JAIN OIVIND DUE~TRIER and TORFINN TAXT.
+\newblock Feature extraction methods for character recognition--a survey.
+\newblock 1995.
+\newblock Zugriff 28.10.2019; Verantwortliche: Aleksandar Vucenovic.
+
 \bibitem{evcScriptMorph}
 Robert Sablatnig.
 \newblock Evc-cv-11. morphologische operationen und bildsegmentierung slides.
