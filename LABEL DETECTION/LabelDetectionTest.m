@@ -13,7 +13,7 @@ imshow(imdilate(img_threshold, se));
 
 %% CORNER DETECTION
 img_grey_gaus = imgaussfilt(img_grey, 4);
-corners = corner(img_grey_gaus, 5000, 'FilterCoefficients', fspecial('gaussian',[9 1], 5));
+corners = corner(img_grey_gaus, 5000, 'FilterCoefficients', fspecial('gaussian',[9 1], 2));
 img_corner_highlight = img_grey;
 
 imshow(img_corner_highlight);
@@ -117,6 +117,70 @@ function result = generate_integral_image(greyscale_image)
            
        end
     end
+
+end
+
+%{
+    Detect corners in the given binary image (already edge-filtered) and
+    return the detected points as line vectors.
+%}
+function result = detect_corners(binary_edge_image)
+    
+    im = edge(rgb2gray(im2double(imread('input2.jpg'))), 'sobel');
+
+    dx = fspecial('gaussian', [1 9], 5);
+    dy = fspecial('gaussian', [9 1], 5);
+    
+    % Step 1: Compute derivatives of image
+    Ix = conv2(im, dx, 'same');
+    Iy = conv2(im, dy, 'same');
+
+    % Step 2: Smooth space image derivatives (gaussian filtering)
+    Ix2 = imgaussfilt(Ix .^ 2, [1 9]);
+    Iy2 = imgaussfilt(Iy .^ 2, [9 1]);
+    Ixy = imgaussfilt(Ix .* Iy, 9);
+
+    % Step 3: Harris corner measure
+    harris = (Ix2 .* Iy2 - Ixy .^ 2) ./ (Ix2 + Iy2);
+
+    % Step 4: Find local maxima (non maximum suppression)
+    mx = ordfilt2(harris, size(im, 1) .^ 2, ones(size(im, 1)));
+    
+    plot(mx);
+
+    % Step 5: Thresholding
+    harris = (harris == mx) & (harris > threshold);
+    
+    
+im1 = rgb2gray(im2double(imread('input2.jpg')));
+%figure ;imshow(im1);
+dx = [-1 0 1; -1 0 1; -1 0 1]; % image derivatives
+dy = dx';
+Ix = imfilter(im1, dx);    % Step 1: Compute the image derivatives Ix and Iy
+Iy = imfilter(im1, dy);
+g = fspecial('gaussian',9,2); % Step 2: Generate Gaussian filter 'g' of size 9x9 and standard deviation Sigma=2.
+Ix2 = imfilter(Ix.^2, g); % Step 3: Smooth the squared image derivatives to obtain Ix2, Iy2 and IxIy
+%figure;imshow(Ix2);
+Iy2 = imfilter(Iy.^2, g);
+%figure;imshow(Iy2);
+IxIy = imfilter(Ix.*Iy, g);
+%figure;imshow(IxIy);
+[r c]=size(Ix2);
+E = zeros(r, c); % Compute matrix E
+tic
+for i=2:1:r-1 
+    for j=2:1:c-1
+     Ix21=sum(sum(Ix2(i-1:i+1,j-1:j+1)));
+     Iy21=sum(sum(Iy2(i-1:i+1,j-1:j+1)));
+     IxIy1= sum(sum(IxIy(i-1:i+1,j-1:j+1)));
+     M=[Ix21 IxIy1;IxIy1 Iy21]; %(1) Build autocorrelation matrix for every singe pixel considering a window of size 3x3
+     E(i,j)=min(eig(M)); %(2)Compute Eigen value of the autocorrelation matrix and save the minimum eigenvalue as the desired value.
+    end
+end
+t=toc;
+disp('time needed for calculating E matrix');
+disp(t);
+figure, imshow(mat2gray(E)); % display result
 
 end
 
