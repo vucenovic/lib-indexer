@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.19 (MiKTeX 2.9.6930 64-bit) (preloaded format=pdflatex 2019.1.26)  28 OCT 2019 17:11
+This is pdfTeX, Version 3.14159265-2.6-1.40.19 (MiKTeX 2.9.6930 64-bit) (preloaded format=pdflatex 2019.1.26)  28 OCT 2019 22:13
 entering extended mode
 **./edbv_konzept_ag_xx.tex
 (edbv_konzept_ag_xx.tex
@@ -643,10 +643,10 @@ LaTeX Warning: There were multiply-defined labels.
 
  ) 
 Here is how much of TeX's memory you used:
- 7483 strings out of 492946
- 132748 string characters out of 3126266
- 310824 words of memory out of 3000000
- 11266 multiletter control sequences out of 15000+200000
+ 7484 strings out of 492946
+ 132758 string characters out of 3126266
+ 310828 words of memory out of 3000000
+ 11267 multiletter control sequences out of 15000+200000
  13363 words of font info for 51 fonts, out of 3000000 for 9000
  1141 hyphenation exceptions out of 8191
  51i,8n,61p,10106b,323s stack positions out of 5000i,500n,10000p,200000b,50000s
@@ -659,7 +659,7 @@ KTeX 2.9/fonts/type1/public/amsfonts/cm/cmr10.pfb><C:/Users/laure/AppData/Local
 ppData/Local/Programs/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmssbx10.pfb><C
 :/Users/laure/AppData/Local/Programs/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/
 cmti10.pfb>
-Output written on edbv_konzept_ag_xx.pdf (5 pages, 6476244 bytes).
+Output written on edbv_konzept_ag_xx.pdf (5 pages, 6476775 bytes).
 PDF statistics:
  49 PDF objects out of 1000 (max. 8388607)
  0 named destinations out of 1000 (max. 500000)
