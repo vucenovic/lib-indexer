@@ -35,7 +35,7 @@ imshow(dark_th);
 img_integral_darks = generate_integral_image(dark_th);
 
 %% FIND LABELS
-brights_darks_ratio_range = [5, 50];   % ratio between II brightness sum/II darkness sum [min acceptable, max acceptable]
+brights_darks_ratio_range = [7, 60];   % ratio between II brightness sum/II darkness sum [min acceptable, max acceptable]
 x_diff_range = [20, 125];               % absolute distance that two corners need to be apart in x direction [min, max]
 y_diff_range = [100, 200];              % absolute distance that two corners need to be apart in y direction [min, max]
 labels = [];
