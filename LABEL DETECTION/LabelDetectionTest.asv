@@ -28,7 +28,7 @@ imshow(bright_th);
 img_integral_brights = generate_integral_image(bright_th);
 
 dark_th = 1-img_grey;
-dark_th = dark_th .^ 2.75 .* 2.95;
+dark_th = dark_th .^ 3.5 .* ;
 dark_th(dark_th > 0.3) = 1;
 dark_th(dark_th < 0.3) = 0;
 imshow(dark_th);
