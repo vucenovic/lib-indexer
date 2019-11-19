@@ -25,10 +25,22 @@ img = imrotate(img, -angle, 'bicubic');
 % remove lines
 
 img = edge(img, 'canny');
+img = removeLines(removeLines(removeLines(removeLines(removeLines(img)))));
+img = removeLines(removeLines(removeLines(removeLines(removeLines(img)))));
+img = removeLines(removeLines(removeLines(removeLines(removeLines(img)))));
+img = removeLines(removeLines(removeLines(removeLines(removeLines(img)))));
+img = removeLines(img);
+
+imshow(img);
+
+function [img] = removeLines(img)
+% removes horitontal lines of image
+% author: aleksandar vucenovic, 01635282
+
 [H,theta,rho] = hough(img);
 P = houghpeaks(H,10,'NHoodSize',[1 1]);
 lines_found = houghlines(img,theta,rho,P,...
-    'FillGap',50,'MinLength',1);
+    'FillGap',500,'MinLength',1);
 for k = 1:length(lines_found)
    % extract one line:
    xy = [lines_found(k).point1; lines_found(k).point2];
@@ -36,11 +48,8 @@ for k = 1:length(lines_found)
    % note that I take a buffer of 3 to the 'width' of the line
    img(xy(1,2):xy(1,2)+3,xy(1,1):xy(2,1)) = 0;
    img(xy(1,2):xy(1,2)+5,xy(1,1):xy(2,1)) = 0;
-
-
 end
-imshow(img);
-
+end
 
 
 
