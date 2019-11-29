@@ -12,6 +12,8 @@ function [] = testHough(fn,thres,peakCount)
     linesB = [struct("P",[0,0],"D",[0,1]),struct("P",[1,0],"D",[0,1])];
     a = findIntersections(linesA,linesB)
     sortIntersections(a)
+    linesTest = [struct("P",[0,5],"D",[1,0]),struct("P",[0,1],"D",[1,0]),struct("P",[0,20],"D",[1,0]),struct("P",[0,2],"D",[1,0])];
+    selectLineCandidates(linesTest)
     
     %Only take horizontal Edges
     %make sure to extend edges and not zero pad them to avoid detecting
@@ -75,16 +77,42 @@ function [] = testHough(fn,thres,peakCount)
         plot(xy(:,1),xy(:,2),'LineWidth',2,'Color','green');
     end
     
+    linesHorizontal = selectLineCandidates(linesHorizontal);
+    linesVertical = selectLineCandidates(linesVertical);
+    intersections = sortIntersections(findIntersections(linesHorizontal,linesVertical),true,[-1,0]);
+    figure; imshow(baseImage), hold on;
+    
+    for i = 0:size(intersections,1)-1
+        plot(intersections([i+1,mod(i+1,4)+1],1), intersections([i+1,mod(i+1,4)+1],2),"lineWidth", 4, "color", "red");
+    end
+    
     %%Correct Perspective
+    imageSize = size(baseImage);
     transformMatrix = fitgeotrans(...
-        [0 0; 0 1; 1 1; 1 0],...
-        [0 0; 0 1; 0.8 4; 0.8 -1],...
+        intersections,...
+        [0 0; imageSize(2) 0; imageSize(2) imageSize(1); 0 imageSize(1)],...  %%kinda works [0 0; imageSize(1) 0; imageSize(1) imageSize(2); 0 imageSize(2)],...
         "projective");
-    tranformCoordsys = imref2d(size(baseImage),[0,1],[0,1]);
-    tranformImageOutputBounds=imref2d(size(baseImageGray),[1 size(baseImageGray,2)],[1 size(baseImageGray,1)]);
-    transformedImage = imwarp(baseImageGray,tranformCoordsys,transformMatrix); %"OutputView", tranformImageOutputBounds
-    figure();
-    imshow(transformedImage);
+    transformedImage = imwarp(baseImageGray,transformMatrix);
+    figure(); imshow(transformedImage);
+end
+
+%{
+    Takes: Hough-Transform outputs and houghpeaks
+
+    Returns: Two best line candidates for generating a perspective plane
+
+    @Author Anand Eichner
+%}
+function [lines] = selectLineCandidates(lines)
+    norms = vertcat(lines.D);
+    norms = [norms(:,2),-norms(:,1)];
+    points = vertcat(lines.P);
+    
+    dists = abs(dot(norms,points,2));
+    dists = [dists,(1:length(dists))'];
+    dists = sortrows(dists,1);
+    
+    lines = [lines(dists(1,2)),lines(dists(length(lines),2))];
 end
 
 %{
@@ -143,20 +171,25 @@ end
     Takes: A list of intersections
         (optionally a directionVector at which to start)
 
-    Returns: A sorted list of the intersections (clockwise)
+    Returns: A sorted list of the intersections
 
     @Author Anand Eichner
 %}
-function [intersections] = sortIntersections(intersections,zeroVector)
+function [intersections] = sortIntersections(intersections,reverse,zeroVector)
+    if nargin > 1
+        if reverse; direction = "descend"; else; direction = "ascend"; end;
+    else 
+        direction = "ascend";
+    end
+    
     if nargin > 2
-      dirVec = zeroVector;
-    else
-      dirVec = [0,1];
+        dirVec = zeroVector;
+    else 
+        dirVec = [0,1];
     end
 
     middle = sum(intersections,1)/size(intersections,1);
     dirs = intersections - middle;
-    %%normalize directions
     dirssqrd = dirs.*dirs;
     dirs = dirs ./ repmat(sqrt(dirssqrd(:,1)+dirssqrd(:,2)),1,2);
     
@@ -169,6 +202,6 @@ function [intersections] = sortIntersections(intersections,zeroVector)
     
     %%Sort by angles
     intersections = [intersections,angle];
-    intersections = sortrows(intersections,3);
+    intersections = sortrows(intersections,3,direction);
     intersections = intersections(:,1:2)
 end
