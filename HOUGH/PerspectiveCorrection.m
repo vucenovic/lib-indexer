@@ -7,16 +7,15 @@
 
     @Author Anand Eichner
 %}
-function [correctedImage,spaceData] = PerspectiveCorrection(fn)
-    close all;%%ffs
+function [correctedImage,spaceData] = PerspectiveCorrection(baseImage)
+    baseImageGray = rgb2gray(im2double(baseImage));
     
     thres = 0.4;
     peakCount = 5;
     VerticalAreaSelect = 20;
-
-
-    baseImage = imread(fn);
-    baseImageGray = rgb2gray(im2double(baseImage));
+    Debug = true;
+    
+    %% Preprocessing
     
     %Only take horizontal Edges
     %make sure to extend edges and not zero pad them to avoid detecting
@@ -39,6 +38,7 @@ function [correctedImage,spaceData] = PerspectiveCorrection(fn)
     edgeImageVertical = bwareaopen(edgeImageVertical,500);
     edgeImageVertical = bwareafilt(edgeImageVertical,VerticalAreaSelect);
     
+    %% Hough Transform
     %Transpose Image to reduce the houghspace to -20 to +20 degrees instead
     %of having to use a full -90 to 89 degrees
     [H,T,R] = hough(edgeImageHorizontal','RhoResolution',2,'Theta',-32.25:0.5:32);
@@ -48,65 +48,66 @@ function [correctedImage,spaceData] = PerspectiveCorrection(fn)
     [H2,T2,R2] = hough(edgeImageVertical,'RhoResolution',2,'Theta',-32.25:0.5:32);
     P2  = houghpeaks(H2,peakCount,'threshold',ceil(thres*max(H2(:))));
     
-    %{
-    figure, imshow(H,[],'XData',T,'YData',R,'InitialMagnification','fit');
-    xlabel('\theta'), ylabel('\rho');
-    axis on, axis normal, hold on;
-    
-    x = T(P(:,2)); y = R(P(:,1));
-    plot(x,y,'s','color','white');
-    %}
-    
-    %{
-    figure, imshow(H2,[],'XData',T2,'YData',R2,'InitialMagnification','fit');
-    xlabel('\theta'), ylabel('\rho');
-    axis on, axis normal, hold on;
-    
-    x2 = T2(P2(:,2)); y2 = R2(P2(:,1));
-    plot(x2,y2,'s','color','white');
-    %}
-    
+    %% Find a rectangle in the plane of the shelf
     linesHorizontal = toLines(R,T,P,true);
     linesVertical = toLines(R2,T2,P2,false);
+    verticalBounds = selectLineCandidates(linesHorizontal);
+    horizontalBounds = selectLineCandidates(linesVertical);
+    intersections = sortIntersections(findIntersections(horizontalBounds,verticalBounds),true,[-1,0]);
     
-    %%Plot horizontal line image
-    figure, imshow(edgeImageHorizontal), hold on
-    for k = 1:length(linesHorizontal)
-        line = linesHorizontal(k);
-        xy = findIntersections([line],[struct("P",[0,0],"D",[0,1]),struct("P",[size(edgeImageHorizontal,2),0],"D",[0,1])]);
-        plot(xy(:,1),xy(:,2),'LineWidth',2,'Color','green');
-    end
-    
-    %%Plot vertical line image
-    figure, imshow(edgeImageVertical), hold on
-    for k = 1:length(linesVertical)
-        line = linesVertical(k);
-        xy = findIntersections([line],[struct("P",[0,0],"D",[1,0]),struct("P",[0,size(edgeImageHorizontal,1)],"D",[1,0])]);
-        plot(xy(:,1),xy(:,2),'LineWidth',2,'Color','green');
-    end
-    
-    linesHorizontal = selectLineCandidates(linesHorizontal);
-    linesVertical = selectLineCandidates(linesVertical);
-    intersections = sortIntersections(findIntersections(linesVertical,linesHorizontal),true,[-1,0]);
-    
-    figure; imshow(baseImage), hold on;
-    for i = 0:size(intersections,1)-1;
-        plot(intersections([i+1,mod(i+1,4)+1],1), intersections([i+1,mod(i+1,4)+1],2),"lineWidth", 4, "color", "red");
-    end
-    
-    %%Correct Perspective
+    %% Correct Perspective
     imageSize = size(baseImage);
     transformMatrix = fitgeotrans(...
         intersections,...
         [0 0; imageSize(2) 0; imageSize(2) imageSize(1); 0 imageSize(1)],...  %%kinda works [0 0; imageSize(1) 0; imageSize(1) imageSize(2); 0 imageSize(2)],...
         "projective");
     [correctedImage,spacialRef] = imwarp(baseImage,transformMatrix);
-    figure(); imshow(correctedImage);
     
+    %% Write additional return data
     spaceData.imRef = spacialRef;
     [x,y]=transformPointsForward(transformMatrix,intersections(:,1),intersections(:,2));
     spaceData.houghBounds = [x,y];
+    
+    %% Debug visualizations (These are completely post work)
+    if Debug
+        close all;%%ffs
+        
+        figure, imshow(H,[],'XData',T,'YData',R,'InitialMagnification','fit');
+        xlabel('\theta'), ylabel('\rho');
+        axis on, axis normal, hold on;
+        x = T(P(:,2)); y = R(P(:,1));
+        plot(x,y,'s','color','white');
+
+        figure, imshow(H2,[],'XData',T2,'YData',R2,'InitialMagnification','fit');
+        xlabel('\theta'), ylabel('\rho');
+        axis on, axis normal, hold on;
+        x2 = T2(P2(:,2)); y2 = R2(P2(:,1));
+        plot(x2,y2,'s','color','white');
+
+        figure, imshow(edgeImageHorizontal), hold on
+        for k = 1:length(linesHorizontal)
+            line = linesHorizontal(k);
+            xy = findIntersections([line],[struct("P",[0,0],"D",[0,1]),struct("P",[size(edgeImageHorizontal,2),0],"D",[0,1])]);
+            plot(xy(:,1),xy(:,2),'LineWidth',2,'Color','green');
+        end
+
+        figure, imshow(edgeImageVertical), hold on
+        for k = 1:length(linesVertical)
+            line = linesVertical(k);
+            xy = findIntersections([line],[struct("P",[0,0],"D",[1,0]),struct("P",[0,size(edgeImageHorizontal,1)],"D",[1,0])]);
+            plot(xy(:,1),xy(:,2),'LineWidth',2,'Color','green');
+        end
+
+        figure; imshow(baseImage), hold on;
+        for i = 0:size(intersections,1)-1;
+            plot(intersections([i+1,mod(i+1,4)+1],1), intersections([i+1,mod(i+1,4)+1],2),"lineWidth", 4, "color", "red");
+        end
+        
+        figure(); imshow(correctedImage);
+    end
 end
+
+%% Local Function Definitions
 
 %{
     Takes: An array of lines
