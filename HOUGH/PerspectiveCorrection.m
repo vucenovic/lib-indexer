@@ -100,7 +100,7 @@ function [correctedImage,spaceData] = PerspectiveCorrection(fn)
         intersections,...
         [0 0; imageSize(2) 0; imageSize(2) imageSize(1); 0 imageSize(1)],...  %%kinda works [0 0; imageSize(1) 0; imageSize(1) imageSize(2); 0 imageSize(2)],...
         "projective");
-    [correctedImage,spacialRef] = imwarp(baseImageGray,transformMatrix);
+    [correctedImage,spacialRef] = imwarp(baseImage,transformMatrix);
     figure(); imshow(correctedImage);
     
     spaceData.imRef = spacialRef;
