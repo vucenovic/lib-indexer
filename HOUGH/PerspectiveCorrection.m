@@ -13,7 +13,7 @@ function [correctedImage,spaceData] = PerspectiveCorrection(baseImage)
     thres = 0.4;
     peakCount = 5;
     VerticalAreaSelect = 20;
-    Debug = true;
+    Debug = false; %Set to true to display different stages of the process on screen
     
     %% Preprocessing
     
@@ -124,8 +124,9 @@ function [distances] = lineOriginDistances(lines)
     distances = abs(dot(norms,points,2));
 end
 
+
 %{
-    Takes: Hough-Transform outputs and houghpeaks
+    Takes: An array of lines
 
     Returns: Two best line candidates for generating a perspective plane
 
@@ -200,6 +201,7 @@ end
     @Author Anand Eichner
 %}
 function [intersections] = sortIntersections(intersections,reverse,zeroVector)
+    %% Process arguments
     if nargin > 1
         if reverse; direction = "descend"; else; direction = "ascend"; end;
     else 
@@ -212,19 +214,20 @@ function [intersections] = sortIntersections(intersections,reverse,zeroVector)
         dirVec = [0,1];
     end
 
+    %% Calculate weight point and the direction vectors of all points relative to it
     middle = sum(intersections,1)/size(intersections,1);
     dirs = intersections - middle;
     dirssqrd = dirs.*dirs;
     dirs = dirs ./ repmat(sqrt(dirssqrd(:,1)+dirssqrd(:,2)),1,2);
     
-    %%Compute angles
+    %% Compute angles
     c = cross([dirs,zeros(length(dirs),1)],repmat([dirVec,0],length(dirs),1),2);
     c = c(:,3);
     d = dot(dirs,repmat(dirVec,length(dirs),1),2);
     angle = acosd(d);
     angle = abs(360*(c<0) - angle);
     
-    %%Sort by angles
+    %% Sort by angles
     intersections = [intersections,angle];
     intersections = sortrows(intersections,3,direction);
     intersections = intersections(:,1:2);
