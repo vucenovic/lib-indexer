@@ -268,7 +268,7 @@ function [lines] = transformLines(lines,tform,imOffset)
     points2 = transformPointsForward(tform,points2);
     
     dirs = points2 - points;
-    dirs = dirs ./ repmat(dot(dirs,dirs,2),1,2);
+    dirs = dirs ./ repmat(sqrt(dot(dirs,dirs,2)),1,2);
     points = points + repmat(imOffset,length(lines),1);
     lines = [];
     for i = 1:size(points,1)
