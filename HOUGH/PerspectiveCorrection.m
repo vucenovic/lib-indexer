@@ -13,7 +13,12 @@ function [correctedImage,spaceData] = PerspectiveCorrection(baseImage)
     thres = 0.4;
     peakCount = 5;
     VerticalAreaSelect = 20;
-    Debug = true; %Set to true to display different stages of the process on screen
+    
+    %%ONLY change this if you know what it is for (this is a safety feature)
+    %%should be around 1.5 to 2 in most cases, 5 in extreme cases
+    IMAGE_MAX_REL_SIZE = 3;
+    ENABLE_PRE_CORR_UPSCALING = true; %%not implemented yet
+    DEBUG = true; %Set to true to display different stages of the process on screen
     
     %% Preprocessing
     
@@ -53,19 +58,24 @@ function [correctedImage,spaceData] = PerspectiveCorrection(baseImage)
     linesVertical = toLines(R2,T2,P2,false);
     verticalBounds = selectLineCandidates(linesHorizontal);
     horizontalBounds = selectLineCandidates(linesVertical);
-    intersections = sortIntersections(findIntersections(horizontalBounds,verticalBounds),true,[-1,0]);
+    rectangleBounds = sortIntersections(findIntersections(horizontalBounds,verticalBounds),true,[-1,0]);
+    
+    %%Optionally upscale bounds to fit the image as good as possible
+    imageSize = size(baseImage);
+    if (ENABLE_PRE_CORR_UPSCALING) scaledBounds = upscalePerspectiveRectangle(rectangleBounds);
+    else scaledBounds = rectangleBounds;
+    end
     
     %% Correct Perspective
-    imageSize = size(baseImage);
     transformMatrix = fitgeotrans(...
-        intersections,...
+        scaledBounds,...
         [0 0; imageSize(2) 0; imageSize(2) imageSize(1); 0 imageSize(1)],...  %%kinda works [0 0; imageSize(1) 0; imageSize(1) imageSize(2); 0 imageSize(2)],...
         "projective");
     
     %%Prevent Matlab from locking up your PC if it finds an invalid
     %%rectangle (too small)
     [xlim, ylim] = outputLimits(transformMatrix,[1 imageSize(2)],[1 imageSize(1)]);
-    if((xlim(2)-xlim(1))/imageSize(2) >1.5 || (ylim(2)-ylim(1))/imageSize(1) >1.5)
+    if(((xlim(2)-xlim(1)) * (ylim(2)-ylim(1))) / (imageSize(2)*imageSize(1)) > IMAGE_MAX_REL_SIZE*IMAGE_MAX_REL_SIZE)
         correctedImage = baseImage;
         spacialRef = imref2d();
     else
@@ -80,7 +90,7 @@ function [correctedImage,spaceData] = PerspectiveCorrection(baseImage)
     spaceData.horizontals = transformLines(linesHorizontal,transformMatrix,imOffset);
     
     %% Debug visualizations (These are completely post work)
-    if Debug
+    if DEBUG
         close all;%%ffs
         
         figure, imshow(H,[],'XData',T,'YData',R,'InitialMagnification','fit');
@@ -110,8 +120,8 @@ function [correctedImage,spaceData] = PerspectiveCorrection(baseImage)
         end
 
         figure; imshow(baseImage), hold on;
-        for i = 0:size(intersections,1)-1
-            plot(intersections([i+1,mod(i+1,4)+1],1), intersections([i+1,mod(i+1,4)+1],2),"lineWidth", 4, "color", "red");
+        for i = 0:size(rectangleBounds,1)-1
+            plot(rectangleBounds([i+1,mod(i+1,4)+1],1), rectangleBounds([i+1,mod(i+1,4)+1],2),"lineWidth", 4, "color", "red");
         end
         
         figure(); imshow(correctedImage), hold on;
@@ -274,4 +284,16 @@ function [lines] = transformLines(lines,tform,imOffset)
     for i = 1:size(points,1)
         lines = [lines,struct("P",points(i,:),"D",dirs(i,:))];
     end
+end
+
+%{
+    Takes: An a sorted list of four intersections defining the bounds of a
+    rectange in space and the size of the image
+
+    Returns: The the bounds scaled up to fit the ImageSize
+
+    @Author Anand
+%}
+function [bounds] = upscalePerspectiveRectangle(bounds,ImageSize)
+    bounds = bounds;%%TODO IMPLEMENT
 end
