@@ -2,8 +2,8 @@
     Attempts to correct the perspective of an Image based on the lines in it
 
     Returns: The perspective corrected image and a Struct containing an
-            imRef2d object and the corners of the rectangle used to correct
-            the image.
+            imRef2d object, the corners of the rectangle used to correct
+            the image, and all horizontal Lines that were used(found).
 
     @Author Anand Eichner
 %}
@@ -13,7 +13,7 @@ function [correctedImage,spaceData] = PerspectiveCorrection(baseImage)
     thres = 0.4;
     peakCount = 5;
     VerticalAreaSelect = 20;
-    Debug = false; %Set to true to display different stages of the process on screen
+    Debug = true; %Set to true to display different stages of the process on screen
     
     %% Preprocessing
     
@@ -61,12 +61,23 @@ function [correctedImage,spaceData] = PerspectiveCorrection(baseImage)
         intersections,...
         [0 0; imageSize(2) 0; imageSize(2) imageSize(1); 0 imageSize(1)],...  %%kinda works [0 0; imageSize(1) 0; imageSize(1) imageSize(2); 0 imageSize(2)],...
         "projective");
-    [correctedImage,spacialRef] = imwarp(baseImage,transformMatrix);
+    
+    %%Prevent Matlab from locking up your PC if it finds an invalid
+    %%rectangle (too small)
+    [xlim, ylim] = outputLimits(transformMatrix,[1 imageSize(2)],[1 imageSize(1)]);
+    if((xlim(2)-xlim(1))/imageSize(2) >1.5 || (ylim(2)-ylim(1))/imageSize(1) >1.5)
+        correctedImage = baseImage;
+        spacialRef = imref2d();
+    else
+        %% Warp image using the transformmatrix
+        [correctedImage,spacialRef] = imwarp(baseImage,transformMatrix);
+    end
     
     %% Write additional return data
     spaceData.imRef = spacialRef;
-    [x,y]=transformPointsForward(transformMatrix,intersections(:,1),intersections(:,2));
-    spaceData.houghBounds = [x,y];
+    imOffset = [-spacialRef.XWorldLimits(1),-spacialRef.YWorldLimits(1)];
+    spaceData.originalBounds = [0 0; imageSize(2) 0; imageSize(2) imageSize(1); 0 imageSize(1)] + repmat(imOffset,4,1);
+    spaceData.horizontals = transformLines(linesHorizontal,transformMatrix,imOffset);
     
     %% Debug visualizations (These are completely post work)
     if Debug
@@ -99,11 +110,20 @@ function [correctedImage,spaceData] = PerspectiveCorrection(baseImage)
         end
 
         figure; imshow(baseImage), hold on;
-        for i = 0:size(intersections,1)-1;
+        for i = 0:size(intersections,1)-1
             plot(intersections([i+1,mod(i+1,4)+1],1), intersections([i+1,mod(i+1,4)+1],2),"lineWidth", 4, "color", "red");
         end
         
-        figure(); imshow(correctedImage);
+        figure(); imshow(correctedImage), hold on;
+        for k = 1:length(spaceData.horizontals)
+            line = spaceData.horizontals(k);
+            xy = findIntersections([line],[struct("P",[0,0],"D",[0,1]),struct("P",[size(correctedImage,2),0],"D",[0,1])]);
+            plot(xy(:,1),xy(:,2),'LineWidth',3,'Color','green');
+        end
+        for i = 0:size(spaceData.originalBounds,1)-1
+            plot(spaceData.originalBounds([i+1,mod(i+1,4)+1],1), spaceData.originalBounds([i+1,mod(i+1,4)+1],2),"lineWidth", 2, "color", "red");
+        end
+        
     end
 end
 
@@ -155,7 +175,7 @@ function [lines] = toLines(R,T,P,transposed)
     d = [sind(a'),cosd(a')];
     p = repmat(nd',1,2) .* [d(:,2),-d(:,1)];
     lines = [];
-    for i = 1:size(p,1);
+    for i = 1:size(p,1)
         lines = [lines,struct("P",p(i,:),"D",d(i,:))];
     end
 end
@@ -203,7 +223,7 @@ end
 function [intersections] = sortIntersections(intersections,reverse,zeroVector)
     %% Process arguments
     if nargin > 1
-        if reverse; direction = "descend"; else; direction = "ascend"; end;
+        if reverse; direction = "descend"; else; direction = "ascend"; end
     else 
         direction = "ascend";
     end
@@ -231,4 +251,27 @@ function [intersections] = sortIntersections(intersections,reverse,zeroVector)
     intersections = [intersections,angle];
     intersections = sortrows(intersections,3,direction);
     intersections = intersections(:,1:2);
+end
+
+%{
+    Takes: An array of lines and a transformmatrix
+
+    Returns: The transformed lines
+
+    @Author Anand
+%}
+function [lines] = transformLines(lines,tform,imOffset)
+    points = vertcat(lines.P);
+    points2 = vertcat(lines.D) + points;
+    
+    points = transformPointsForward(tform,points);
+    points2 = transformPointsForward(tform,points2);
+    
+    dirs = points2 - points;
+    dirs = dirs ./ repmat(dot(dirs,dirs,2),1,2);
+    points = points + repmat(imOffset,length(lines),1);
+    lines = [];
+    for i = 1:size(points,1)
+        lines = [lines,struct("P",points(i,:),"D",dirs(i,:))];
+    end
 end
