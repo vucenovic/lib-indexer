@@ -17,8 +17,9 @@ function [correctedImage,spaceData] = PerspectiveCorrection(baseImage)
     %%ONLY change this if you know what it is for (this is a safety feature)
     %%should be around 1.5 to 2 in most cases, 5 in extreme cases
     IMAGE_MAX_REL_SIZE = 3;
-    ENABLE_PRE_CORR_UPSCALING = true; %%not implemented yet
-    DEBUG = true; %Set to true to display different stages of the process on screen
+    %%reduces overall output size
+    ENABLE_PRE_CORR_UPSCALING = false; %%not implemented yet
+    DEBUG = false; %Set to true to display different stages of the process on screen
     
     %% Preprocessing
     
@@ -62,7 +63,7 @@ function [correctedImage,spaceData] = PerspectiveCorrection(baseImage)
     
     %%Optionally upscale bounds to fit the image as good as possible
     imageSize = size(baseImage);
-    if (ENABLE_PRE_CORR_UPSCALING) scaledBounds = upscalePerspectiveRectangle(rectangleBounds);
+    if (ENABLE_PRE_CORR_UPSCALING) scaledBounds = upscalePerspectiveRectangle(rectangleBounds,imageSize);
     else scaledBounds = rectangleBounds;
     end
     
@@ -133,7 +134,6 @@ function [correctedImage,spaceData] = PerspectiveCorrection(baseImage)
         for i = 0:size(spaceData.originalBounds,1)-1
             plot(spaceData.originalBounds([i+1,mod(i+1,4)+1],1), spaceData.originalBounds([i+1,mod(i+1,4)+1],2),"lineWidth", 2, "color", "red");
         end
-        
     end
 end
 
@@ -214,9 +214,9 @@ end
 
     @Author Anand Eichner
 %}
-function [intersection] = findIntersection(lineA,lineB)
+function [intersection,t] = findIntersection(lineA,lineB)
     d=lineA.D(1)*lineB.D(2)-lineA.D(2)*lineB.D(1);
-    if d == 0 intersection = []; return; end
+    if d == 0 intersection = []; t=[]; return; end
     t = (lineB.P(1) - lineA.P(1))*lineB.D(2) - (lineB.P(2) - lineA.P(2))*lineB.D(1);
     t = t/d;
     intersection = lineA.P + t * lineA.D;
@@ -287,13 +287,97 @@ function [lines] = transformLines(lines,tform,imOffset)
 end
 
 %{
-    Takes: An a sorted list of four intersections defining the bounds of a
-    rectange in space and the size of the image
+    Takes: A line and a box (array of four lines)
 
-    Returns: The the bounds scaled up to fit the ImageSize
+    Returns: The two points of intersection
+
+    @Author Anand Eichner
+%}
+function [intersections] = intersectBox(line,box)
+    intersections = [];
+    for j = 1:size(box,2)
+        [intersection,t] = findIntersection(box(j),line);
+        intersections = [intersections; intersection, t];
+    end
+    intersections = sortrows(intersections,3);
+    intersections = intersections(2:3,1:2);
+end
+
+%{
+    Takes: Two Points
+
+    Returns: A line going through both points in parameter form
 
     @Author Anand
 %}
-function [bounds] = upscalePerspectiveRectangle(bounds,ImageSize)
+function [lines] = pointsToLine(pointA,pointB)
+    dirs = pointB - pointA;
+    dirs = dirs ./ repmat(sqrt(dot(dirs,dirs,2)),1,2);
+    lines = [];
+    for i = 1:size(pointA,1)
+        lines = [lines,struct("P",pointA(i,:),"D",dirs(i,:))];
+    end
+end
+
+%{
+    Takes: An a sorted list of four intersections defining the bounds of a
+    rectange in space and the size of the image
+
+    Returns: The the bounds scaled up to fit the ImageSize while keeping
+    the same perspective distortion
+
+    @Author Anand
+%}
+function [bounds] = upscalePerspectiveRectangle(bounds,imageSize)
+    
+    imageBoundingBox = [...
+        struct("P",[0,0],"D",[0,1]),...
+        struct("P",[imageSize(2),0],"D",[0,1]),...
+        struct("P",[0,0],"D",[1,0]),...
+        struct("P",[0,imageSize(1)],"D",[1,0])
+        ];
+    
+    %% create lines going along all directions of the quad
+    topLine = pointsToLine(bounds(1,:),bounds(2,:));
+    rightLine = pointsToLine(bounds(2,:),bounds(3,:));
+    bottomLine = pointsToLine(bounds(3,:),bounds(4,:));
+    leftLine = pointsToLine(bounds(4,:),bounds(1,:));
+    
+    %% find escape Points of the rectangle
+    horizontalEscape = findIntersection(topLine,bottomLine);
+    verticalEscape = findIntersection(leftLine,rightLine);
+    
+    xy = intersectBox(topLine,imageBoundingBox);
+    xy2 = intersectBox(leftLine,imageBoundingBox);
+    
+    outerHor = pointsToLine(xy2,repmat(horizontalEscape,2,1));
+    outerVert = pointsToLine(xy,repmat(verticalEscape,2,1));
+    outerBounds = sortIntersections(findIntersections(outerHor,outerVert),true,[-1,0]);
+    
+    internalPoint = 0;
+    for i = 1:size(outerBounds,1)
+        
+    end
+    
+    %% plot stuff for debugging
+    figure, set(gca, 'YDir','reverse'), hold on;
+    plot([0,imageSize(2)],[0,0],'LineWidth',3,'Color','green');
+    plot([0,imageSize(2)],[imageSize(1),imageSize(1)],'LineWidth',3,'Color','green');
+    plot([imageSize(2),imageSize(2)],[imageSize(1),0],'LineWidth',3,'Color','green');
+    plot([0,0],[imageSize(1),0],'LineWidth',3,'Color','green');
+    
+    plot(bounds(1:2,1),bounds(1:2,2),'LineWidth',3,'Color','red');
+    plot(bounds(2:3,1),bounds(2:3,2),'LineWidth',3,'Color','red');
+    plot(bounds(3:4,1),bounds(3:4,2),'LineWidth',3,'Color','red');
+    plot(bounds([4,1],1),bounds([4,1],2),'LineWidth',3,'Color','red');
+    
+    plot(xy(:,1),xy(:,2),'LineWidth',2,'Color','blue');
+    plot(xy2(:,1),xy2(:,2),'LineWidth',2,'Color','blue');
+    
+    for i = 0:size(outerBounds,1)-1
+        plot(outerBounds([i+1,mod(i+1,4)+1],1), outerBounds([i+1,mod(i+1,4)+1],2),"lineWidth", 1, "color", "red");
+    end
+    
+    intersectBox(pointsToLine(bounds(1,:),bounds(4,:)),imageBoundingBox);
     bounds = bounds;%%TODO IMPLEMENT
 end
