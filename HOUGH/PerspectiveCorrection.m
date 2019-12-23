@@ -23,8 +23,8 @@ function [correctedImage,spaceData] = PerspectiveCorrection(baseImage)
     ENABLE_PRE_CORR_UPSCALING = true;
     PRE_CORR_AGGRESSIVE_STRATEGY = true;
     %%Set to true to display different stages of the process on screen
-    DEBUG = true;
-    %if(DEBUG); close all; end%ffs
+    DEBUG = false;
+    if(DEBUG); close all; end%ffs
     
     %% Preprocessing
     
