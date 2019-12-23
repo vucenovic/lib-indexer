@@ -1,6 +1,8 @@
 %{
     Attempts to correct the perspective of an Image based on the lines in it
 
+    Takes: An Image
+
     Returns: The perspective corrected image and a Struct containing an
             imRef2d object, the corners of the rectangle used to correct
             the image, and all horizontal Lines that were used(found).
@@ -19,9 +21,10 @@ function [correctedImage,spaceData] = PerspectiveCorrection(baseImage)
     IMAGE_MAX_REL_SIZE = 3;
     %%reduces overall output size
     ENABLE_PRE_CORR_UPSCALING = true;
+    PRE_CORR_AGGRESSIVE_STRATEGY = true;
     %%Set to true to display different stages of the process on screen
     DEBUG = true;
-    if(DEBUG); close all; end%ffs
+    %if(DEBUG); close all; end%ffs
     
     %% Preprocessing
     
@@ -49,11 +52,13 @@ function [correctedImage,spaceData] = PerspectiveCorrection(baseImage)
     %% Hough Transform
     %Transpose Image to reduce the houghspace to -20 to +20 degrees instead
     %of having to use a full -90 to 89 degrees
-    [H,T,R] = hough(edgeImageHorizontal','RhoResolution',2,'Theta',-32.25:0.5:32);
+    %[H,T,R] = hough(edgeImageHorizontal','RhoResolution',2,'Theta',-32.25:0.5:32);
+    [H,T,R] = houghTransform(edgeImageHorizontal',1,-32.25:0.5:32);
     P  = houghpeaks(H,peakCount,'threshold',ceil(thres*max(H(:))));
     
     %Removing the zero angle seems to improve the results quite significantly
-    [H2,T2,R2] = hough(edgeImageVertical,'RhoResolution',2,'Theta',-32.25:0.5:32);
+    %[H2,T2,R2] = hough(edgeImageVertical,'RhoResolution',2,'Theta',-32.25:0.5:32);
+    [H2,T2,R2] = houghTransform(edgeImageVertical,1,-32.25:0.5:32);
     P2  = houghpeaks(H2,peakCount,'threshold',ceil(thres*max(H2(:))));
     
     %% Find a rectangle in the plane of the shelf
@@ -65,7 +70,7 @@ function [correctedImage,spaceData] = PerspectiveCorrection(baseImage)
     
     %%Optionally upscale bounds to fit the image as good as possible
     imageSize = size(baseImage);
-    if (ENABLE_PRE_CORR_UPSCALING); scaledBounds = upscalePerspectiveRectangle(rectangleBounds,imageSize);
+    if (ENABLE_PRE_CORR_UPSCALING); scaledBounds = upscalePerspectiveRectangle(rectangleBounds,imageSize,'STRATEGY',PRE_CORR_AGGRESSIVE_STRATEGY,'DEBUG',DEBUG);
     else; scaledBounds = rectangleBounds;
     end
     
@@ -143,7 +148,7 @@ end
 %{
     Takes: An array of lines
 
-    Returns: The distances of the lines to (0,0)
+    Returns: The distances of the lines to (0,0) (signed depending on direction)
 
     @Author Anand Eichner
 %}
@@ -152,9 +157,8 @@ function [distances] = lineOriginDistances(lines)
     norms = [norms(:,2),-norms(:,1)];
     points = vertcat(lines.P);
     
-    distances = abs(dot(norms,points,2));
+    distances = dot(norms,points,2);
 end
-
 
 %{
     Takes: An array of lines
@@ -376,12 +380,12 @@ end
 
 %{
     Test Data for the upscale Function
-    %upscalePerspectiveRectangle([0.22,0.3;0.78,0.42;0.86,0.68;0.27,0.6],[1,1]) %% case 4
-    %upscalePerspectiveRectangle([0.22,0.3;0.78,0.42;0.83,0.63;0.27,0.6],[1,1]) %% case 2
-    %upscalePerspectiveRectangle([0.25,0.34;0.76,0.33;0.69,0.55;0.22,0.53],[1,1]) %% case 2.2
-    %upscalePerspectiveRectangle([0.36,0.39;0.58,0.43;0.56,0.59;0.34,0.55],[1,1]) %% case 3
-    %upscalePerspectiveRectangle([0.36,0.39;0.61,0.35;0.67,0.53;0.42,0.58],[1,1]) %% case 3.2
-    %upscalePerspectiveRectangle([0.35,0.32;0.74,0.3;0.78,0.57;0.32,0.65],[1,1]) %% case 1
+    upscalePerspectiveRectangle([0.22,0.3;0.78,0.42;0.86,0.68;0.27,0.6],[1,1],'STRATEGY',PRE_CORR_AGGRESSIVE_STRATEGY,'DEBUG',DEBUG) %% case 4
+    upscalePerspectiveRectangle([0.22,0.3;0.78,0.42;0.83,0.63;0.27,0.6],[1,1],'STRATEGY',PRE_CORR_AGGRESSIVE_STRATEGY,'DEBUG',DEBUG) %% case 2
+    upscalePerspectiveRectangle([0.25,0.34;0.76,0.33;0.69,0.55;0.22,0.53],[1,1],'STRATEGY',PRE_CORR_AGGRESSIVE_STRATEGY,'DEBUG',DEBUG) %% case 2.2
+    upscalePerspectiveRectangle([0.36,0.39;0.58,0.43;0.56,0.59;0.34,0.55],[1,1],'STRATEGY',PRE_CORR_AGGRESSIVE_STRATEGY,'DEBUG',DEBUG) %% case 3
+    upscalePerspectiveRectangle([0.36,0.39;0.61,0.35;0.67,0.53;0.42,0.58],[1,1],'STRATEGY',PRE_CORR_AGGRESSIVE_STRATEGY,'DEBUG',DEBUG) %% case 3.2
+    upscalePerspectiveRectangle([0.35,0.32;0.74,0.3;0.78,0.57;0.32,0.65],[1,1],'STRATEGY',PRE_CORR_AGGRESSIVE_STRATEGY,'DEBUG',DEBUG) %% case 1
 %}
 %{
     Takes: An a sorted list of four intersections defining the bounds of a
@@ -392,10 +396,28 @@ end
 
     @Author Anand
 %}
-function [outbounds] = upscalePerspectiveRectangle(bounds,imageSize)
+function [outbounds] = upscalePerspectiveRectangle(bounds,imageSize, varargin)
+    DEBUG = false;
+    strategy = false;
+    if nargin > 3
+        idx = 1;
+        while idx <= nargin-2
+            input = varargin{idx};
 
-    %%Set to true to display different stages of the process on screen
-    DEBUG = true;
+            idx = idx+1;
+
+            switch input
+                case 'DEBUG'
+                    DEBUG = varargin{idx};
+
+                case 'STRATEGY'
+                    strategy = varargin{idx};                         
+            end      
+
+            idx=idx+1;     
+        end
+    end
+
 
     imageBoundingBox = [...
         struct("P",[0,0],"D",[0,1]),...
@@ -425,6 +447,13 @@ function [outbounds] = upscalePerspectiveRectangle(bounds,imageSize)
     %% find escape Points of the rectangle
     horizontalEscape = findIntersection(topLine,bottomLine);
     verticalEscape = findIntersection(leftLine,rightLine);
+    
+    xy = intersectBox(topLine,imageBoundingBox);
+    xy2 = intersectBox(leftLine,imageBoundingBox);
+
+    linesVertical = pointsToLine(xy,repmat(verticalEscape,2,1));
+    linesHorizontal = pointsToLine(xy2,repmat(horizontalEscape,2,1));
+    outerBounds = sortIntersections(findIntersections(linesVertical,linesHorizontal),true,[-1,0]);
     
     heSector = pointSector(horizontalEscape,imageSize);
     veSector = pointSector(verticalEscape,imageSize);
@@ -484,15 +513,19 @@ function [outbounds] = upscalePerspectiveRectangle(bounds,imageSize)
             pointD = findIntersection(pointsToLine(pointB,horizontalEscape),pointsToLine(pointA,verticalEscape));
             outbounds = sortIntersections([pointA;pointB;pointC;pointD],true,[-1,0]);
         else %% No internal points general approach
-            lineA = topLine;
-            pointA = intersectBox(lineA,imageBoundingBox);
-            pointA = pointA(2,:);
-            
-            pointB = selectOtherPoint(intersectBox(pointsToLine(pointA,verticalEscape),imageBoundingBox),pointA);
-            pointC = selectOtherPoint(intersectBox(pointsToLine(pointB,horizontalEscape),imageBoundingBox),pointB);
-            pointD = findIntersection(lineA,pointsToLine(pointC,verticalEscape));
+            if(strategy)
+                outbounds = outerBounds;
+            else
+                lineA = topLine;
+                pointA = intersectBox(lineA,imageBoundingBox);
+                pointA = pointA(2,:);
 
-            outbounds = sortIntersections([pointA;pointB;pointC;pointD],true,[-1,0]);
+                pointB = selectOtherPoint(intersectBox(pointsToLine(pointA,verticalEscape),imageBoundingBox),pointA);
+                pointC = selectOtherPoint(intersectBox(pointsToLine(pointB,horizontalEscape),imageBoundingBox),pointB);
+                pointD = findIntersection(lineA,pointsToLine(pointC,verticalEscape));
+
+                outbounds = sortIntersections([pointA;pointB;pointC;pointD],true,[-1,0]);
+            end
         end
     else
         outbounds = bounds; %% Also a very rare and very complex case that I am not going to do right now
@@ -511,13 +544,6 @@ function [outbounds] = upscalePerspectiveRectangle(bounds,imageSize)
         plot(bounds(3:4,1),bounds(3:4,2),'LineWidth',3,'Color','red');
         plot(bounds([4,1],1),bounds([4,1],2),'LineWidth',3,'Color','red');
 
-        xy = intersectBox(topLine,imageBoundingBox);
-        xy2 = intersectBox(leftLine,imageBoundingBox);
-        
-        linesA = pointsToLine(xy,repmat(verticalEscape,2,1));
-        linesB = pointsToLine(xy2,repmat(horizontalEscape,2,1));
-        outerBounds = sortIntersections(findIntersections(linesA,linesB),true,[-1,0]);
-        
         plot(xy(:,1),xy(:,2),'LineWidth',2,'Color','blue');
         plot(xy2(:,1),xy2(:,2),'LineWidth',2,'Color','blue');
         for i = 0:size(outerBounds,1)-1
