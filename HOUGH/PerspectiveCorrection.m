@@ -20,7 +20,7 @@ function [correctedImage,spaceData] = PerspectiveCorrection(baseImage)
     %%reduces overall output size
     ENABLE_PRE_CORR_UPSCALING = true;
     %%Set to true to display different stages of the process on screen
-    DEBUG = false;
+    DEBUG = true;
     if(DEBUG); close all; end%ffs
     
     %% Preprocessing
@@ -395,7 +395,7 @@ end
 function [outbounds] = upscalePerspectiveRectangle(bounds,imageSize)
 
     %%Set to true to display different stages of the process on screen
-    DEBUG = false;
+    DEBUG = true;
 
     imageBoundingBox = [...
         struct("P",[0,0],"D",[0,1]),...
@@ -405,6 +405,16 @@ function [outbounds] = upscalePerspectiveRectangle(bounds,imageSize)
         ];
     
     imageRect = [0,0;imageSize(2),0;imageSize(2),imageSize(1);0,imageSize(1)];
+    
+    %%Decide on a new strategy for bounds that already extend beyond the imageSize
+    %%for now just skip the scaling
+    for i = 1:size(bounds,1)
+        point = bounds(i,:);
+        if(point(1)<0 || point(1)>imageSize(2) || point(2)<0 || point(2)>imageSize(1))
+            outbounds = bounds;
+            return;
+        end
+    end
     
     %% create lines going along all directions of the quad
     topLine = pointsToLine(bounds(1,:),bounds(2,:));
