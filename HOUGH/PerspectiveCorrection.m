@@ -18,8 +18,10 @@ function [correctedImage,spaceData] = PerspectiveCorrection(baseImage)
     %%should be around 1.5 to 2 in most cases, 5 in extreme cases
     IMAGE_MAX_REL_SIZE = 3;
     %%reduces overall output size
-    ENABLE_PRE_CORR_UPSCALING = false; %%not implemented yet
-    DEBUG = false; %Set to true to display different stages of the process on screen
+    ENABLE_PRE_CORR_UPSCALING = true;
+    %%Set to true to display different stages of the process on screen
+    DEBUG = false;
+    if(DEBUG); close all; end%ffs
     
     %% Preprocessing
     
@@ -92,8 +94,6 @@ function [correctedImage,spaceData] = PerspectiveCorrection(baseImage)
     
     %% Debug visualizations (These are completely post work)
     if DEBUG
-        close all;%%ffs
-        
         figure, imshow(H,[],'XData',T,'YData',R,'InitialMagnification','fit');
         xlabel('\theta'), ylabel('\rho');
         axis on, axis normal, hold on;
@@ -320,6 +320,69 @@ function [lines] = pointsToLine(pointA,pointB)
 end
 
 %{
+    Takes: A point and the size vector of the image
+
+    Returns: The sector that the point is in
+
+    Notes: 0  1  2
+           7 -1  3
+           6  5  4
+
+    @Author Anand
+%}
+function [sector] = pointSector(point,imageSize)
+    if(point(1)<0)
+        if(point(2)<0)
+            sector = 0;
+        elseif(point(2)>imageSize(1))
+            sector = 2;
+        else
+           sector = 1; 
+        end
+    elseif(point(1)>imageSize(2))
+        if(point(2)<0)
+            sector = 6;
+        elseif(point(2)>imageSize(1))
+            sector = 4;
+        else
+           sector = 5; 
+        end
+    else
+        if(point(2)<0)
+            sector = 7;
+        elseif(point(2)>imageSize(1))
+            sector = 3;
+        else
+           sector = -1; 
+        end
+    end
+end
+
+%{
+    Takes: matrix with two points and a point
+
+    Returns: the other point
+
+    @Author Anand
+%}
+function [ret] = selectOtherPoint(points,point)
+    if(points(1,:) == point)
+        ret = points(2,:);
+    else
+        ret = points(1,:);
+    end
+end
+
+%{
+    Test Data for the upscale Function
+    %upscalePerspectiveRectangle([0.22,0.3;0.78,0.42;0.86,0.68;0.27,0.6],[1,1]) %% case 4
+    %upscalePerspectiveRectangle([0.22,0.3;0.78,0.42;0.83,0.63;0.27,0.6],[1,1]) %% case 2
+    %upscalePerspectiveRectangle([0.25,0.34;0.76,0.33;0.69,0.55;0.22,0.53],[1,1]) %% case 2.2
+    %upscalePerspectiveRectangle([0.36,0.39;0.58,0.43;0.56,0.59;0.34,0.55],[1,1]) %% case 3
+    %upscalePerspectiveRectangle([0.36,0.39;0.61,0.35;0.67,0.53;0.42,0.58],[1,1]) %% case 3.2
+    %upscalePerspectiveRectangle([0.35,0.32;0.74,0.3;0.78,0.57;0.32,0.65],[1,1]) %% case 1
+%}
+%{
     Takes: An a sorted list of four intersections defining the bounds of a
     rectange in space and the size of the image
 
@@ -328,14 +391,19 @@ end
 
     @Author Anand
 %}
-function [bounds] = upscalePerspectiveRectangle(bounds,imageSize)
-    
+function [outbounds] = upscalePerspectiveRectangle(bounds,imageSize)
+
+    %%Set to true to display different stages of the process on screen
+    DEBUG = false;
+
     imageBoundingBox = [...
         struct("P",[0,0],"D",[0,1]),...
         struct("P",[imageSize(2),0],"D",[0,1]),...
         struct("P",[0,0],"D",[1,0]),...
         struct("P",[0,imageSize(1)],"D",[1,0])
         ];
+    
+    imageRect = [0,0;imageSize(2),0;imageSize(2),imageSize(1);0,imageSize(1)];
     
     %% create lines going along all directions of the quad
     topLine = pointsToLine(bounds(1,:),bounds(2,:));
@@ -347,37 +415,106 @@ function [bounds] = upscalePerspectiveRectangle(bounds,imageSize)
     horizontalEscape = findIntersection(topLine,bottomLine);
     verticalEscape = findIntersection(leftLine,rightLine);
     
-    xy = intersectBox(topLine,imageBoundingBox);
-    xy2 = intersectBox(leftLine,imageBoundingBox);
+    heSector = pointSector(horizontalEscape,imageSize);
+    veSector = pointSector(verticalEscape,imageSize);
     
-    outerHor = pointsToLine(xy2,repmat(horizontalEscape,2,1));
-    outerVert = pointsToLine(xy,repmat(verticalEscape,2,1));
-    outerBounds = sortIntersections(findIntersections(outerHor,outerVert),true,[-1,0]);
-    
-    internalPoint = 0;
-    for i = 1:size(outerBounds,1)
+    %% select Strategy
+    if(heSector==-1 || veSector==-1) %% This is a very rare and very complex case that I am not going to do right now
+        outbounds = bounds;
+    elseif(mod(heSector,2)==1 && mod(veSector,2)==1)
+        if(mod(heSector,4) ~= mod(veSector,4)) %% One internal point symmetrical approach
+            pointA = imageRect(mod((heSector+veSector)/4,4)+1,:);
+            pointB = selectOtherPoint(intersectBox(pointsToLine(pointA,verticalEscape),imageBoundingBox),pointA);
+            pointC = selectOtherPoint(intersectBox(pointsToLine(pointA,horizontalEscape),imageBoundingBox),pointA);
+            pointD = findIntersection(pointsToLine(pointB,horizontalEscape),pointsToLine(pointC,verticalEscape));
+            outbounds = sortIntersections([pointA;pointB;pointC;pointD],true,[-1,0]);
+        else %% Edge case
+            outbounds = bounds;
+        end
+    elseif(mod(heSector,2)==1 && mod(veSector,2)==0 ||... %% One internal point asymmetrical approach
+            mod(heSector,2)==0 && mod(veSector,2)==1)
+        %% classify corner and edge sector
+        if (mod(heSector,2)==0)
+            corner = heSector;
+            edge = veSector;
+        else 
+            corner = veSector;
+            edge = heSector;
+        end
+            
+        %% Select correct starting point
+        if(mod(abs(heSector-veSector),6)==1)
+            pointA = imageRect(max(mod(fix(heSector/2),4),mod(fix(veSector/2),4))+1,:);
+        else
+            pointA = imageRect(mod(corner/2,4)+1,:);
+        end
+        direction = sign(corner-edge);
         
+        %% Select order to process thing in
+        if (xor(corner==2 || corner == 6,direction==-1))
+            firstEscape = verticalEscape;
+            secondEscape = horizontalEscape;
+        else 
+            firstEscape = horizontalEscape;
+            secondEscape = verticalEscape;
+        end
+        
+        pointB = selectOtherPoint(intersectBox(pointsToLine(pointA,firstEscape),imageBoundingBox),pointA);
+        pointC = selectOtherPoint(intersectBox(pointsToLine(pointB,secondEscape),imageBoundingBox),pointB);
+        pointD = findIntersection(pointsToLine(pointA,secondEscape),pointsToLine(pointC,firstEscape));
+        
+        outbounds = sortIntersections([pointA;pointB;pointC;pointD],true,[-1,0]);
+        
+    elseif(mod(heSector,2)==0 && mod(veSector,2)==0)
+        if(mod(heSector,4) == mod(veSector,4)) %% Two internal points diagonal approach
+            pointA = imageRect(heSector/2+1,:);
+            pointB = imageRect(mod(heSector/2+2,4)+1,:);
+            pointC = findIntersection(pointsToLine(pointA,horizontalEscape),pointsToLine(pointB,verticalEscape));
+            pointD = findIntersection(pointsToLine(pointB,horizontalEscape),pointsToLine(pointA,verticalEscape));
+            outbounds = sortIntersections([pointA;pointB;pointC;pointD],true,[-1,0]);
+        else %% No internal points general approach
+            lineA = topLine;
+            pointA = intersectBox(lineA,imageBoundingBox);
+            pointA = pointA(2,:);
+            
+            pointB = selectOtherPoint(intersectBox(pointsToLine(pointA,verticalEscape),imageBoundingBox),pointA);
+            pointC = selectOtherPoint(intersectBox(pointsToLine(pointB,horizontalEscape),imageBoundingBox),pointB);
+            pointD = findIntersection(lineA,pointsToLine(pointC,verticalEscape));
+
+            outbounds = sortIntersections([pointA;pointB;pointC;pointD],true,[-1,0]);
+        end
+    else
+        outbounds = bounds; %% Also a very rare and very complex case that I am not going to do right now
     end
     
     %% plot stuff for debugging
-    figure, set(gca, 'YDir','reverse'), hold on;
-    plot([0,imageSize(2)],[0,0],'LineWidth',3,'Color','green');
-    plot([0,imageSize(2)],[imageSize(1),imageSize(1)],'LineWidth',3,'Color','green');
-    plot([imageSize(2),imageSize(2)],[imageSize(1),0],'LineWidth',3,'Color','green');
-    plot([0,0],[imageSize(1),0],'LineWidth',3,'Color','green');
-    
-    plot(bounds(1:2,1),bounds(1:2,2),'LineWidth',3,'Color','red');
-    plot(bounds(2:3,1),bounds(2:3,2),'LineWidth',3,'Color','red');
-    plot(bounds(3:4,1),bounds(3:4,2),'LineWidth',3,'Color','red');
-    plot(bounds([4,1],1),bounds([4,1],2),'LineWidth',3,'Color','red');
-    
-    plot(xy(:,1),xy(:,2),'LineWidth',2,'Color','blue');
-    plot(xy2(:,1),xy2(:,2),'LineWidth',2,'Color','blue');
-    
-    for i = 0:size(outerBounds,1)-1
-        plot(outerBounds([i+1,mod(i+1,4)+1],1), outerBounds([i+1,mod(i+1,4)+1],2),"lineWidth", 1, "color", "red");
+    if(DEBUG)
+        figure, set(gca, 'YDir','reverse'), hold on;
+        plot([0,imageSize(2)],[0,0],'LineWidth',3,'Color','green');
+        plot([0,imageSize(2)],[imageSize(1),imageSize(1)],'LineWidth',3,'Color','green');
+        plot([imageSize(2),imageSize(2)],[imageSize(1),0],'LineWidth',3,'Color','green');
+        plot([0,0],[imageSize(1),0],'LineWidth',3,'Color','green');
+
+        plot(bounds(1:2,1),bounds(1:2,2),'LineWidth',3,'Color','red');
+        plot(bounds(2:3,1),bounds(2:3,2),'LineWidth',3,'Color','red');
+        plot(bounds(3:4,1),bounds(3:4,2),'LineWidth',3,'Color','red');
+        plot(bounds([4,1],1),bounds([4,1],2),'LineWidth',3,'Color','red');
+
+        xy = intersectBox(topLine,imageBoundingBox);
+        xy2 = intersectBox(leftLine,imageBoundingBox);
+        
+        linesA = pointsToLine(xy,repmat(verticalEscape,2,1));
+        linesB = pointsToLine(xy2,repmat(horizontalEscape,2,1));
+        outerBounds = sortIntersections(findIntersections(linesA,linesB),true,[-1,0]);
+        
+        plot(xy(:,1),xy(:,2),'LineWidth',2,'Color','blue');
+        plot(xy2(:,1),xy2(:,2),'LineWidth',2,'Color','blue');
+        for i = 0:size(outerBounds,1)-1
+            plot(outerBounds([i+1,mod(i+1,4)+1],1), outerBounds([i+1,mod(i+1,4)+1],2),"lineWidth", 1, "color", "red");
+        end
+        
+        for i = 0:size(outbounds,1)-1
+            plot(outbounds([i+1,mod(i+1,4)+1],1), outbounds([i+1,mod(i+1,4)+1],2),"lineWidth", 1, "color", "green");
+        end
     end
-    
-    intersectBox(pointsToLine(bounds(1,:),bounds(4,:)),imageBoundingBox);
-    bounds = bounds;%%TODO IMPLEMENT
 end
