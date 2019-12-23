@@ -65,8 +65,8 @@ function [correctedImage,spaceData] = PerspectiveCorrection(baseImage)
     
     %%Optionally upscale bounds to fit the image as good as possible
     imageSize = size(baseImage);
-    if (ENABLE_PRE_CORR_UPSCALING) scaledBounds = upscalePerspectiveRectangle(rectangleBounds,imageSize);
-    else scaledBounds = rectangleBounds;
+    if (ENABLE_PRE_CORR_UPSCALING); scaledBounds = upscalePerspectiveRectangle(rectangleBounds,imageSize);
+    else; scaledBounds = rectangleBounds;
     end
     
     %% Correct Perspective
@@ -74,6 +74,7 @@ function [correctedImage,spaceData] = PerspectiveCorrection(baseImage)
         scaledBounds,...
         [0 0; imageSize(2) 0; imageSize(2) imageSize(1); 0 imageSize(1)],...  %%kinda works [0 0; imageSize(1) 0; imageSize(1) imageSize(2); 0 imageSize(2)],...
         "projective");
+    %% TODO: May need to do some aspect ratio correction
     
     %%Prevent Matlab from locking up your PC if it finds an invalid
     %%rectangle (too small)
@@ -179,9 +180,9 @@ end
 %}
 function [lines] = toLines(R,T,P,transposed)
     a = -T(P(:,2));
-    if transposed a = 90-a; end
+    if transposed; a = 90-a; end
     nd = R(P(:,1));
-    if transposed nd = -nd; end
+    if transposed; nd = -nd; end
     d = [sind(a'),cosd(a')];
     p = repmat(nd',1,2) .* [d(:,2),-d(:,1)];
     lines = [];
@@ -216,7 +217,7 @@ end
 %}
 function [intersection,t] = findIntersection(lineA,lineB)
     d=lineA.D(1)*lineB.D(2)-lineA.D(2)*lineB.D(1);
-    if d == 0 intersection = []; t=[]; return; end
+    if d == 0; intersection = []; t=[]; return; end
     t = (lineB.P(1) - lineA.P(1))*lineB.D(2) - (lineB.P(2) - lineA.P(2))*lineB.D(1);
     t = t/d;
     intersection = lineA.P + t * lineA.D;
