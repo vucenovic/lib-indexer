@@ -1,12 +1,20 @@
 % PREPROCESSING FOR OCR 
 % AUTHOR: ALEKSANDAR VUCENOVIC, 01635282
 
+% Preprocessing steps for the OCR are done in this file. Preprocessing
+% steps include image upscaling,for a better letter and digit quality,
+% image straightening, for the template matching not having to rotate the
+% templates around the image, line removal for the image segmentation and
+% finally the image segmentation, to isolate each letter and digit for the
+% template matching. 
+
+function img = preprocessing(~)
 % convert to binary image
 
 img = imread('../test/Label_1.png');
 [x, y, z] = size(img); 
 
-% upscale
+% upscale and apply adaptive threshold
 
 img = imresize(img, 3);
 
@@ -18,142 +26,75 @@ img = imbinarize(img,'adaptive','ForegroundPolarity','dark','Sensitivity',0.45);
 
 % straighten image
 
-angle = horizon(img, 0.1, 'hough');
+angle = calcAngle(img, 0.1);
 imshowpair(imrotate(img, -angle, 'bicubic'), img, 'montage');
 img = imrotate(img, -angle, 'bicubic');
 
-% remove lines
-
-img = removeLines(removeLines(img));
 imshow(img);
 
-function [img] = removeLines(img)
-% removes horitontal lines of image
+% dilate and fill 
+
+edgeImg = edge(img, 'prewitt');
+se = strel('square',2);                 % structuring element for dilation
+edgeImgDilate = imdilate(edgeImg, se); 
+imshow(edgeImgDilate);
+filledImg= imfill(edgeImgDilate,'holes');
+imshow(filledImg);
+
+% use regionprops to get bounding boxes of objects
+
+box = regionprops(logical(filledImg), 'BoundingBox');
+imshow(img);
+hold on;
+colors = hsv(numel(box));
+for k = 1:numel(box)
+    rectangle('position',box(k).BoundingBox, 'EdgeColor',colors(k,:));
+end
+
+% segment the regions by cropping image using bounding box rectangle
+% coordinates
+
+for k = 3:numel(box)
+    subImage = imcrop(img, box(k).BoundingBox);
+    imshow(subImage);
+    return subImage
+end
+
+
+function [angle] = calcAngle(image, precision)
+% calculates the angle to be rotated at in a range of -45 to 45 degrees
+% usage: calculate the angle and rotate the image using 'bicubic' method
 % author: aleksandar vucenovic, 01635282
 
-img = edge(img, 'canny');
-[H,theta,rho] = hough(img);
-P = houghpeaks(H,10,'NHoodSize',[1 1]);
-lines_found = houghlines(img,theta,rho,P,...
-    'FillGap',500,'MinLength',1);
-for k = 1:length(lines_found)
-   % extract one line:
-   xy = [lines_found(k).point1; lines_found(k).point2];
-   % remove the lines from the image:
-   % note that I take a buffer of 3 to the 'width' of the line
-   img(xy(1,2):xy(1,2)+3,xy(1,1):xy(2,1)) = 0;
-   img(xy(1,2):xy(1,2)+5,xy(1,1):xy(2,1)) = 0;
+% precondition
+
+if ~ismatrix(image)
+    error('The image must be binarized before applying this function!')
 end
+
+% angle calculation using hough
+
+angle = angleHough(image, precision);
+
+angle = mod(45+angle,90)-45;            
 end
 
 
-
-
-function [angle] = horizon(image, varargin)
-% HORIZON estimates the horizon rotation in the image.
-%   ANGLE=HORIZON(I) returns rotation of an estimated horizon
-%   in the image I. The returned value ANGLE is in the
-%   range <-45,45> degrees.
-%
-%   ANGLE=HORIZON(I, PRECISION) aligns the image I with
-%   the predefined precision. The default value is 1 degree. If higher
-%   precision is required, 0.1 could be a good value.
-%
-%   ANGLE=HORIZON(I, PRECISION, METHOD, DISKSIZE) aligns the image I with
-%   the specified METHOD. Following methods are supported:
-%       'fft' - Fast Fourier Transform, the default method,
-%       'hough' - Hough transform, which finds lines in the image,
-%       'blot' - Finds blots and estimates their's orientation.
-%                Blot method allows additional parameter DISKSIZE that 
-%                defines the filter size of morphological transformations.
-%                The default value is 7. Note that this method 
-%                may not work for all kind of pictures.
-%
-%   Example
-%   -------
-%       image = imread('board.tif');
-%       angle = horizon(rgb2gray(image), 0.1, 'fft')
-%       imshow(imrotate(image, -angle, 'bicubic'));
-%
-%   The example aligns the default image in Image Processing Toolbox.
-% Parameter checking.
-numvarargs = length(varargin);
-if numvarargs > 3                   % only want 3 optional inputs at most
-    error('myfuns:somefun2Alt:TooManyInputs', ...
-        'requires at most 2 optional inputs');
-end
-optargs = {1, 'fft', 2};            % set defaults for optional inputs
-optargs(1:numvarargs) = varargin;
-[precision, method, diskSize] = optargs{:};  % use memorable variable names
-% Check image dimension.
-if ndims(image)~=2
-    error('The image must be two-dimensional (i.e. grayscale).')
-end
-% Call the selected method
-if strcmpi(method, 'fft')
-    angle = horizonFFT(image, precision);
-elseif strcmpi(method, 'hough')
-    angle = horizonHough(image, precision);
-else
-    angle = horizonBlobs(image, precision, diskSize);
-end
-% Return the angle
-angle = mod(45+angle,90)-45;            % rotation in -45..45 range
-end
-function angle = horizonFFT(image, precision)
-% FFT.
-maxsize = max(size(image));
-T = fftshift(fft2(image, maxsize, maxsize)); % create rectangular transform
-T = log(abs(T)+1);                           % get magnitude in <0..inf)  
-% Combine two FFT quadrants together (another two quadrants are symetric).
-center = ceil((maxsize+1)/2);
-evenS = mod(maxsize+1, 2);
-T = (rot90(T(center:end, 1+evenS:center), 1) + T(center:end, center:end));
-T = T(2:end, 2:end);    % remove artifacts for expense of inaccuracy
-% Find the dominant orientation
-angles = floor(90/precision);
-score = zeros(angles, 1);
-maxDist = maxsize/2-1;
-for angle = 0:angles-1
-    [y,x] = pol2cart(deg2rad(angle*precision), 0:maxDist-1); % all [x,y]
-    for i = 1:maxDist
-        score(angle+1) = score(angle+1) + T(round(y(i)+1), round(x(i)+1));
-    end
-end
-% Return the most dominant direction.
-[~, position] = max(score);
-angle = (position-1)*precision;
-end
-function angle = horizonHough(image, precision)
-    % Detect edges.
+function angle = angleHough(image, precision)
+    % edge detection using prewitt
+    
     BW = edge(image,'prewitt');
-    % Perform the Hough transform.
-    [H, T, ~] = hough(BW,'Theta',-90:precision:90-precision);  
-    % Find the most dominant line direction.
-    data=var(H);                      % measure variance at each angle 
-    fold=floor(90/precision);         % assume right angles & fold data
+    
+    % perform the hough transform.
+    
+    [H, T, ~] = hough(BW,'Theta',-90:precision:90-precision);
+    
+    % find the dominant lines, by calculating variance at angles, folding
+    % image, return column to angle 
+    
+    data=var(H);                      
+    fold=floor(90/precision);         
     data=data(1:fold) + data(end-fold+1:end);
-    [~, column] = max(data);          % the column with the crispiest peaks
-    angle = -T(column);               % column to degrees 
-end
-function angle = horizonBlobs(image, precision, diskSize)
-% perform morphological operations
-bw = im2bw(image);
-bw = imopen(bw, strel('disk', diskSize));       % fill holes
-bw = imclose(bw, strel('disk', diskSize));      % remove spackles
-% get region properties
-stat = regionprops(~bw, 'Area', 'BoundingBox', 'Orientation');
-% select only some blobs
-dimensions = cat(1, stat.BoundingBox);
-area = cat(1, stat.Area);
-boundingBoxArea = dimensions(:,3).*dimensions(:,4);
-areaRatio = boundingBoxArea./area;
-% create histogram of orientations in the picture
-histogram = hist(cat(1, stat(areaRatio>1.2).Orientation), -90:precision:90);
-% fold the histogram
-len = ceil(length(histogram)/2);
-histogram = histogram(1:len)+histogram(len:end);
-% find the peak and return the dominant orientation
-[~, index] = max(histogram);
-angle = mod(-precision*(index-1)+45,90)-45;    % index -> angle
+    [~, column] = max(data);          
+    angle = -T(column);               
 end
