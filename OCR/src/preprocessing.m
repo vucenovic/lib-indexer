@@ -7,17 +7,17 @@
 % templates around the image, boundingboxes and finally the image
 % segmentation, to isolate each letter and digit for the template matching.
 
-% return: an array of subImages, which are segmented digits/letters or
-% lines
+% return: no value is returned, but multiple subImages are saved locally.
 
-% usage: call preprocessing to get an array of subImages, which can be
-% template matched 
+% usage: call preprocessing to get a folder with subimages, which can be
+% template matched. 
 
-% todo: resize subImages to optimize and enable template matching
+% todo: resize subImages to optimize and enable template matching.
 
-function img = preprocessing(~)
+function preprocessing(img)
 % convert to binary image
 
+img = img;
 img = imread('../test/Label_1.png');
 [x, y, z] = size(img); 
 
@@ -59,14 +59,13 @@ for k = 1:numel(box)
 end
 
 % segment the regions by cropping image using bounding box rectangle
-% coordinates
-
-img = {};
+% coordinates, save them as images in a temporary folder
 
 for k = 3:numel(box)
     subImage = imcrop(img, box(k).BoundingBox);
     imshow(subImage);
-    img(end+1) = subImage;
+    filename = sprintf('temp/tempSubImage%d.png', k);
+    imwrite(subImage, filename);
 end
 end
 

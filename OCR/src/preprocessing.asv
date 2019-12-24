@@ -4,11 +4,17 @@
 % Preprocessing steps for the OCR are done in this file. Preprocessing
 % steps include image upscaling,for a better letter and digit quality,
 % image straightening, for the template matching not having to rotate the
-% templates around the image, line removal for the image segmentation and
-% finally the image segmentation, to isolate each letter and digit for the
-% template matching. 
+% templates around the image, boundingboxes and finally the image
+% segmentation, to isolate each letter and digit for the template matching.
 
-function img = preprocessing(~)
+% return: no value is returned, but multiple subImages are saved locally.
+
+% usage: call preprocessing to get an array of subImages, which can be
+% template matched 
+
+% todo: resize subImages to optimize and enable template matching
+
+function preprocessing(img)
 % convert to binary image
 
 img = imread('../test/Label_1.png');
@@ -54,10 +60,13 @@ end
 % segment the regions by cropping image using bounding box rectangle
 % coordinates
 
+img = [];
+
 for k = 3:numel(box)
     subImage = imcrop(img, box(k).BoundingBox);
     imshow(subImage);
-    return subImage
+    img(end+1) = subImage;
+end
 end
 
 
