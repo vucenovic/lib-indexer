@@ -36,6 +36,7 @@ imshowpair(imrotate(img, -angle, 'bicubic'), img, 'montage');
 img = imrotate(img, -angle, 'bicubic');
 
 imshow(img);
+imwrite(img, 'temp/label.png');
 
 % dilate and fill 
 
@@ -59,14 +60,11 @@ end
 % segment the regions by cropping image using bounding box rectangle
 % coordinates, save them as images in a temporary folder
 
-patches = struct;
-
-for k = 1:numel(box)
+for k = 3:numel(box)
     subImage = imcrop(img, box(k).BoundingBox);
     imshow(subImage);
     filename = sprintf('temp/tempSubImage%d.png', k);
     imwrite(imresize(subImage, [42, 24]), filename);
-    patches = struct(k, imresize(subImage, [42, 24]));
 end
 
 end

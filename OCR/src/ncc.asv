@@ -1,11 +1,51 @@
 % NORMALIZED CORRELATION COEFFICIENT ALGORITHM
 % AUTHOR: ALEKSANDAR VUCENOVIC, 01635282
 
-% Optical character reco
+% Optical character recognition through template matching using
+% NCC-Algorithm. The normalized correleation coefficient algorithm
+% determines the corelation of pixels between two images and returns a
+% value between -1 and 1, wheras 1 means they fully correlate, -1 means it
+% correlates with its negation, 0 means no correlation.
 
-% return: no value is returned, but multiple subImages are saved locally.
+% This code follows the following paper:
+% http://scribblethink.org/Work/nvisionInterface/nip.pdf
 
-% usage: call preprocessing to get a folder with subimages, which can be
-% template matched. 
+% The correlation coefficient that must be reached at its peak is 0.5,
+% determined by trying out different templates and images, a correct result
+% was achieved when the factor was >0.5 and incorrect when <0.5
 
-% todo: resize subImages to optimize and enable template matching.
+% return: a correlation coefficient, which ranges from -1 to 1
+
+% usage: input a template and image 
+
+function coefficient = ncc(template, img)
+template = imcomplement(imread('temp/L.bmp'));
+img = imread('temp/tempSubImage11.png');
+
+% check prerequisites
+
+[x, y, z] = size(img); 
+[u, v, w] = size(template); 
+
+if z == 3 
+   img = rgb2gray(im2double(img)); 
+end
+
+if w == 3 
+   img = rgb2gray(im2double(template)); 
+end
+
+if size(template) > size(img)
+    error('template must be smaller or equal size of image!')
+end
+
+corr
+
+
+
+end
+
+
+
+
+
