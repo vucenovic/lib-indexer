@@ -53,7 +53,42 @@ padded = padarray(img, sizeTemplate);
 % calculate local sum (hinted by:
 % https://blogs.mathworks.com/steve/2006/05/02/fast-local-sums/)
 
-cumulative = cumsum(padded,1);
+localsum = localSum(padded, sizeTemplate);
+
+dotImg = img.*img;
+padded = padarray(dotImg, sizeTemplate);
+quadsum = localSum(padded, sizeTemplate);
+
+% calculate standard deviation
+
+stdDev = quadsum - localsum.^2;
+stdDev = stdDev/numel(template);
+stdDev = sqrt(max(0, stdDev));
+
+stdDevTemplate = std(template(:)) * sqrt(numel(template) - 1);
+
+% calculate mean
+
+mean = sum(template(:)) * localsum;
+mean = mean / numel(template);
+
+% calculate correlation using fast fourier transform
+
+corr = fftCorr(template, img, sizeImage, sizeTemplate);
+
+% calculate ncc
+
+i = max(stdDev, stdDevTemplate/1e5);
+ncc = (corr - mean) + 0.5./(stdDevTemplate * i * 2);
+
+end
+
+function localsum = localSum(img, sizeTemplate)
+% calculate local sum (hinted by:
+% https://blogs.mathworks.com/steve/2006/05/02/fast-local-sums/)
+% author: aleksandar vucenovic
+
+cumulative = cumsum(img,1);
 dim1 = cumulative(1 + sizeTemplate(1):end-1,:);
 dim2 = cumulative(1:end - sizeTemplate(1) - 1,:);
 cumulative = cumsum(dim1 - dim2,2);
@@ -61,12 +96,19 @@ dim1 =  cumulative(:,1+sizeTemplate(2):end-1);
 dim2 = cumulative(:,1:end-sizeTemplate(2)-1);
 localsum = dim1 - dim2;
 
-% calculate standard deviation
+end
 
-stdDev = 
+function corr = fftCorr(template, Image, sizeImage, sizeTemplate)
+% calculates the correlation between template
+% and image by using fast fourier transform
+% author: aleksandar vucenovic
 
-
-
+flip180 = rot90(template,2);
+totalSize = sizeImage + sizeTemplate - 1;
+fourierTemplate = fft2(flip180, totalSize(1), totalSize(2));
+fourierImage = fft2(Image, totalSize(1), totalSize(2));
+corr = ifft2(fourierTemplate.*fourierImage);
+corr = real(corr);
 
 end
 
