@@ -1,0 +1,11 @@
+% NORMALIZED CORRELATION COEFFICIENT ALGORITHM
+% AUTHOR: ALEKSANDAR VUCENOVIC, 01635282
+
+% Optical character reco
+
+% return: no value is returned, but multiple subImages are saved locally.
+
+% usage: call preprocessing to get a folder with subimages, which can be
+% template matched. 
+
+% todo: resize subImages to optimize and enable template matching.

@@ -7,14 +7,12 @@
 % templates around the image, boundingboxes and finally the image
 % segmentation, to isolate each letter and digit for the template matching.
 
-% return: no value is returned, but multiple subImages are saved locally.
+% return: a cell array containing all the blobs found in the image
 
-% usage: call preprocessing to get a folder with subimages, which can be
-% template matched. 
+% usage: call preprocessing to get a cellarray containg all image blobs,
+% which are potential characters 
 
-% todo: resize subImages to optimize and enable template matching.
-
-function preprocessing(img)
+function patches = preprocessing(img)
 % convert to binary image
 
 img = img;
@@ -61,13 +59,18 @@ end
 % segment the regions by cropping image using bounding box rectangle
 % coordinates, save them as images in a temporary folder
 
-for k = 3:numel(box)
+patches = struct;
+
+for k = 1:numel(box)
     subImage = imcrop(img, box(k).BoundingBox);
     imshow(subImage);
     filename = sprintf('temp/tempSubImage%d.png', k);
-    imwrite(subImage, filename);
+    imwrite(imresize(subImage, [42, 24]), filename);
+    patches = struct(k, imresize(subImage, [42, 24]));
 end
+
 end
+
 
 
 function [angle] = calcAngle(image, precision)

@@ -9,14 +9,15 @@
 
 % return: no value is returned, but multiple subImages are saved locally.
 
-% usage: call preprocessing to get an array of subImages, which can be
-% template matched 
+% usage: call preprocessing to get a folder with subimages, which can be
+% template matched. 
 
-% todo: resize subImages to optimize and enable template matching
+% todo: resize subImages to optimize and enable template matching.
 
 function preprocessing(img)
 % convert to binary image
 
+img = img;
 img = imread('../test/Label_1.png');
 [x, y, z] = size(img); 
 
@@ -58,14 +59,16 @@ for k = 1:numel(box)
 end
 
 % segment the regions by cropping image using bounding box rectangle
-% coordinates
+% coordinates, save them as images in a temporary folder
 
 img = [];
 
-for k = 3:numel(box)
+for k = 1:numel(box)
     subImage = imcrop(img, box(k).BoundingBox);
     imshow(subImage);
-    img(end+1) = subImage;
+    filename = sprintf('temp/tempSubImage%d.png', k);
+    imwrite(imresize(subImage, [42, 24]), filename);
+    img(k) = imresize(subImage, [42, 24];
 end
 end
 
