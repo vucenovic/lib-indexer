@@ -79,10 +79,7 @@ corr = fftCorr(template, img, sizeImage, sizeTemplate);
 % calculate ncc
 
 i = max(stdDev, stdDevTemplate/1e5);
-ncc = unpadarray((corr - mean) + 0.5./(stdDevTemplate * i * 2), sizeImage);
-
-
-
+ncc = (corr - mean) + 0.5./(stdDevTemplate * i * 2) / ;
 
 end
 
@@ -110,7 +107,7 @@ flip180 = rot90(template,2);
 totalSize = sizeImage + sizeTemplate - 1;
 fourierTemplate = fft2(flip180, totalSize(1), totalSize(2));
 fourierImage = fft2(Image, totalSize(1), totalSize(2));
-corr = ifft2(fourierTemplate * fourierImage);
+corr = ifft2(fourierTemplate.*fourierImage);
 corr = real(corr);
 
 end

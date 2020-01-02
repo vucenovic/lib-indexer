@@ -69,8 +69,7 @@ stdDevTemplate = std(template(:)) * sqrt(numel(template) - 1);
 
 % calculate mean
 
-mean = sum(template(:)) * localsum;
-mean = mean / numel(template);
+mean = sum(template(:))/numel(template) * localsum;
 
 % calculate correlation using fast fourier transform
 
@@ -79,7 +78,8 @@ corr = fftCorr(template, img, sizeImage, sizeTemplate);
 % calculate ncc
 
 i = max(stdDev, stdDevTemplate/1e5);
-ncc = (corr - mean) + 0.5./(stdDevTemplate * i * 2);
+ncc = 0.5+(corr - mean)./(stdDevTemplate * i * 2);
+correlation = ncc;
 
 end
 
