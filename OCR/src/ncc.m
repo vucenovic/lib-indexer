@@ -14,12 +14,19 @@
 % determined by trying out different templates and images, a correct result
 % was achieved when the factor was >0.5 and incorrect when <0.5
 
-% return: a correlation coefficient, which ranges from -1 to 1
+% return: a correlation coefficient matrix, which values range from -1 to 1
 
 % usage: input a template and image 
 
+% examples:
+
+% using A.bmp and "A" found in label
+% max correlation: 0.5324 
+% using L.bmp and "A" found in label
+% max correlation: 0.3155
+
 function coefficient = ncc(template, img)
-template = imcomplement(imread('temp/L.bmp'));
+template = imcomplement(imread('temp/A.bmp'));
 img = imread('temp/tempSubImage11.png');
 % check prerequisites
 
