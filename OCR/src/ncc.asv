@@ -7,7 +7,7 @@
 % value between -1 and 1, wheras 1 means they fully correlate, -1 means it
 % correlates with its negation, 0 means no correlation.
 
-% This code follows the following paper:
+% NCC description:
 % http://scribblethink.org/Work/nvisionInterface/nip.pdf
 
 % The correlation coefficient that must be reached at its peak is 0.5,
@@ -21,7 +21,7 @@
 function coefficient = ncc(template, img)
 template = imcomplement(imread('temp/L.bmp'));
 img = imread('temp/tempSubImage11.png');
-
+figure, surf(c), shading flat
 % check prerequisites
 
 [x, y, z] = size(img); 
@@ -46,7 +46,7 @@ correlation = [];
 sizeTemplate = size(template);
 sizeImage = size(img);
 
-% add padding to original image
+% add padding to original image to increase fft speed (radix-2)
 
 padded = padarray(img, sizeTemplate);
 
@@ -55,22 +55,23 @@ padded = padarray(img, sizeTemplate);
 
 localsum = localSum(padded, sizeTemplate);
 
-dotImg = img.*img;
-padded = padarray(dotImg, sizeTemplate);
+quadImg = img.^2;
+padded = padarray(quadImg, sizeTemplate);
 quadsum = localSum(padded, sizeTemplate);
 
 % calculate standard deviation
 
-stdDev = quadsum - localsum.^2;
-stdDev = stdDev/numel(template);
-stdDev = sqrt(max(0, stdDev));
+diff = quadsum - localsum.^2/sizeTemplate;
+sigma1 = sqrt(max(0, diff));
+stdTemplate = std(template);
+
+if stdTemplate == 0
 
 stdDevTemplate = std(template(:)) * sqrt(numel(template) - 1);
 
 % calculate mean
 
-mean = sum(template(:)) * localsum;
-mean = mean / numel(template);
+mean = sum(template(:))/numel(template) * localsum;
 
 % calculate correlation using fast fourier transform
 
@@ -78,15 +79,20 @@ corr = fftCorr(template, img, sizeImage, sizeTemplate);
 
 % calculate ncc
 
-i = max(stdDev, stdDevTemplate/1e5);
-ncc = (corr - mean) + 0.5./(stdDevTemplate * i * 2) / ;
+i = max(sigma1, stdDevTemplate/1e5);
+ncc = 0.5+(corr - mean)./(stdDevTemplate * i * 2);
+correlation = ncc;
 
 end
 
 function localsum = localSum(img, sizeTemplate)
-% calculate local sum (hinted by:
-% https://blogs.mathworks.com/steve/2006/05/02/fast-local-sums/)
-% author: aleksandar vucenovic
+% calculates the correlation between template
+% and image by using fast fourier transform
+% author:  Dirk-Jan Kroon (2020). Fast/Robust Template Matching
+%(https://www.mathworks.com/matlabcentral/fileexchange/24925-fast-robust-template-matching),
+% MATLAB Central File Exchange. Retrieved January 3, 2020. 
+
+% note: minor changes to author's code for readability
 
 cumulative = cumsum(img,1);
 dim1 = cumulative(1 + sizeTemplate(1):end-1,:);
@@ -99,9 +105,10 @@ localsum = dim1 - dim2;
 end
 
 function corr = fftCorr(template, Image, sizeImage, sizeTemplate)
-% calculates the correlation between template
-% and image by using fast fourier transform
 % author: aleksandar vucenovic
+
+% note: followed this paper 
+% http://scribblethink.org/Work/nvisionInterface/nip.pdf
 
 flip180 = rot90(template,2);
 totalSize = sizeImage + sizeTemplate - 1;
