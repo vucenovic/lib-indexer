@@ -32,10 +32,10 @@ img = imbinarize(img,'adaptive','ForegroundPolarity','dark','Sensitivity',0.45);
 % straighten image
 
 angle = calcAngle(img, 0.1);
-imshowpair(imrotate(img, -angle, 'bicubic'), img, 'montage');
+%imshowpair(imrotate(img, -angle, 'bicubic'), img, 'montage');
 img = imrotate(img, -angle, 'bicubic');
 
-imshow(img);
+%imshow(img);
 imwrite(img, 'temp/label.png');
 
 % dilate and fill 
@@ -43,14 +43,14 @@ imwrite(img, 'temp/label.png');
 edgeImg = edge(img, 'prewitt');
 se = strel('square',2);                 % structuring element for dilation
 edgeImgDilate = imdilate(edgeImg, se); 
-imshow(edgeImgDilate);
+%imshow(edgeImgDilate);
 filledImg= imfill(edgeImgDilate,'holes');
 imshow(filledImg);
 
 % use regionprops to get bounding boxes of objects
 
 box = regionprops(logical(filledImg), 'BoundingBox');
-imshow(img);
+%imshow(img);
 hold on;
 colors = hsv(numel(box));
 for k = 1:numel(box)
@@ -62,7 +62,7 @@ end
 
 for k = 3:numel(box)
     subImage = imcrop(img, box(k).BoundingBox);
-    imshow(subImage);
+    %imshow(subImage);
     filename = sprintf('temp/tempSubImage%d.png', k);
     imwrite(imresize(subImage, [42, 24]), filename);
 end

@@ -56,5 +56,7 @@ for i = 1:size(img,1)
     end
 end
 
+% pseudonormalize
+
 ssd = ssd / 1000;
 end
