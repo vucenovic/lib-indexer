@@ -74,29 +74,32 @@ numer = (corr - localsum * meanTemplate);
 
 % calculate ncorr
 
-correlation = numer/denom;
+correlation = numer./denom;
 
 % set values outside of -1 and 1 to zero (happens through variance)
 
+correlation(correlation > 1) = 0;
+correlation(correlation < -1) = 0;
 
 end
 
-function localsum = localSum(img, sizeTemplate)
+function localsum = localSum(I,T_size)
 % calculates the correlation between template
 % and image by using fast fourier transform
 % author:  Dirk-Jan Kroon (2020). Fast/Robust Template Matching
 %(https://www.mathworks.com/matlabcentral/fileexchange/24925-fast-robust-template-matching),
 % MATLAB Central File Exchange. Retrieved January 3, 2020. 
 
-% note: minor changes to author's code for readability
-
-cumulative = cumsum(img,1);
-dim1 = cumulative(1 + sizeTemplate(1):end-1,:);
-dim2 = cumulative(1:end - sizeTemplate(1) - 1,:);
-cumulative = cumsum(dim1 - dim2,2);
-dim1 =  cumulative(:,1+sizeTemplate(2):end-1);
-dim2 = cumulative(:,1:end-sizeTemplate(2)-1);
-localsum = dim1 - dim2;
+B = padarray(I,T_size);
+% Calculate for each pixel the sum of the region around it,
+% with the region the size of the template.
+if(length(T_size)==2)
+    % 2D localsum
+    s = cumsum(B,1);
+    c = s(1+T_size(1):end-1,:)-s(1:end-T_size(1)-1,:);
+    s = cumsum(c,2);
+    localsum = s(:,1+T_size(2):end-1)-s(:,1:end-T_size(2)-1);
+end
 
 end
 
@@ -108,22 +111,15 @@ function corr = fftCorr(template, Image, sizeImage, sizeTemplate)
 
 flip180 = rot90(template,2);
 totalSize = sizeImage + sizeTemplate - 1;
-fourierTemplate = fft(flip180, totalSize(1), totalSize(2));
-fourierImage = fft(Image, totalSize(1), totalSize(2));
-corr = ifft(fourierTemplate.*fourierImage);
+fourierTemplate = fft2(flip180, totalSize(1), totalSize(2));
+fourierImage = fft2(Image, totalSize(1), totalSize(2));
+corr = ifft2(fourierTemplate.*fourierImage);
 corr = real(corr);
+corr = corr(1:totalSize(1),1:totalSize(2));
 
 end
 
-function result = forceSize(mat, target)
-one = target;
 
-for k = 1:2
-    if size(mat,k) > target[k]
-        difference = (size(mat,k) - target[k])/2;
-        one = [floor:
-end
-end
 
 
 
