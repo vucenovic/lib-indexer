@@ -8,18 +8,18 @@
 
 % the idea of SDD is, that the sum of squared differences is low (close to
 % 0) if the images correlate. if you wish to use the non-naive version
-% choose "ssd" instead.
+% choose "ncc" instead.
 
-% result: a minimum double value
+% result: ssd value 
 
-% usage: use template and image 
+% usage: pass template and image to the function
 
 % example:
 
 % using A.bmp and "A" found in label
-% ssd: 282
+% ssd: 0.282
 % using L.bmp and "A" found in label
-% max correlation: 520 
+% max correlation: 0.520 
 
 function ssd = ssd_naive(template, image)
 ssd = 0;
@@ -56,4 +56,5 @@ for i = 1:size(img,1)
     end
 end
 
+ssd = ssd / 1000;
 end
