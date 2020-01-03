@@ -84,27 +84,22 @@ end
 
 % angle calculation using hough
 
-angle = angleHough(image, precision);
+% edge detection using prewitt
+    
+BW = edge(image,'prewitt');
+    
+% perform the hough transform.
+    
+[H, T, ~] = hough(BW,'Theta',-90:precision:90-precision);
+    
+% find the dominant lines, by calculating variance at angles, folding
+% image, return column to angle 
+    
+data=var(H);                      
+fold=floor(90/precision);         
+data=data(1:fold) + data(end-fold+1:end);
+[~, column] = max(data);          
+angle = -T(column);             
 
 angle = mod(45+angle,90)-45;            
-end
-
-
-function angle = angleHough(image, precision)
-    % edge detection using prewitt
-    
-    BW = edge(image,'prewitt');
-    
-    % perform the hough transform.
-    
-    [H, T, ~] = hough(BW,'Theta',-90:precision:90-precision);
-    
-    % find the dominant lines, by calculating variance at angles, folding
-    % image, return column to angle 
-    
-    data=var(H);                      
-    fold=floor(90/precision);         
-    data=data(1:fold) + data(end-fold+1:end);
-    [~, column] = max(data);          
-    angle = -T(column);               
 end
