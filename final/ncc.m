@@ -14,12 +14,19 @@
 % determined by trying out different templates and images, a correct result
 % was achieved when the factor was >0.5 and incorrect when <0.5
 
-% return: a correlation coefficient, which ranges from -1 to 1
+% return: a correlation coefficient matrix, which values range from -1 to 1
 
 % usage: input a template and image 
 
+% examples:
+
+% using A.bmp and "A" found in label
+% max correlation: 0.5324 
+% using L.bmp and "A" found in label
+% max correlation: 0.3155
+
 function coefficient = ncc(template, img)
-template = imcomplement(imread('temp/L.bmp'));
+template = imcomplement(imread('temp/A.bmp'));
 img = imread('temp/tempSubImage11.png');
 % check prerequisites
 
@@ -74,10 +81,12 @@ numer = (corr - localsum * meanTemplate);
 
 % calculate ncorr
 
-correlation = numer/denom;
+correlation = numer./denom;
 
 % set values outside of -1 and 1 to zero (happens through variance)
 
+correlation(correlation > 1) = 0;
+correlation(correlation < -1) = 0;
 
 end
 
@@ -109,11 +118,11 @@ function corr = fftCorr(template, Image, sizeImage, sizeTemplate)
 
 flip180 = rot90(template,2);
 totalSize = sizeImage + sizeTemplate - 1;
-fourierTemplate = fft(flip180, totalSize(1), totalSize(2));
-fourierImage = fft(Image, totalSize(1), totalSize(2));
-corr = ifft(fourierTemplate.*fourierImage);
+fourierTemplate = fft2(flip180, totalSize(1), totalSize(2));
+fourierImage = fft2(Image, totalSize(1), totalSize(2));
+corr = ifft2(fourierTemplate.*fourierImage);
 corr = real(corr);
-corr = c
+corr = corr(1:totalSize(1),1:totalSize(2));
 
 end
 
