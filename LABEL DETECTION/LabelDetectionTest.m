@@ -1,4 +1,4 @@
-img = imread('input3.jpg');
+img = imread('input2.jpg');
 img_double = im2double(img);
 img_grey = rgb2gray(img_double);
 
@@ -18,10 +18,10 @@ th_mask = img_grey >= global_th;
 
 %% CORNER DETECTION
 
-img_grey_gauss = imgaussfilt(img_grey, 3);
-corners = corner(img_grey_gauss, 5000, 'FilterCoefficients', fspecial('gaussian',[9 1], 2));
+img_grey_gaus = imgaussfilt(img_grey, 4);
+corners = corner(img_grey_gaus, 5000, 'FilterCoefficients', fspecial('gaussian',[9 1], 2));
 corners = [corners(:, 2), corners(:, 1)]; % swap columns so it's right
-%corners = detect_corners(img_grey_gaus);
+%corners = harris_corners(img_grey_gaus);
 
 
 %% INTEGRAL IMAGING
@@ -57,7 +57,7 @@ end
 
 %% DEBUG
 
-corners_t = corner(img_grey_gauss, 5000, 'FilterCoefficients', fspecial('gaussian',[9 1], 2));
+corners_t = [corners(:, 2), corners(:, 1)];
 imshow(img_grey);
 hold on;
 for t = 1:size(labels, 1)
@@ -334,4 +334,101 @@ function result = otsu_threshold(greyscale_img)
 result = t;
 % TODO ### rewrite ###
 
+end
+
+
+%{
+Harris corner detector. Returns corners.
+Author: Anna Berezhinskaya
+Quelle: https://en.wikipedia.org/wiki/Harris_Corner_Detector
+%}
+function result = harris_corners(greyscale_image)
+    % 2nd Step:
+    %{    
+     The sum of squared differences between 2 patches will be given 
+     with following equation:
+     (1) F(u,v) = sum([I(x+u,y+v) - I(x,y)]^2).
+     Now using Taylor expansion we can approximate I(x+u,y+v) as following:
+     I(x+u,y+v) = I(x,y) + dx * d(I(x,y))/dx + dy * d(I(x,y))/dy
+
+     We can than rewrite the equation (1)  in the following way :
+        F(u,v)*w(x,y) = sum(w(x,y)*[dx * d(I(x,y))/dx + dy * d(I(x,y))/dy]^2)
+     Let call d(I(x,y))/dx = Ix and d(I(x,y))/dy = Iy
+    (w(x,y) is window function, which can be gaussian or just a rectangular) 
+    or in matrix form: F(u,v)*w(x,y)~=   [dx, dy] * M * [dx, dy]^T, where
+    M = sum(w(x,y) [Ix^2 IxIy;IxIy Iy^2]) 
+    From the PSA method we know, that the eigenvalues of this matrix would give us 
+    the directions in which the data are mostly spread. 
+    Thats why by analizing the eigenvalues of this matrix in each window, we 
+    destinglish between corner, edge or none of both. 
+%}
+   
+    %Spatial derivative calculation (Ix,Iy)
+    % Create sobel operator in horizontal direction: 
+    fx = [-1 0 1; -2 0 2; -1 0 1];
+    % Apply it to the image
+    Ix = filter2(fx,greyscale_image);
+    % Create sobel operator in vertical direction:
+    fy = [1 2 1; 0 0 0; -1 -2 -1];
+    % Apply it to the image
+    Iy = filter2(fy,greyscale_image);
+    % We need to calculate also Ix^2, Iy^2, Ixy
+    Ix2 = Ix.^2;
+    Iy2 = Iy.^2;
+    Ixy = Ix.*Iy;
+
+    %3rd Step:  
+    % as window function we choose gaussian. In the next step, we apply it to
+    % the result
+    h= fspecial('gaussian',[9 9], 2); 
+    Ix2 = filter2(h,Ix2);
+    Iy2 = filter2(h,Iy2);
+    Ixy = filter2(h,Ixy);
+
+    % Eigenvalues are very expensive to calculate, thats why we calculate a
+    % parameter R(i,j) = det(M)-0.06*(trace(M))^2;
+    % where 0,06 is a chosen coefficient between [0.04, 0.06]
+    % Now we can destinglish between different R
+    % create a matrix R of a size of the Image
+    R = zeros(size(greyscale_image,1),size(greyscale_image,2));
+
+    % set Rmax to 0 first
+    Rmax = 0; 
+    for i = 1:size(greyscale_image,1)
+        for j = 1:size(greyscale_image,2)
+            M = [Ix2(i,j) Ixy(i,j);Ixy(i,j) Iy2(i,j)]; 
+            R(i,j) = det(M)-0.04*(trace(M))^2;
+            if R(i,j) > Rmax
+                 Rmax = R(i,j);
+            end
+        end
+    end
+    % searching for local maxima as corner within the window of 3/3 
+    result = zeros(size(greyscale_image,1),size(greyscale_image,2)); 
+    for i = 3:size(greyscale_image,1)-2 % height 
+         for j = 3:size(greyscale_image,2)-2 %width
+                if R(i,j) > 0.0006*Rmax && ...
+                    R(i,j)< 0.5*Rmax && ...
+                    R(i,j) > R(i-1,j-1) && ...
+                    R(i,j) > R(i-1,j) && ...
+                    R(i,j) > R(i-1,j+1) &&...
+                    R(i,j) > R(i,j-1) &&...
+                    R(i,j) > R(i,j+1) && ...
+                    R(i,j) > R(i+1,j-1) &&...
+                    R(i,j) > R(i+1,j) && ...
+                    R(i,j) > R(i+1,j+1) && ...
+                    R(i,j) > R(i+2,j+2)&& ...
+                    R(i,j) > R(i+2,j-2) &&...
+                    R(i,j) > R(i+2,j) && ...
+                    R(i,j) > R(i,j+2) && ...
+                    R(i,j) > R(i,j-2) &&...
+                    R(i,j) > R(i-2,j+2) &&...
+                    R(i,j) > R(i-2,j-2) && ...
+                    R(i,j) > R(i-2,j) 
+                    result(i,j) = 1;
+                end
+         end
+    end
+    [posc, posr] = find(result == 1);
+    result = [posc, posr];
 end
