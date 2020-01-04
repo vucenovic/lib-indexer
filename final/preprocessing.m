@@ -16,7 +16,7 @@ function patches = preprocessing(img)
 % convert to binary image
 
 img = img;
-img = imread('../test/Label_1.png');
+img = imread('Label_1.png');
 [x, y, z] = size(img); 
 
 % upscale and apply adaptive threshold
@@ -31,8 +31,8 @@ img = imbinarize(img,'adaptive','ForegroundPolarity','dark','Sensitivity',0.45);
 
 % straighten image
 
-angle = calcAngle(img, 0.1);
-%imshowpair(imrotate(img, -angle, 'bicubic'), img, 'montage');
+angle = calcRotationAngle(img);
+imshowpair(imrotate(img, -angle, 'bicubic'), img, 'montage');
 img = imrotate(img, -angle, 'bicubic');
 
 %imshow(img);
@@ -71,7 +71,7 @@ end
 
 
 
-function [angle] = calcAngle(image, precision)
+function angle = calcRotationAngle(image)
 % calculates the angle to be rotated at in a range of -45 to 45 degrees
 % usage: calculate the angle and rotate the image using 'bicubic' method
 % author: aleksandar vucenovic, 01635282
@@ -79,7 +79,7 @@ function [angle] = calcAngle(image, precision)
 % precondition
 
 if ~ismatrix(image)
-    error('The image must be binarized before applying this function!')
+    error('The image must be binarized!')
 end
 
 % angle calculation using hough
@@ -90,14 +90,13 @@ BW = edge(image,'prewitt');
     
 % perform the hough transform.
     
-[H, T, ~] = hough(BW,'Theta',-90:precision:90-precision);
+[H, T, ~] = hough(BW,'Theta',-90:0.1:89.9);
     
 % find the dominant lines, by calculating variance at angles, folding
 % image, return column to angle 
     
-data = var(H);                      
-fold = floor(90/precision);         
-data = data(1:fold) + data(end-fold+1:end);
+data = var(H);                              
+data = data(1:900) + data(end-900+1:end);
 [~, column] = max(data);          
 angle = -T(column);             
 

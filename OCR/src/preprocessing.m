@@ -79,7 +79,7 @@ function [angle] = calcAngle(image, precision)
 % precondition
 
 if ~ismatrix(image)
-    error('The image must be binarized before applying this function!')
+    error('The image must be binarized!')
 end
 
 % angle calculation using hough
