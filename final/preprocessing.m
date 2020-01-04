@@ -32,11 +32,12 @@ img = imbinarize(img,'adaptive','ForegroundPolarity','dark','Sensitivity',0.45);
 % straighten image
 
 angle = calcRotationAngle(img);
-imshowpair(imrotate(img, -angle, 'bicubic'), img, 'montage');
+%imshowpair(imrotate(img, -angle, 'bicubic'), img, 'montage');
 img = imrotate(img, -angle, 'bicubic');
+img = 1-imclearborder(1 - img);
 
 %imshow(img);
-imwrite(img, 'temp/label.png');
+%imwrite(img, 'temp/label.png');
 
 % dilate and fill 
 
@@ -49,22 +50,38 @@ imshow(filledImg);
 
 % use regionprops to get bounding boxes of objects
 
-box = regionprops(logical(filledImg), 'BoundingBox');
+box = regionprops(logical(filledImg), 'BoundingBox', 'Centroid');
+box_corrected = [];
+for i = 1:length(box)
+    b = box(i);
+    coord = b.BoundingBox(3:4);
+    if coord(1) < (coord(2) * 10)
+        box_corrected = [box_corrected; b];
+    end
+end
+
+
+centroidsXY = vertcat(box_corrected.Centroid);
+imshow(img)
+hold on
+plot(centroidsXY(:,1),centroidsXY(:,2),'b*')
+hold off
 %imshow(img);
 hold on;
 colors = hsv(numel(box));
-for k = 1:numel(box)
-    rectangle('position',box(k).BoundingBox, 'EdgeColor',colors(k,:));
+for k = 1:numel(box_corrected)
+    rectangle('position',box_corrected(k).BoundingBox, 'EdgeColor',colors(k,:));
 end
 
 % segment the regions by cropping image using bounding box rectangle
 % coordinates, save them as images in a temporary folder
-
-for k = 3:numel(box)
-    subImage = imcrop(img, box(k).BoundingBox);
+patches = []
+for k = 1:numel(box_corrected)
+    subImage = imcrop(img, box_corrected(k).BoundingBox);
     %imshow(subImage);
-    filename = sprintf('temp/tempSubImage%d.png', k);
-    imwrite(imresize(subImage, [42, 24]), filename);
+    %filename = sprintf('temp/tempSubImage%d.png', k);
+    %imwrite(imresize(subImage, [42, 24]), filename);
+    patches = [patches, struct("image",subImage)];
 end
 
 end
