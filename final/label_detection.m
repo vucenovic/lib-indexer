@@ -1,102 +1,91 @@
-img = imread('input3.jpg');
-img_double = im2double(img);
-img_grey = rgb2gray(img_double);
-
-%% GLOBAL THRESHOLD
-% we apply the threshold twice. all pixels lower than the first th are
-% clipped to that same th value. this makes the second th less likely to
-% be too high, yet it is high enough to separate text from labels.
- 
-th_img = img_grey;
-global_th = graythresh(th_img)
-
-otsu_threshold(th_img)
-return;
-th_img(th_img < global_th) = global_th;
-global_th = graythresh(th_img);
-th_mask = img_grey >= global_th;
-
-%th_img = transform_clip_image(img_grey, global_th, 1);
-
-
-%% CORNER DETECTION
-
-img_grey_gauss = imgaussfilt(img_grey, 3);
-corners = corner(img_grey_gauss, 5000, 'FilterCoefficients', fspecial('gaussian',[9 1], 2));
-corners = [corners(:, 2), corners(:, 1)]; % swap columns so it's right
-%corners = detect_corners(img_grey_gaus);
-
-
-%% INTEGRAL IMAGING
-% create integral image for brightness values.
-% pixels higher than the global th are assumed to be white
-
-bright_th = img_grey;
-bright_th(bright_th >= global_th) = 1;
-img_integral_brights = generate_integral_image(bright_th);
-
-
-%% FIND LABELS
-
-brightness_amount_range = [7, 25];      % acceptable ratio between bright and dark areas of a label (see check_if_label())
-x_diff_range = [20, 125];               % distance in px that two corners need to be apart in x direction [min, max]
-y_diff_range = [100, 200];              % distance in px that two corners need to be apart in y direction [min, max]
-labels = [];
-corners = sortrows(corners);            % sort corners by their y-axis
-
-for c = 1:size(corners, 1)
-    
-    neighbors = find_neighbors(corners, c, x_diff_range, y_diff_range);
-    for n = 1:size(neighbors, 1)
-        if check_if_label(img_grey, th_mask, img_integral_brights, corners(c, :), neighbors(n, :), brightness_amount_range)
-            labels = [labels; corners(c, :), neighbors(n, :)];
-        end
-    end
-    
-end
-
-% labels contains final result
-
-
-%% DEBUG
-
-corners_t = corner(img_grey_gauss, 5000, 'FilterCoefficients', fspecial('gaussian',[9 1], 2));
-imshow(img_grey);
-hold on;
-for t = 1:size(labels, 1)
-    plot([labels(t, 2), labels(t, 4)], [labels(t, 1), labels(t, 3)], 'LineWidth', 2);
-end
-for c = 1:size(corners_t, 1)
-    th = 0:pi/2:2*pi;
-    r = 5;
-    x = r * cos(th) + corners_t(c, 1);
-    y = r * sin(th) + corners_t(c, 2);
-    plot(x, y, 'r');
-end
-hold off;
-
-
-%% FUNCTIONS
-
 %{
-
-### TODO REMOVE ###
-
-    Takes the input image (img) and transforms it so low is 0 and high is
-    1.
-    All values < 0 or > 1 are clipped.
+    Start label detection.
 
     Sources:
-        EVC UE Ex.3 resources: evc_histogram_clipping.m
+        -
 
     Author:
         Laurenz Edmund Fiala (11807869)
 %}
-function result = transform_clip_image(img, low, high)
-    result = (img - low) ./ (high - low);
-    result(result < 0) = 0;
-    result(result > 1) = 1;
+function result = label_detection(input_img, is_debug)
+
+    img_double = im2double(input_img);
+    img_grey = rgb2gray(img_double);
+    
+    %% GLOBAL THRESHOLD
+    % we apply the threshold twice. all pixels lower than the first th are
+    % clipped to that same th value. this makes the second th less likely to
+    % be too high, yet it is high enough to separate text from labels.
+ 
+    th_img = img_grey;
+    global_th = otsu_threshold(th_img);
+    th_img(th_img < global_th) = global_th;
+    global_th = otsu_threshold(th_img);
+    th_mask = img_grey >= global_th;
+
+    %th_img = transform_clip_image(img_grey, global_th, 1);
+
+
+    %% CORNER DETECTION
+
+    img_grey_gaus = imgaussfilt(img_grey, 4);
+    corners = corner(img_grey_gaus, 5000, 'FilterCoefficients', fspecial('gaussian',[9 1], 2));
+    corners = [corners(:, 2), corners(:, 1)]; % swap columns so it's right
+    %corners = harris_corners(img_grey_gaus);
+
+
+    %% INTEGRAL IMAGING
+    % create integral image for brightness values.
+    % pixels higher than the global th are assumed to be white
+
+    bright_th = img_grey;
+    bright_th(bright_th >= global_th) = 1;
+    img_integral_brights = generate_integral_image(bright_th);
+
+
+    %% FIND LABELS
+
+    brightness_amount_range = [7, 25];      % acceptable ratio between bright and dark areas of a label (see check_if_label())
+    x_diff_range = [20, 125];               % distance in px that two corners need to be apart in x direction [min, max]
+    y_diff_range = [100, 200];              % distance in px that two corners need to be apart in y direction [min, max]
+    labels = [];
+    corners = sortrows(corners);            % sort corners by their y-axis
+
+    for c = 1:size(corners, 1)
+
+        neighbors = find_neighbors(corners, c, x_diff_range, y_diff_range);
+        for n = 1:size(neighbors, 1)
+            if check_if_label(th_mask, img_integral_brights, corners(c, :), neighbors(n, :), brightness_amount_range)
+                labels = [labels; corners(c, :), neighbors(n, :)];
+            end
+        end
+
+    end
+
+    result = labels;
+    
+    %% DEBUG
+    if is_debug
+        corners_t = [corners(:, 2), corners(:, 1)];
+        imshow(img_grey);
+        hold on;
+        for t = 1:size(labels, 1)
+            plot([labels(t, 2), labels(t, 4)], [labels(t, 1), labels(t, 3)], 'LineWidth', 2);
+        end
+        for c = 1:size(corners_t, 1)
+            th = 0:pi/2:2*pi;
+            r = 5;
+            x = r * cos(th) + corners_t(c, 1);
+            y = r * sin(th) + corners_t(c, 2);
+            plot(x, y, 'r');
+        end
+        hold off;
+    end
+    
 end
+
+
+%% FUNCTIONS
 
 %{
     Find neighboring corners that satisfy our distance diff range.
@@ -157,9 +146,7 @@ end
     Author:
         Laurenz Edmund Fiala (11807869)
 %}
-function result = check_if_label(img, img_mask, integral_image_brights, corner, neighbor, brights_darks_ratio_range)
-    
-    % ### TODO REMOVE ### label_candidate = img(min([corner(1), neighbor(1)]):max([corner(1), neighbor(1)]), min([corner(2), neighbor(2)]):max([corner(2), neighbor(2)]));
+function result = check_if_label(img_mask, integral_image_brights, corner, neighbor, brights_darks_ratio_range)
     
     label_candidate_th = img_mask(min([corner(1), neighbor(1)]):max([corner(1), neighbor(1)]), min([corner(2), neighbor(2)]):max([corner(2), neighbor(2)]));
     dark_amount = sum(1-clear_label_border(label_candidate_th), 1:2);
@@ -296,19 +283,20 @@ end
     Calculates the greyscale_img's threshold using otsu's method.
 
     Sources:
-        ### TODO ###
+        https://engineering.purdue.edu/kak/computervision/ECE661.08/OTSU_paper.pdf
+        accessed on 2020/01/04
 
     Author:
         Laurenz Edmund Fiala (11807869)
 %}
 function result = otsu_threshold(greyscale_img)
     
-    [bin_amounts, bins] = imhist(greyscale_img, 64);
+    [bin_amounts, bins] = imhist(greyscale_img);
     
-    bin_size = size(bins);
+    bin_size = size(bins, 1);
 
     % Make counts a double column vector
-    bin_amounts = double(bin_amounts(:));
+    bin_amounts = double(bin_amounts);
 
     % Variables names are chosen to be similar to the formulas in
     % the Otsu paper.
@@ -324,8 +312,16 @@ function result = otsu_threshold(greyscale_img)
     % locations.  If maxval is NaN, meaning that sigma_b_squared is all NaN,
     % then return 0.
     maxval = max(sigma_b_squared);
-    idx = mean(find(sigma_b_squared == maxval));
-    % Normalize the threshold to the range [0, 1].
-    res = (idx - 1) / (num_bins - 1);
+    isfinite_maxval = isfinite(maxval);
+    if isfinite_maxval
+        idx = mean(find(sigma_b_squared == maxval));
+        % Normalize the threshold to the range [0, 1].
+        t = (idx - 1) / (bin_size - 1);
+    else
+        t = 0.0;
+    end
+
+result = t;
+% TODO ### rewrite ###
 
 end
