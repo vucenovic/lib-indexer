@@ -1,56 +1,51 @@
-img = imread('input2.jpg');
+img = imread('input3.jpg');
 img_double = im2double(img);
 img_grey = rgb2gray(img_double);
 
-%test_img_threshold = (img_grey > 0.85) & (img_grey < 0.95);
+%% GLOBAL THRESHOLD
+% we apply the threshold twice. all pixels lower than the first th are
+% clipped to that same th value. this makes the second th less likely to
+% be too high, yet it is high enough to separate text from labels.
+ 
+th_img = img_grey;
+global_th = otsu_threshold(th_img);
+th_img(th_img < global_th) = global_th;
+global_th = otsu_threshold(th_img);
+th_mask = img_grey >= global_th;
 
-%{
-imshow(img_threshold);
-figure(2);
-se = strel('rectangle', [5,5]);
-imshow(imdilate(img_threshold, se));
-%}
+%th_img = transform_clip_image(img_grey, global_th, 1);
+
 
 %% CORNER DETECTION
-img_grey_gaus = imgaussfilt(img_grey, 4);
-corners = corner(img_grey_gaus, 5000, 'FilterCoefficients', fspecial('gaussian',[9 1], 2));
-corners = [corners(:, 2), corners(:, 1)]; % swap columns so it's roght
+
+img_grey_gauss = imgaussfilt(img_grey, 3);
+corners = corner(img_grey_gauss, 5000, 'FilterCoefficients', fspecial('gaussian',[9 1], 2));
+corners = [corners(:, 2), corners(:, 1)]; % swap columns so it's right
 %corners = detect_corners(img_grey_gaus);
-img_corner_highlight = img_grey;
 
 
 %% INTEGRAL IMAGING
+% create integral image for brightness values.
+% pixels higher than the global th are assumed to be white
+
 bright_th = img_grey;
-bright_th = bright_th .^ 2.5 .* 3;
-bright_th(bright_th > 0.7) = 1;
-bright_th(bright_th < 0.3) = 0;
-imshow(bright_th);
+bright_th(bright_th >= global_th) = 1;
 img_integral_brights = generate_integral_image(bright_th);
 
-dark_th = 1-img_grey;
-dark_th = dark_th .^ 2.75 .* 2.95;
-dark_th(dark_th > 0.3) = 1;
-dark_th(dark_th < 0.3) = 0;
-imshow(dark_th);
-img_integral_darks = generate_integral_image(dark_th);
 
 %% FIND LABELS
-brights_darks_ratio_range = [7, 60];   % ratio between II brightness sum/II darkness sum [min acceptable, max acceptable]
-x_diff_range = [20, 125];               % absolute distance that two corners need to be apart in x direction [min, max]
-y_diff_range = [100, 200];              % absolute distance that two corners need to be apart in y direction [min, max]
+
+brightness_amount_range = [7, 25];      % acceptable ratio between bright and dark areas of a label (see check_if_label())
+x_diff_range = [20, 125];               % distance in px that two corners need to be apart in x direction [min, max]
+y_diff_range = [100, 200];              % distance in px that two corners need to be apart in y direction [min, max]
 labels = [];
-corners = sortrows(corners);
+corners = sortrows(corners);            % sort corners by their y-axis
 
-for c = 1:size(corners, 1)          % for every corner, find neighbors within x_diff_range and y_diff_range and check bright/dark ratio
-    % quadtree to find neaarest neighbor with minimum distance of
-    % [x_diff_range(1), y_diff_range(1)] and maximum distance of [x_diff_range(2), y_diff_range(2)]
-    % if no other corner is in range, ignore the current corner and move on
-    % if another corner is found in range, do integral imaging and
-    % calculate the brightness/darkness ratio
-
+for c = 1:size(corners, 1)
+    
     neighbors = find_neighbors(corners, c, x_diff_range, y_diff_range);
     for n = 1:size(neighbors, 1)
-        if check_if_label(img_integral_brights, img_integral_darks, corners(c, :), neighbors(n, :), brights_darks_ratio_range)
+        if check_if_label(img_grey, th_mask, img_integral_brights, corners(c, :), neighbors(n, :), brightness_amount_range)
             labels = [labels; corners(c, :), neighbors(n, :)];
         end
     end
@@ -59,8 +54,10 @@ end
 
 % labels contains final result
 
+
 %% DEBUG
-corners_t = corner(img_grey_gaus, 5000, 'FilterCoefficients', fspecial('gaussian',[9 1], 2));
+
+corners_t = corner(img_grey_gauss, 5000, 'FilterCoefficients', fspecial('gaussian',[9 1], 2));
 imshow(img_grey);
 hold on;
 for t = 1:size(labels, 1)
@@ -77,23 +74,64 @@ hold off;
 
 
 %% FUNCTIONS
+
+%{
+
+### TODO REMOVE ###
+
+    Takes the input image (img) and transforms it so low is 0 and high is
+    1.
+    All values < 0 or > 1 are clipped.
+
+    Sources:
+        EVC UE Ex.3 resources: evc_histogram_clipping.m
+
+    Author:
+        Laurenz Edmund Fiala (11807869)
+%}
+function result = transform_clip_image(img, low, high)
+    result = (img - low) ./ (high - low);
+    result(result < 0) = 0;
+    result(result > 1) = 1;
+end
+
+%{
+    Find neighboring corners that satisfy our distance diff range.
+    We only look for corners that occur after coords in the coords array,
+    since we already checked all neighbors that came before (we assume
+    coords is sorted by y-axis).
+    The resulting neighbors might form a label together with coords.
+
+    Sources:
+        -
+
+    Author:
+        Laurenz Edmund Fiala (11807869)
+%}
 function result = find_neighbors(coords, coords_target_index, x_diff_range, y_diff_range)
-    % find nearest neighbors in range
     
     result = [];
     for j = coords_target_index + 1:size(coords, 1)
         neighbor = coords(j, :);
         if check_for_range(coords(coords_target_index, :), neighbor, x_diff_range, y_diff_range)
-            %disp(corners_x(i,:));
-            %disp(next);
-            %plot([corners_x(i,1), next(1,1)], [corners_x(i,2), next(1,2)]); 
             result = [result; neighbor];
         end
     end
     
 end
 
-%check if the two points are not too far from each other
+%{
+    Check if the two points (coordA, coordB) satisfy x_diff_range and
+    y_diff_range.
+    Labels are expected to have a certain width & height, so we restrict
+    the possible corner-combinations.
+
+    Sources:
+        -
+
+    Author:
+        Laurenz Edmund Fiala (11807869)
+%}
 function result = check_for_range(coordA, coordB, x_diff_range, y_diff_range)
 
     diff_x = abs(coordA(2) - coordB(2));
@@ -111,6 +149,70 @@ end
     a heuristic), or false if it is no label that can be detected.
 
     Sources:
+        -
+
+    Author:
+        Laurenz Edmund Fiala (11807869)
+%}
+function result = check_if_label(img, img_mask, integral_image_brights, corner, neighbor, brights_darks_ratio_range)
+    
+    % ### TODO REMOVE ### label_candidate = img(min([corner(1), neighbor(1)]):max([corner(1), neighbor(1)]), min([corner(2), neighbor(2)]):max([corner(2), neighbor(2)]));
+    
+    label_candidate_th = img_mask(min([corner(1), neighbor(1)]):max([corner(1), neighbor(1)]), min([corner(2), neighbor(2)]):max([corner(2), neighbor(2)]));
+    dark_amount = sum(1-clear_label_border(label_candidate_th), 1:2);
+
+    ii_brightness_amount = integral_image_result(integral_image_brights, corner, neighbor);    
+    brightness_ratio = ii_brightness_amount / dark_amount;
+    
+    result = brightness_ratio >= brights_darks_ratio_range(1) && ...
+             brightness_ratio <= brights_darks_ratio_range(2);
+
+end
+
+%{
+    Clear dark areas (connected components) that touch the images' border using
+    MATLAB's imclearborder.
+
+    If more than 25% of the label is changed, we ignore the result and hand
+    back the original input.
+    If the center 50% (50% x, 50% y) is changed at all, we ignore the
+    result and hand back the original input as well.
+
+    Sources:
+        https://blogs.mathworks.com/steve/2007/09/04/clearing-border-components/
+        accessed on 2020/01/04
+
+    Author:
+        Laurenz Edmund Fiala (11807869)
+%}
+function result = clear_label_border(label_binary)
+
+    label_binary_inverted = 1-label_binary; % before: bright areas = 1; now: dark areas = 1
+    label_binary_inverted_cleared = imclearborder(label_binary_inverted);
+    label_binary_cleared = 1-label_binary_inverted_cleared;
+    
+    [dimensions_y, dimensions_x] = size(label_binary);
+    pixel_amount = dimensions_x * dimensions_y;
+    label_binary_center = label_binary(round(dimensions_x*0.25):round(dimensions_x*0.75));
+    label_binary_cleared_center = label_binary_cleared(round(dimensions_x*0.25):round(dimensions_x*0.75));
+    
+    pixels_changed = abs(sum(label_binary, 1:2) - sum(label_binary_cleared, 1:2)); % TODO maybe swap with II
+    pixels_changed_center = abs(sum(label_binary_center, 1:2) - sum(label_binary_cleared_center, 1:2));
+    
+    if pixels_changed > pixel_amount * 0.25 || pixels_changed_center > 0
+        result = label_binary;
+    else
+        result = label_binary_cleared;
+    end
+    
+end
+
+%{
+    Calculate and return the sum of intensity levels contained within the two
+    given corners (must be diagonal corners; either top-left:bottom-right
+    (and vice-versa) or top-right:bottom-left (and vice-versa).
+
+    Sources:
         http://delivery.acm.org/10.1145/810000/808600/p207-crow.pdf
         accessed on 2019/11/12
 
@@ -121,22 +223,6 @@ end
     Author:
         Laurenz Edmund Fiala (11807869)
 %}
-function result = check_if_label(integral_image_brights, integral_image_darks, corner, neighbor, brights_darks_ratio_range)
-    
-    ii_brightness = integral_image_result(integral_image_brights, corner, neighbor);
-    ii_darkness = integral_image_result(integral_image_darks, corner, neighbor);
-        
-    %target_diff   = abs(diff([corner(1), neighbor(1), corner(2), neighbor(2)]));
-    %ii_max_value  = target_diff(1) * target_diff(3);
-    %ii_darkness   = ii_max_value - ii_brightness;
-    
-    ii_bright_dark_ratio = ii_brightness / max(ii_darkness, 1e-15);
-    
-    result = ii_bright_dark_ratio >= brights_darks_ratio_range(1) && ...
-             ii_bright_dark_ratio <= brights_darks_ratio_range(2);
-
-end
-
 function result = integral_image_result(integral_image, corner, neighbor)
 
     ii_coords_1 = integral_image(corner(1), corner(2));
@@ -204,72 +290,48 @@ function result = generate_integral_image(greyscale_image)
 end
 
 %{
-    Detect corners in the given binary image (already edge-filtered) and
-    return the detected points as line vectors.
-%}%{
-function result = detect_corners(binary_edge_image)
-    
-    im = edge(rgb2gray(im2double(imread('input2.jpg'))), 'sobel');
+    Calculates the greyscale_img's threshold using otsu's method.
 
-    dx = fspecial('gaussian', [1 9], 5);
-    dy = fspecial('gaussian', [9 1], 5);
-    
-    % Step 1: Compute derivatives of image
-    Ix = conv2(im, dx, 'same');
-    Iy = conv2(im, dy, 'same');
-    
-    imshow(Ix);
-    figure(2);
-    imshow(Iy);
-    
-    % Step 2: Smooth space image derivatives (gaussian filtering)
-    Ix2 = imgaussfilt(Ix .^ 2, [1 9]);
-    Iy2 = imgaussfilt(Iy .^ 2, [9 1]);
-    Ixy = imgaussfilt(Ix .* Iy, 9);
-    
-    imshow(Ixy);
+    Sources:
+        https://engineering.purdue.edu/kak/computervision/ECE661.08/OTSU_paper.pdf
+        accessed on 2020/01/04
 
-    % Step 3: Harris corner measure
-    harris = (Ix2 .* Iy2 - Ixy .^ 2) ./ (Ix2 + Iy2);
-
-    % Step 4: Find local maxima (non maximum suppression)
-    mx = ordfilt2(harris, size(im, 1) .^ 2, ones(size(im, 1)));
+    Author:
+        Laurenz Edmund Fiala (11807869)
+%}
+function result = otsu_threshold(greyscale_img)
     
-    plot(mx);
-
-    % Step 5: Thresholding
-    %harris = (harris == mx) & (harris > threshold);
+    [bin_amounts, bins] = imhist(greyscale_img);
     
-    %{
-im1 = rgb2gray(im2double(imread('input2.jpg')));
-%figure ;imshow(im1);
-dx = [-1 0 1; -1 0 1; -1 0 1]; % image derivatives
-dy = dx';
-Ix = imfilter(im1, dx);    % Step 1: Compute the image derivatives Ix and Iy
-Iy = imfilter(im1, dy);
-g = fspecial('gaussian',9,2); % Step 2: Generate Gaussian filter 'g' of size 9x9 and standard deviation Sigma=2.
-Ix2 = imfilter(Ix.^2, g); % Step 3: Smooth the squared image derivatives to obtain Ix2, Iy2 and IxIy
-%figure;imshow(Ix2);
-Iy2 = imfilter(Iy.^2, g);
-%figure;imshow(Iy2);
-IxIy = imfilter(Ix.*Iy, g);
-%figure;imshow(IxIy);
-[r c]=size(Ix2);
-E = zeros(r, c); % Compute matrix E
-tic
-for i=2:1:r-1 
-    for j=2:1:c-1
-     Ix21=sum(sum(Ix2(i-1:i+1,j-1:j+1)));
-     Iy21=sum(sum(Iy2(i-1:i+1,j-1:j+1)));
-     IxIy1= sum(sum(IxIy(i-1:i+1,j-1:j+1)));
-     M=[Ix21 IxIy1;IxIy1 Iy21]; %(1) Build autocorrelation matrix for every singe pixel considering a window of size 3x3
-     E(i,j)=min(eig(M)); %(2)Compute Eigen value of the autocorrelation matrix and save the minimum eigenvalue as the desired value.
+    bin_size = size(bins, 1);
+
+    % Make counts a double column vector
+    bin_amounts = double(bin_amounts);
+
+    % Variables names are chosen to be similar to the formulas in
+    % the Otsu paper.
+    p = bin_amounts / sum(bin_amounts);
+    omega = cumsum(p);
+    mu = cumsum(p .* (1:bin_size)');
+    mu_t = mu(end);
+
+    sigma_b_squared = (mu_t * omega - mu).^2 ./ (omega .* (1 - omega));
+
+    % Find the location of the maximum value of sigma_b_squared.
+    % The maximum may extend over several bins, so average together the
+    % locations.  If maxval is NaN, meaning that sigma_b_squared is all NaN,
+    % then return 0.
+    maxval = max(sigma_b_squared);
+    isfinite_maxval = isfinite(maxval);
+    if isfinite_maxval
+        idx = mean(find(sigma_b_squared == maxval));
+        % Normalize the threshold to the range [0, 1].
+        t = (idx - 1) / (bin_size - 1);
+    else
+        t = 0.0;
     end
+
+result = t;
+% TODO ### rewrite ###
+
 end
-t=toc;
-disp('time needed for calculating E matrix');
-disp(t);
-figure, imshow(mat2gray(E)); % display result
-%}
-end
-%}
