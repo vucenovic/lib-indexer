@@ -32,55 +32,42 @@ img = imbinarize(img,'adaptive','ForegroundPolarity','dark','Sensitivity',0.45);
 % straighten image
 
 angle = calcRotationAngle(img);
-%imshowpair(imrotate(img, -angle, 'bicubic'), img, 'montage');
 img = imrotate(img, -angle, 'bicubic');
 img = 1-imclearborder(1 - img);
-
-%imshow(img);
-%imwrite(img, 'temp/label.png');
 
 % dilate and fill 
 
 edgeImg = edge(img, 'prewitt');
-se = strel('square',2);                 % structuring element for dilation
+se = strel('square',2);                
 edgeImgDilate = imdilate(edgeImg, se); 
-%imshow(edgeImgDilate);
 filledImg= imfill(edgeImgDilate,'holes');
 imshow(filledImg);
 
 % use regionprops to get bounding boxes of objects
 
 box = regionprops(logical(filledImg), 'BoundingBox', 'Centroid');
-box_corrected = [];
-for i = 1:length(box)
-    b = box(i);
-    coord = b.BoundingBox(3:4);
-    if coord(1) < (coord(2) * 10)
-        box_corrected = [box_corrected; b];
-    end
-end
 
+% delete lines to get characters only
 
-centroidsXY = vertcat(box_corrected.Centroid);
-imshow(img)
-hold on
-plot(centroidsXY(:,1),centroidsXY(:,2),'b*')
-hold off
-%imshow(img);
-hold on;
-colors = hsv(numel(box));
-for k = 1:numel(box_corrected)
-    rectangle('position',box_corrected(k).BoundingBox, 'EdgeColor',colors(k,:));
+box_corrected = deleteLines(box);
+
+% slice boxes which include two characters
+
+box_sliced = sliceBoxes(box_corrected);
+
+% get centoids of characters
+centroidsXY = vertcat(box_sliced.Centroid);
+
+colors = hsv(length(box_sliced));
+for k = 1:length(box_sliced)
+    rectangle('position',box_sliced(k).BoundingBox, 'EdgeColor',colors(k,:));
 end
 
 % segment the regions by cropping image using bounding box rectangle
 % coordinates, save them as images in a temporary folder
 patches = []
-for k = 1:numel(box_corrected)
-    subImage = imcrop(img, box_corrected(k).BoundingBox);
-    %imshow(subImage);
-    %filename = sprintf('temp/tempSubImage%d.png', k);
-    %imwrite(imresize(subImage, [42, 24]), filename);
+for k = 1:length(box_sliced)
+    subImage = imcrop(img, box_sliced(k).BoundingBox);
     patches = [patches, struct("image",subImage)];
 end
 
@@ -118,4 +105,43 @@ data = data(1:900) + data(end-900+1:end);
 angle = -T(column);             
 
 angle = mod(45 + angle,90) - 45;            
+end
+
+function box_sliced = sliceBoxes(box_corrected)
+% author: anand eichner & aleksandar vucenovic
+% slice boxes which include two characters
+% the characters are monospaced, and the width should always be smaller
+% than the height
+
+box_sliced = []
+for i = 1:length(box_corrected)
+    b = box_corrected(i);
+    coord = b.BoundingBox;
+    if coord(3) > coord(4)
+        wide = coord(3) / 2;
+        x = coord(1);
+        b1.BoundingBox = [coord(1), coord(2), wide, coord(4)];
+        b2.BoundingBox = [coord(1) + wide, coord(2), wide, coord(4)];
+        b1.Centroid = b.Centroid;
+        b1.Centroid(1) = coord(1) + wide / 2;
+        b2.Centroid = b.Centroid;
+        b2.Centroid(1) = coord(1) + wide / 2 * 3;
+        box_sliced = [box_sliced; b1 ; b2];
+    else
+        box_sliced = [box_sliced; b];
+    end
+end
+end
+
+function box_corrected = deleteLines(box)
+% author: aleksandar vucenovic
+% delete lines from label to only have boxes and centroids around chars
+box_corrected = [];
+for i = 1:length(box)
+    b = box(i);
+    coord = b.BoundingBox(3:4);
+    if coord(1) < (coord(2) * 10)
+        box_corrected = [box_corrected; b];
+    end
+end
 end
