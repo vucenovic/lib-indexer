@@ -5,9 +5,14 @@
 % 1. Preprocessing
 % 2. NCC or SSD template matching algorithm
 
+% example:
+% actual = "MTA 900 MULLER"
+% SSD = "HTA SQQ YVLLR"
+% NNC = "LLL LLL FLJJR"
+
 function label = ocr(label)
 
-STRATEGY = "NCC";
+STRATEGY = "SSD";
 label = imread('label_1.png');
 patch = preprocessing(label);
 templates = loadTemplates();

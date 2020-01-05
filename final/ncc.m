@@ -44,7 +44,7 @@ if size(template) > size(img)
     error('template must be smaller or equal size of image!')
 end
 
-% compute correlations matrix with ncc
+% get image sizes
 
 correlation = [];
 
@@ -71,15 +71,17 @@ if stdTemplate == 0
 end
 
 sigmaTemplate = sqrt(numel(template) - 1) * stdTemplate;
-denom = sigmaTemplate * sigmaImg;
+
 
 % calculate correlation using fast fourier transform
 
 corr = fftCorr(template, img, sizeImage, sizeTemplate);
-numer = (corr - localsum * meanTemplate);
 
 % calculate ncorr
+% (% http://scribblethink.org/Work/nvisionInterface/nip.pdf)
 
+numer = (corr - localsum * meanTemplate);
+denom = sigmaTemplate * sigmaImg;
 correlation = numer./denom;
 
 % set values outside of -1 and 1 to zero (happens through variance)
@@ -108,9 +110,12 @@ end
 end
 
 function corr = fftCorr(template, Image, sizeImage, sizeTemplate)
-% author: aleksandar vucenovic
+% author:  Dirk-Jan Kroon (2020). Fast/Robust Template Matching
+%(https://www.mathworks.com/matlabcentral/fileexchange/24925-fast-robust-template-matching),
+% MATLAB Central File Exchange. Retrieved January 3, 2020. 
 
-% note: followed this paper 
+% note: additional code by aleksandar vucenovic
+% reference:
 % http://scribblethink.org/Work/nvisionInterface/nip.pdf
 
 flip180 = rot90(template,2);
@@ -122,7 +127,6 @@ corr = real(corr);
 corr = corr(1:totalSize(1),1:totalSize(2));
 
 end
-
 
 
 
