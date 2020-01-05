@@ -5,16 +5,17 @@ function [] = main(imagePath)
     image = imread(imagePath);
     [image, distortionData] = PerspectiveCorrection(image);
     
-    %labelQuads = label_detection(image, calc_shelf_height(distortionData), true);
+    shelf_height_px = calc_shelf_height(distortionData);
+    %labelQuads = label_detection(image, shelf_height_px, true);
     
     labelQuads = [50,100,400,500;100,50,500,300;700,50,1000,300];
     
     labelQuads = sort_labels(labelQuads);
     
     STRATEGY = "NCC";
-    for i = 1:size(labelQuads,1)
-        quad = labelQuads(i,:);
-        subImg = image(quad(2):quad(4),quad(1):quad(3),:);
+    for i = 1:size(labelQuads, 1)
+        quad = labelQuads(i, :);
+        subImg = image(quad(2):quad(4),quad(1):quad(3), :);
         patches = preprocessing(subImg);
         for j = 1:length(patches)
             if(STRATEGY=="NCC")
@@ -24,6 +25,10 @@ function [] = main(imagePath)
             end
         end
     end
+    
+    sort_labels();              % labels to shelf coords
+    eliminate_duplicates();     % remove duplicate neighbors
+    
 end
 
 %{
