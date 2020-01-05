@@ -51,8 +51,15 @@ box_corrected = deleteLines(box);
 
 box_sliced = sliceBoxes(box_corrected);
 
+if length(box_sliced) > 1
 % get centroids of characters
 centroidsXY = vertcat(box_sliced.Centroid);
+
+imshow(img)
+hold on
+plot(centroidsXY(:,1),centroidsXY(:,2),'b*')
+hold off
+end
 
 % sort the indices column-wise
 % source: 
@@ -60,6 +67,13 @@ centroidsXY = vertcat(box_sliced.Centroid);
 [~, ~, centroidsXY(:, 2)] = histcounts(centroidsXY(:, 2), 3); 
 [~, sortIndex] = sortrows(centroidsXY, [2 1]);  
 box_sliced = box_sliced(sortIndex);  
+
+
+
+colors = hsv(length(box_sliced));
+for k = 1:length(box_sliced)
+    rectangle('position',box_sliced(k).BoundingBox, 'EdgeColor',colors(k,:));
+end
 
 % segment the regions by cropping image using bounding box rectangle
 % coordinates, save the first three letters of a label first,
