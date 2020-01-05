@@ -12,6 +12,10 @@
 \usepackage{multirow}
 \usepackage{color}
 \usepackage[]{geometry}
+\usepackage{textcomp}
+
+\newcommand\tab[1][1cm]{\hspace*{#1}}
+
 \begin{document}
 
 
@@ -28,8 +32,7 @@
 \author{Anand Eichner (11808244)\\
 Laurenz Edmund Fiala (11807869)\\
 Anna Nieto-Berezhinskaya (01223066)\\
-Aleksandar Vucenovic (01635282)\\
-Jansen Wu (01226578)}
+Aleksandar Vucenovic (01635282)}
 
 
 
@@ -68,7 +71,7 @@ Strukturierte Klartext-Datei mit Inhalt:
 
 \subsection{Voraussetzungen und Bedingungen}
 \begin{itemize}
-  \item Die Bücher müssen gerade (+- 5°) stehen.
+  \item Die Bücher müssen gerade (+/- 5°) stehen.
   \item Das Bild darf nicht mehr als 30° von der Waagrechte abweichen.
   \item Das Bild muss eine für die Texterkennung der Labels ausreichende Auflösung aufweisen (Abhängig von der Entfernung).
   \item Das Bild muss farbig sein.
@@ -82,38 +85,95 @@ Neue Anforderungen:
 \end{itemize}
 
 \subsection{Methodik}
+Methodik- Pipeline
+\begin{enumerate}
+	\item Hough-Transformation\\
+		\textit{Finden der Regalfächer zum Korrigieren der Perspektive}
+	\item Persprektivenkorrektur\\tuwe
+		\textit{Mittels Transformationsmatrix aus HT berechnet}
+	\item Eckenerkennung\\
+		\textit{Finden der Ecken von Labels}
+	\item Integral imaging\\
+		\textit{Finden von Labels innerhalb eines Akzeptanzbereichs, es werden nur Bereiche zwischen verschiedenen, zuvor erkannten, Ecken überprüft}
+	\item Eigene Heuristik\\
+		\textit{Einordnen von Labels in Buch-Koordinaten}
+	\item Optical Character Recognition\\
+		\textit{Erkennen von Text auf den Labels in den zuvor erkannten Bereichen}
+\end{enumerate}
+
 \subsection{Evaluierungsfragen}
+\textbf{Interaktion zwischen den Komponenten:}
+\begin{itemize}
+	\item \textit{Werden die Regalfächer korrekt erkannt?}\\
+		  Voraussetzungen:\tab Seite der Regalfächer, die zur Kamera zeigt, ist schwarz.\\
+		  Ergebnis:\tab[2.2cm] An jedem Fach liegt eine Gerade an.
+	\item \textit{Wird die Perspektive korrekt angepasst?}\\
+		  Voraussetzungen:\tab Korrekte Geraden der Regalfächer.\\
+		  Ergebnis:\tab[2.2cm] Bücher und Labels sind im Bild weitestgehend rechteckig.
+	\item \textit{Werden alle Labels erkannt?}\\
+		  Voraussetzungen:\tab Perspektivenkorrigiertes Bild\\
+		  Ergebnis:\tab[2.2cm] Bounding-Boxes der gefundenen Labels
+	\item \textit{Sind die Bounding Boxes der gefundenen Labels korrekt? Ist der gesamte Text darin enthalten?}\\
+		  Voraussetzungen:\tab Korrekt erkanntes Label oder ein false-positive.\\
+		  Ergebnis:\tab[2.2cm] Vier Vektoren, die den gesamten Text umschließen (und nicht mehr). Bei false-positives ist das Ergebnis nicht relevant, jedoch sollte es nicht zu groß sein (z.B. das gesamte Bild überdecken).
+	\item \textit{Werden die Labels korrekt in Bücher-Koordinaten umgewandelt?}\\
+		  Voraussetzungen:\tab Bounding Boxes der Labels sind korrekt.\\
+		  Ergebnis:\tab[2.2cm] Bücher-Koordinatensystem als 2D-Array mit Ursprung links-oben.
+	\item \textit{Werden die Labels der TU-Bibliothek korrekt gelesen und in Text umgewandelt?}\\
+		  Voraussetzungen:\tab Label Bounding-Boxes wurden korrekt berechnet (enthalten keinen unnötigen Text).\\
+		  Ergebnis:\tab[2.2cm] String-Repräsentation des Labels. Erwartete Korrektheit: $>$ 90\% für typische Datensätze.
+	\item \textit{Wird die Wahrscheinlichkeit der Label-Korrektheit angemessen berechnet?}\\
+		  Voraussetzungen:\tab Korrekt in Text umgewandeltes Label.\\
+		  Ergebnis:\tab[2.2cm] Floating-point Wert im Intervall [0, 1]. Alle Labels mit Wahrscheinlichkeit 0 wurden entfernt.
+\end{itemize}
+
 \subsection{Zeitplan}
-Der Zeitplan soll neben Euren anfänglichen, geplanten Zeiten/Arbeitsaufwände die tatsächlichen Zeiten/Arbeitsaufwände beinhalten. 
-\begin{table}[h!]
+\begin{table}[H]
 	\centering
-	\begin{tabular}{|c|c|c|c|c|}
+		\begin{tabular}{|c|c|c|}
 		\hline
-		Meilenstein & \multicolumn{2}{c|}{abgeschlossen am} & \multicolumn{2}{c|}{Arbeitsaufwand in h}\\
-		\cline{2-5}
-		 & geplant & tatsächlich & geplant & tatsächlich\\
+		Meilenstein & abgeschlossen am & Arbeitsaufwand in h\\
 		\hline
-		...&... &... &... &...\\
+		Prototyp & 10.11. & 30\\
 		\hline
-	\end{tabular}
+		Hough-Transformation & 17.11. & 50\\
+		\hline
+		Perspektivenkorrektur & 17.11. & 6\\
+		\hline
+		Labelerkennung & 25.11. & 80\\
+		\hline
+		Labels in Buch-Koordinaten & 1.12. & 4\\
+		\hline
+		Optical Character Recognition & 10.12. & 110\\
+		\hline
+		Labels filtern & 15.12. & 6\\
+		\hline
+		Daten in Output-Format umwandeln & 15.12. & 4\\
+		\hline
+		Tests & 18.12. & 5\\
+		\hline
+		Evaluierung & 20.12. & 5 \\
+		\hline
+		\end{tabular}
 \end{table}
 %%------------------------------------------------------
 
 %%------------------------------------------------------
 \section{Arbeitsteilung}
-(0,5 Seiten)\\
-Wer hat welche Aufgaben übernommen (MATLAB-Funktionen, Abschnitt im Bericht, Evaluierung, Datenerfassung, etc.)? Die Aufteilung sollte fair sein, aber den tatsächlichen Aufwänden der einzelnen Teilnehmer entsprechen. Jeder übernimmt die Verantwortung (z.B. Korrektheit, keine Plagiate, wissen warum die Methode gewählt wurde) über seine ausgewiesenen Tätigkeiten.
-
 \begin{center}
   \begin{tabular}{ |l | c | }
     \hline
   Name & Tätigkeiten\\
     \hline
-		Vorname1 Nachname1 & Matlab-Funktion A, Bericht Abschnitt B...\\
+    	Anna Nieto-Berezhinskaya & ?\\
 		\hline
-		Vorname2 Nachname2 & Matlab-Funktion C, Bericht Abschnitt D...\\
+		Anand Eichner & houghTransform (+ locals), PerspectiveCorrection (+ locals),\\
 		\hline
-		$\vdots$ & $\vdots$\\
+		Laurenz Edmund Fiala & label\_detection (+ locals),\\
+		\hline
+		Aleksandar Vucenovic & ocr (+ locals), ncc, ssd\_naive (+ locals),\\
+		 & preprocessing (+ locals)\\
+		\hline
   \end{tabular}
 \end{center}
 
