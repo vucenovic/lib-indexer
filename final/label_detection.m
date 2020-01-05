@@ -17,8 +17,8 @@ function result = label_detection(input_img, shelf_height_px, is_debug)
     
     approx_label_height = shelf_height_px * 0.135;
     approx_label_width = approx_label_height * 0.583;
-    min_label_height = max(approx_label_height - 20, approx_label_height * 0.8);
-    max_label_height = min(approx_label_height + 20, approx_label_height * 1.2);
+    min_label_height = approx_label_height * 0.65;
+    max_label_height = min(approx_label_height + 20, approx_label_height * 1.1);
     min_label_width = max(20, approx_label_width * 0.2);
     max_label_width = min(approx_label_width + 20, approx_label_width * 1.2);
     
@@ -44,7 +44,7 @@ function result = label_detection(input_img, shelf_height_px, is_debug)
     % the implementation of one of our colleagues was too sensitive.
     
     img_grey_gaus = imgaussfilt(img_grey, 4);
-    corners = corner(img_grey_gaus, 5000, 'FilterCoefficients', fspecial('gaussian',[9 1], 2));
+    corners = corner(img_grey_gaus, 5000, 'FilterCoefficients', fspecial('gaussian',[23 1], 2));
     corners = [corners(:, 2), corners(:, 1)]; % swap columns so it's right
 
 
@@ -113,6 +113,40 @@ function result = label_detection(input_img, shelf_height_px, is_debug)
         label_index = label_index + 1;
     end
     %}
+    
+    label_index = 1;
+    while label_index < size(labels, 1)
+
+        neighbor_index = 1;
+        while neighbor_index < size(labels, 1)
+
+            if label_index == neighbor_index
+                neighbor_index = neighbor_index + 1;
+                continue;
+            end
+
+            label_1 = labels(label_index, :);
+            label_2 = labels(neighbor_index, :);
+            if contains_label(label_1, label_2)
+                combined_label = [min([label_1(1), label_2(1)]), min([label_1(2), label_2(2)]), max([label_1(3), label_2(3)]), max([label_1(4), label_2(4)])];
+                
+                if check_for_range(combined_label(1:2), combined_label(3:4), x_diff_range, y_diff_range) && ...
+                   check_if_label(img_grey, img_integral_brights, combined_label, brightness_amount_range)
+
+                    first_index = min([label_index, neighbor_index]);
+                    second_index = max([label_index, neighbor_index]);
+                    labels = [labels(1:first_index-1, :); combined_label; labels(first_index+1:second_index-1, :); labels(second_index+1:end, :)];
+                    neighbor_index = 1;
+                    continue;
+                end
+
+            end
+
+            neighbor_index = neighbor_index + 1;
+        end
+
+        label_index = label_index + 1;
+    end
 
     result = labels;
     
@@ -206,9 +240,17 @@ function result = check_if_label(img_grey, integral_image_brights, label_quad, b
     
     label_candidate = img_grey(label_quad(1):label_quad(3), label_quad(2):label_quad(4));
     dark_amount = sum(1-clear_label_border(label_candidate), 1:2);
-
+    
+    
+    label_width = label_candidate(4) - label_candidate(2);
+    label_height = label_candidate(3) - label_candidate(1);
+    brightness_max_value  = label_width * label_height;
+    
     ii_brightness_amount = integral_image_result(integral_image_brights, label_quad);    
     brightness_ratio = ii_brightness_amount / dark_amount;
+    
+    % ### TODO ###
+    %if ii_brightness_amount < brightness_max_value / 2 % at least half of the label must be considered white
     
     result = brightness_ratio >= brights_darks_ratio_range(1) && ...
              brightness_ratio <= brights_darks_ratio_range(2);
@@ -382,6 +424,26 @@ function result = intersects_label(label, label_2)
     
     result = label(1) <= label_2(3) && label(2) <= label_2(4) && ...
              label(3) >= label_2(1) && label(4) >= label_2(2);
+
+end
+
+%{
+    Checks if one quad lies completely within another.
+    Works on both directions.
+    Quads must be of style: [top-left y, top-left x, bottom-right y, bottom-right x]
+
+    Sources:
+        -
+
+    Author:
+        Laurenz Edmund Fiala (11807869)
+%}
+function result = contains_label(label, label_2)
+    
+    result = (label(1) <= label_2(1) && label(2) <= label_2(2) && ...
+             label(3) >= label_2(3) && label(4) >= label_2(4)) || ...
+             (label(1) >= label_2(1) && label(2) >= label_2(2) && ...
+             label(3) <= label_2(3) && label(4) <= label_2(4));
 
 end
 
