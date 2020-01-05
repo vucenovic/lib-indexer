@@ -3,8 +3,9 @@
 %}
 function [] = main(imagePath)
     image = imread(imagePath);
-    [image,distortionData] = PerspectiveCorrection(image);
-    %labelQuads = label_detection(image,false);
+    [image, distortionData] = PerspectiveCorrection(image);
+    
+    %labelQuads = label_detection(image, calc_shelf_height(distortionData), false);
     
     labelQuads = [50,100,700,500;100,50,1000,300];
     
@@ -21,4 +22,24 @@ function [] = main(imagePath)
             end
         end
     end
+end
+
+%{
+    Find the height in px for a shelf.
+    Basically takes the difference in px of the two perspective correction-
+    horizontals that are furthest apart.
+
+    Sources:
+        -
+
+    Author:
+        Laurenz Edmund Fiala (11807869)
+%}
+function shelf_height = calc_shelf_height(distortion_data)
+    
+    horizontals_positions = [distortionData.horizontals.P];
+    horizontals_positions = sort(horizontals_positions(2:2:end));
+    horizontals_distances = diff(horizontals_positions);
+    shelf_height = max(horizontals_distances);
+
 end
