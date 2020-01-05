@@ -60,11 +60,13 @@ end
 % segment the regions by cropping image using bounding box rectangle
 % coordinates, save them as images in a temporary folder
 
+patches = []
 for k = 3:numel(box)
     subImage = imcrop(img, box(k).BoundingBox);
     %imshow(subImage);
     filename = sprintf('temp/tempSubImage%d.png', k);
     imwrite(imresize(subImage, [42, 24]), filename);
+    patches = [patches, struct("image", subImage)];
 end
 
 end

@@ -25,9 +25,8 @@
 % using L.bmp and "A" found in label
 % max correlation: 0.3155
 
-function coefficient = ncc(template, img)
-template = imcomplement(imread('temp/A.bmp'));
-img = imread('temp/tempSubImage11.png');
+function correlation = ncc(template, img)
+template = imcomplement(template);
 % check prerequisites
 
 [x, y, z] = size(img); 

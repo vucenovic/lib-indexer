@@ -14,9 +14,6 @@
 
 function patches = preprocessing(img)
 % convert to binary image
-
-img = img;
-img = imread('Label_1.png');
 [x, y, z] = size(img); 
 
 % upscale and apply adaptive threshold
@@ -38,8 +35,8 @@ img = 1-imclearborder(1 - img);
 % dilate and fill 
 
 edgeImg = edge(img, 'prewitt');
-struct = strel('square',2);                
-edgeImgDilate = imdilate(edgeImg, struct); 
+structElement = strel('square',2);                
+edgeImgDilate = imdilate(edgeImg, structElement); 
 filledImg= imfill(edgeImgDilate,'holes');
 
 % use regionprops to get bounding boxes of objects
@@ -70,7 +67,7 @@ box_sliced = box_sliced(sortIndex);
 patches = []
 for k = 1:length(box_sliced)
     subImage = imcrop(img, box_sliced(k).BoundingBox);
-    patches = [patches, struct("image",subImage)];
+    patches = [patches, struct("image",imresize(subImage, [42,24]))];
 end
 
 end

@@ -7,22 +7,32 @@
 
 function label = ocr(label)
 
-STRATEGY = "NCC";
+STRATEGY = "SSD";
 label = imread('label_1.png');
-patches = preprocessing(label);
+patch = preprocessing(label);
 templates = loadTemplates();
 
-for k = 1:numel(patches)
-    values = []
+for k = 1:numel(patch)
     wordOne = '';
     wordTwo = '';
     wordThree = '';
+    bestCorr = 10.0;
     for j = 1:numel(templates)
         if STRATEGY == "NCC";
-            value = ncc(templates(j).template, patches(k).image);
-            values = [values, value];
-            [bestCorr, index] = max(values, [], 'all');
-            matchedChar = templates(index).char;
+            corrMatrix = ncc(templates(j).template, patch(k).image);
+            value = max(corrMatrix, [], 'all');
+            if value > bestCorr
+                bestCorr = value;
+                bestIndex = j;
+            matchedChar = templates(bestIndex).char;
+            end
+        elseif STRATEGY == "SSD";
+            value = ssd_naive(templates(j).template, patch(k).image);
+            if value < bestCorr
+                bestCorr = value;
+                bestIndex = j;
+            matchedChar = templates(bestIndex).char;
+            end
         end
     end
 end

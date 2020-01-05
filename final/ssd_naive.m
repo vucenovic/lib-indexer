@@ -21,11 +21,9 @@
 % using L.bmp and "A" found in label
 % max correlation: 0.520 
 
-function ssd = ssd_naive(template, image)
+function ssd = ssd_naive(template, img)
 ssd = 0;
-template = imcomplement(imread('temp/A.bmp'));
-img = imread('temp/tempSubImage11.png');
-
+template = imcomplement(template);
 % check prerequisites
 
 [x, y, z] = size(img); 
