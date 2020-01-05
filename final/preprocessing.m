@@ -51,15 +51,18 @@ box_corrected = deleteLines(box);
 
 box_sliced = sliceBoxes(box_corrected);
 
+if length(box_sliced) > 1
 % get centroids of characters
 centroidsXY = vertcat(box_sliced.Centroid);
-
 % sort the indices column-wise
 % source: 
 % https://stackoverflow.com/questions/43076798/how-to-control-the-order-of-detected-objects-by-regionprops-in-matlab
 [~, ~, centroidsXY(:, 2)] = histcounts(centroidsXY(:, 2), 3); 
 [~, sortIndex] = sortrows(centroidsXY, [2 1]);  
-box_sliced = box_sliced(sortIndex);  
+box_sliced = box_sliced(sortIndex);
+
+end
+
 
 % segment the regions by cropping image using bounding box rectangle
 % coordinates, save the first three letters of a label first,
