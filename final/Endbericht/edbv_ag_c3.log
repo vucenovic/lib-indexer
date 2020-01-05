@@ -1,43 +1,54 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.20 (MiKTeX 2.9.7200 64-bit) (preloaded format=pdflatex 2019.10.21)  5 JAN 2020 19:14
+This is pdfTeX, Version 3.14159265-2.6-1.40.20 (MiKTeX 2.9.6960 64-bit) (preloaded format=pdflatex 2019.1.30)  5 JAN 2020 20:36
 entering extended mode
 **./edbv_ag_c3.tex
 (edbv_ag_c3.tex
-LaTeX2e <2019-10-01> patch level 1
-(D:\MikTex\tex/latex/koma-script\scrartcl.cls
-Document Class: scrartcl 2019/10/12 v3.27 KOMA-Script document class (article)
-(D:\MikTex\tex/latex/koma-script\scrkbase.sty
-Package: scrkbase 2019/10/12 v3.27 KOMA-Script package (KOMA-Script-dependent b
-asics and keyval usage)
+LaTeX2e <2018-12-01>
 
-(D:\MikTex\tex/latex/koma-script\scrbase.sty
-Package: scrbase 2019/10/12 v3.27 KOMA-Script package (KOMA-Script-independent 
+("C:\Users\laure\AppData\Local\Programs\MiKTeX 2.9\tex/latex/koma-script\scrart
+cl.cls"
+Document Class: scrartcl 2019/02/01 v3.26b KOMA-Script document class (article)
+
+
+("C:\Users\laure\AppData\Local\Programs\MiKTeX 2.9\tex/latex/koma-script\scrkba
+se.sty"
+Package: scrkbase 2019/02/01 v3.26b KOMA-Script package (KOMA-Script-dependent 
 basics and keyval usage)
 
-(D:\MikTex\tex/latex/graphics\keyval.sty
+("C:\Users\laure\AppData\Local\Programs\MiKTeX 2.9\tex/latex/koma-script\scrbas
+e.sty"
+Package: scrbase 2019/02/01 v3.26b KOMA-Script package (KOMA-Script-independent
+ basics and keyval usage)
+
+("C:\Users\laure\AppData\Local\Programs\MiKTeX 2.9\tex/latex/graphics\keyval.st
+y"
 Package: keyval 2014/10/28 v1.15 key=value parser (DPC)
 \KV@toks@=\toks14
 )
-(D:\MikTex\tex/latex/koma-script\scrlfile.sty
-Package: scrlfile 2019/10/12 v3.27 KOMA-Script package (loading files)
+("C:\Users\laure\AppData\Local\Programs\MiKTeX 2.9\tex/latex/koma-script\scrlfi
+le.sty"
+Package: scrlfile 2019/02/01 v3.26b KOMA-Script package (loading files)
 )))
-(D:\MikTex\tex/latex/koma-script\tocbasic.sty
-Package: tocbasic 2019/10/12 v3.27 KOMA-Script package (handling toc-files)
+("C:\Users\laure\AppData\Local\Programs\MiKTeX 2.9\tex/latex/koma-script\tocbas
+ic.sty"
+Package: tocbasic 2019/02/01 v3.26b KOMA-Script package (handling toc-files)
 \scr@dte@tocline@numberwidth=\skip41
 \scr@dte@tocline@numbox=\box27
 )
 Package tocbasic Info: omitting babel extension for `toc'
 (tocbasic)             because of feature `nobabel' available
-(tocbasic)             for `toc' on input line 137.
+(tocbasic)             for `toc' on input line 134.
 Class scrartcl Info: File `scrsize11pt.clo' used instead of
-(scrartcl)           file `scrsize11.clo' to setup font sizes on input line 220
-8.
+(scrartcl)           file `scrsize11.clo' to setup font sizes on input line 216
+2.
 
-(D:\MikTex\tex/latex/koma-script\scrsize11pt.clo
-File: scrsize11pt.clo 2019/10/12 v3.27 KOMA-Script font size class option (11pt
+("C:\Users\laure\AppData\Local\Programs\MiKTeX 2.9\tex/latex/koma-script\scrsiz
+e11pt.clo"
+File: scrsize11pt.clo 2019/02/01 v3.26b KOMA-Script font size class option (11p
+t)
 )
-)
-(D:\MikTex\tex/latex/koma-script\typearea.sty
-Package: typearea 2019/10/12 v3.27 KOMA-Script package (type area)
+("C:\Users\laure\AppData\Local\Programs\MiKTeX 2.9\tex/latex/koma-script\typear
+ea.sty"
+Package: typearea 2019/02/01 v3.26b KOMA-Script package (type area)
 \ta@bcor=\skip42
 \ta@div=\count80
 \ta@hblk=\skip43
@@ -60,7 +71,7 @@ Package typearea Info: These are the values describing the layout:
 (typearea)              \topskip        = 11.0pt
 (typearea)              \footskip       = 47.6pt
 (typearea)              \baselineskip   = 13.6pt
-(typearea)              on input line 1716.
+(typearea)              on input line 1715.
 )
 \c@part=\count81
 \c@section=\count82
@@ -70,87 +81,92 @@ Package typearea Info: These are the values describing the layout:
 \c@subparagraph=\count86
 \scr@dte@section@maxnumwidth=\skip47
 Class scrartcl Info: using compatibility default `runin=bysign'
-(scrartcl)           for `\section on input line 4702.
+(scrartcl)           for `\section on input line 4489.
 Class scrartcl Info: using compatibility default `afterindent=bysign'
-(scrartcl)           for `\section on input line 4702.
+(scrartcl)           for `\section on input line 4489.
 \scr@dte@part@maxnumwidth=\skip48
 Class scrartcl Info: using compatibility default `afterindent=false'
-(scrartcl)           for `\part on input line 4710.
+(scrartcl)           for `\part on input line 4497.
 \scr@dte@subsection@maxnumwidth=\skip49
 Class scrartcl Info: using compatibility default `runin=bysign'
-(scrartcl)           for `\subsection on input line 4720.
+(scrartcl)           for `\subsection on input line 4507.
 Class scrartcl Info: using compatibility default `afterindent=bysign'
-(scrartcl)           for `\subsection on input line 4720.
+(scrartcl)           for `\subsection on input line 4507.
 \scr@dte@subsubsection@maxnumwidth=\skip50
 Class scrartcl Info: using compatibility default `runin=bysign'
-(scrartcl)           for `\subsubsection on input line 4730.
+(scrartcl)           for `\subsubsection on input line 4517.
 Class scrartcl Info: using compatibility default `afterindent=bysign'
-(scrartcl)           for `\subsubsection on input line 4730.
+(scrartcl)           for `\subsubsection on input line 4517.
 \scr@dte@paragraph@maxnumwidth=\skip51
 Class scrartcl Info: using compatibility default `runin=bysign'
-(scrartcl)           for `\paragraph on input line 4740.
+(scrartcl)           for `\paragraph on input line 4527.
 Class scrartcl Info: using compatibility default `afterindent=bysign'
-(scrartcl)           for `\paragraph on input line 4740.
+(scrartcl)           for `\paragraph on input line 4527.
 \scr@dte@subparagraph@maxnumwidth=\skip52
 Class scrartcl Info: using compatibility default `runin=bysign'
-(scrartcl)           for `\subparagraph on input line 4750.
+(scrartcl)           for `\subparagraph on input line 4537.
 Class scrartcl Info: using compatibility default `afterindent=bysign'
-(scrartcl)           for `\subparagraph on input line 4750.
+(scrartcl)           for `\subparagraph on input line 4537.
 \abovecaptionskip=\skip53
 \belowcaptionskip=\skip54
 \c@pti@nb@sid@b@x=\box28
 Package tocbasic Info: omitting babel extension for `lof'
 (tocbasic)             because of feature `nobabel' available
-(tocbasic)             for `lof' on input line 5969.
+(tocbasic)             for `lof' on input line 5781.
 \scr@dte@figure@maxnumwidth=\skip55
 \c@figure=\count87
 Package tocbasic Info: omitting babel extension for `lot'
 (tocbasic)             because of feature `nobabel' available
-(tocbasic)             for `lot' on input line 5981.
+(tocbasic)             for `lot' on input line 5793.
 \scr@dte@table@maxnumwidth=\skip56
 \c@table=\count88
-Class scrartcl Info: Redefining `\numberline' on input line 6145.
+Class scrartcl Info: Redefining `\numberline' on input line 5957.
 \bibindent=\dimen102
 )
-(D:\MikTex\tex/generic/babel\babel.sty
-Package: babel 2019/10/15 3.35 The Babel package
- (D:\MikTex\tex/generic/babel\switch.def
-File: switch.def 2019/10/15 3.35 Babel switching mechanism
+("C:\Users\laure\AppData\Local\Programs\MiKTeX 2.9\tex/generic/babel\babel.sty"
+Package: babel 2018/11/13 3.27 The Babel package
+("C:\Users\laure\AppData\Local\Programs\MiKTeX 2.9\tex/generic/babel\switch.def
+"
+File: switch.def 2018/11/13 3.27 Babel switching mechanism
 )
 *************************************
 * Local config file bblopts.cfg used
 *
-(D:\MikTex\tex/latex/arabi\bblopts.cfg
+("C:\Users\laure\AppData\Local\Programs\MiKTeX 2.9\tex/latex/arabi\bblopts.cfg"
 File: bblopts.cfg 2005/09/08 v0.1 add Arabic and Farsi to "declared" options of
  babel
 )
-(D:\MikTex\tex/latex/babel-german\ngerman.ldf
+("C:\Users\laure\AppData\Local\Programs\MiKTeX 2.9\tex/latex/babel-german\ngerm
+an.ldf"
 Language: ngerman 2018/12/08 v2.11 German support for babel (post-1996 orthogra
 phy)
 
-(D:\MikTex\tex/latex/babel-german\ngermanb.ldf
+("C:\Users\laure\AppData\Local\Programs\MiKTeX 2.9\tex/latex/babel-german\ngerm
+anb.ldf"
 Language: ngermanb 2018/12/08 v2.11 German support for babel (post-1996 orthogr
 aphy)
 
-(D:\MikTex\tex/generic/babel\babel.def
-File: babel.def 2019/10/15 3.35 Babel common definitions
+("C:\Users\laure\AppData\Local\Programs\MiKTeX 2.9\tex/generic/babel\babel.def"
+File: babel.def 2018/11/13 3.27 Babel common definitions
 \babel@savecnt=\count89
 \U@D=\dimen103
 
-(D:\MikTex\tex/generic/babel\txtbabel.def)
+("C:\Users\laure\AppData\Local\Programs\MiKTeX 2.9\tex/generic/babel\txtbabel.d
+ef")
 \bbl@dirlevel=\count90
 )
 Package babel Info: Making " an active character on input line 121.
 )))
-(D:\MikTex\tex/latex/base\inputenc.sty
+("C:\Users\laure\AppData\Local\Programs\MiKTeX 2.9\tex/latex/base\inputenc.sty"
 Package: inputenc 2018/08/11 v1.3c Input encoding file
 \inpenc@prehook=\toks15
 \inpenc@posthook=\toks16
 )
-(D:\MikTex\tex/latex/algorithms\algorithmic.sty
+("C:\Users\laure\AppData\Local\Programs\MiKTeX 2.9\tex/latex/algorithms\algorit
+hmic.sty"
 Package: algorithmic 2009/08/24 v0.1 Document Style `algorithmic'
 
-(D:\MikTex\tex/latex/base\ifthen.sty
+("C:\Users\laure\AppData\Local\Programs\MiKTeX 2.9\tex/latex/base\ifthen.sty"
 Package: ifthen 2014/09/29 v1.1c Standard LaTeX ifthen package (DPC)
 )
 \c@ALC@unique=\count91
@@ -160,11 +176,12 @@ Package: ifthen 2014/09/29 v1.1c Standard LaTeX ifthen package (DPC)
 \ALC@tlm=\skip57
 \algorithmicindent=\skip58
 )
-(D:\MikTex\tex/latex/algorithms\algorithm.sty
+("C:\Users\laure\AppData\Local\Programs\MiKTeX 2.9\tex/latex/algorithms\algorit
+hm.sty"
 Package: algorithm 2009/08/24 v0.1 Document Style `algorithm' - floating enviro
 nment
 
-(D:\MikTex\tex/latex/float\float.sty
+("C:\Users\laure\AppData\Local\Programs\MiKTeX 2.9\tex/latex/float\float.sty"
 Package: float 2001/11/08 v1.3d Float enhancements (AL)
 \c@float@type=\count95
 \float@exts=\toks17
@@ -175,61 +192,71 @@ Package: float 2001/11/08 v1.3d Float enhancements (AL)
 \@float@every@algorithm=\toks19
 \c@algorithm=\count96
 )
-(D:\MikTex\tex/latex/graphics\graphicx.sty
+("C:\Users\laure\AppData\Local\Programs\MiKTeX 2.9\tex/latex/graphics\graphicx.
+sty"
 Package: graphicx 2017/06/01 v1.1a Enhanced LaTeX Graphics (DPC,SPQR)
 
-(D:\MikTex\tex/latex/graphics\graphics.sty
-Package: graphics 2019/10/08 v1.3c Standard LaTeX Graphics (DPC,SPQR)
+("C:\Users\laure\AppData\Local\Programs\MiKTeX 2.9\tex/latex/graphics\graphics.
+sty"
+Package: graphics 2017/06/25 v1.2c Standard LaTeX Graphics (DPC,SPQR)
 
-(D:\MikTex\tex/latex/graphics\trig.sty
+("C:\Users\laure\AppData\Local\Programs\MiKTeX 2.9\tex/latex/graphics\trig.sty"
 Package: trig 2016/01/03 v1.10 sin cos tan (DPC)
 )
-(D:\MikTex\tex/latex/graphics-cfg\graphics.cfg
+("C:\Users\laure\AppData\Local\Programs\MiKTeX 2.9\tex/latex/graphics-cfg\graph
+ics.cfg"
 File: graphics.cfg 2016/06/04 v1.11 sample graphics configuration
 )
-Package graphics Info: Driver file: pdftex.def on input line 105.
+Package graphics Info: Driver file: pdftex.def on input line 99.
 
-(D:\MikTex\tex/latex/graphics-def\pdftex.def
+("C:\Users\laure\AppData\Local\Programs\MiKTeX 2.9\tex/latex/graphics-def\pdfte
+x.def"
 File: pdftex.def 2018/01/08 v1.0l Graphics/color driver for pdftex
 ))
 \Gin@req@height=\dimen104
 \Gin@req@width=\dimen105
 )
-(D:\MikTex\tex/latex/amsmath\amsmath.sty
-Package: amsmath 2019/04/01 v2.17c AMS math features
+("C:\Users\laure\AppData\Local\Programs\MiKTeX 2.9\tex/latex/amsmath\amsmath.st
+y"
+Package: amsmath 2018/12/01 v2.17b AMS math features
 \@mathmargin=\skip59
 
 For additional information on amsmath, use the `?' option.
-(D:\MikTex\tex/latex/amsmath\amstext.sty
+
+("C:\Users\laure\AppData\Local\Programs\MiKTeX 2.9\tex/latex/amsmath\amstext.st
+y"
 Package: amstext 2000/06/29 v2.01 AMS text
 
-(D:\MikTex\tex/latex/amsmath\amsgen.sty
+("C:\Users\laure\AppData\Local\Programs\MiKTeX 2.9\tex/latex/amsmath\amsgen.sty
+"
 File: amsgen.sty 1999/11/30 v2.0 generic functions
 \@emptytoks=\toks20
 \ex@=\dimen106
 ))
-(D:\MikTex\tex/latex/amsmath\amsbsy.sty
+("C:\Users\laure\AppData\Local\Programs\MiKTeX 2.9\tex/latex/amsmath\amsbsy.sty
+"
 Package: amsbsy 1999/11/29 v1.2d Bold Symbols
 \pmbraise@=\dimen107
 )
-(D:\MikTex\tex/latex/amsmath\amsopn.sty
+("C:\Users\laure\AppData\Local\Programs\MiKTeX 2.9\tex/latex/amsmath\amsopn.sty
+"
 Package: amsopn 2016/03/08 v2.02 operator names
 )
 \inf@bad=\count97
-LaTeX Info: Redefining \frac on input line 227.
+LaTeX Info: Redefining \frac on input line 223.
 \uproot@=\count98
 \leftroot@=\count99
-LaTeX Info: Redefining \overline on input line 389.
+LaTeX Info: Redefining \overline on input line 385.
 \classnum@=\count100
 \DOTSCASE@=\count101
-LaTeX Info: Redefining \ldots on input line 486.
-LaTeX Info: Redefining \dots on input line 489.
-LaTeX Info: Redefining \cdots on input line 610.
+LaTeX Info: Redefining \ldots on input line 482.
+LaTeX Info: Redefining \dots on input line 485.
+LaTeX Info: Redefining \cdots on input line 606.
 \Mathstrutbox@=\box31
 \strutbox@=\box32
 \big@size=\dimen108
-LaTeX Font Info:    Redeclaring font encoding OML on input line 733.
-LaTeX Font Info:    Redeclaring font encoding OMS on input line 734.
+LaTeX Font Info:    Redeclaring font encoding OML on input line 729.
+LaTeX Font Info:    Redeclaring font encoding OMS on input line 730.
 \macc@depth=\count102
 \c@MaxMatrixCols=\count103
 \dotsspace@=\muskip10
@@ -250,27 +277,31 @@ LaTeX Font Info:    Redeclaring font encoding OMS on input line 734.
 \multlinegap=\skip60
 \multlinetaggap=\skip61
 \mathdisplay@stack=\toks24
-LaTeX Info: Redefining \[ on input line 2855.
-LaTeX Info: Redefining \] on input line 2856.
+LaTeX Info: Redefining \[ on input line 2844.
+LaTeX Info: Redefining \] on input line 2845.
 )
-(D:\MikTex\tex/latex/amsfonts\amssymb.sty
+("C:\Users\laure\AppData\Local\Programs\MiKTeX 2.9\tex/latex/amsfonts\amssymb.s
+ty"
 Package: amssymb 2013/01/14 v3.01 AMS font symbols
 
-(D:\MikTex\tex/latex/amsfonts\amsfonts.sty
+("C:\Users\laure\AppData\Local\Programs\MiKTeX 2.9\tex/latex/amsfonts\amsfonts.
+sty"
 Package: amsfonts 2013/01/14 v3.01 Basic AMSFonts support
 \symAMSa=\mathgroup4
 \symAMSb=\mathgroup5
-LaTeX Font Info:    Redeclaring math symbol \hbar on input line 98.
 LaTeX Font Info:    Overwriting math alphabet `\mathfrak' in version `bold'
 (Font)                  U/euf/m/n --> U/euf/b/n on input line 106.
 ))
-(D:\MikTex\tex/latex/caption\subcaption.sty
+("C:\Users\laure\AppData\Local\Programs\MiKTeX 2.9\tex/latex/caption\subcaption
+.sty"
 Package: subcaption 2018/05/01 v1.1-162 Sub-captions (AR)
 
-(D:\MikTex\tex/latex/caption\caption.sty
+("C:\Users\laure\AppData\Local\Programs\MiKTeX 2.9\tex/latex/caption\caption.st
+y"
 Package: caption 2018/10/06 v3.3-154 Customizing captions (AR)
 
-(D:\MikTex\tex/latex/caption\caption3.sty
+("C:\Users\laure\AppData\Local\Programs\MiKTeX 2.9\tex/latex/caption\caption3.s
+ty"
 Package: caption3 2018/09/12 v1.8c caption3 kernel (AR)
 Package caption3 Info: TeX engine: e-TeX on input line 64.
 \captionmargin=\dimen115
@@ -289,32 +320,39 @@ Package caption Info: float package is loaded.
 \c@subfigure=\count111
 \c@subtable=\count112
 )
-(D:\MikTex\tex/latex/multirow\multirow.sty
-Package: multirow 2019/05/31 v2.5 Span multiple rows of a table
+("C:\Users\laure\AppData\Local\Programs\MiKTeX 2.9\tex/latex/multirow\multirow.
+sty"
+Package: multirow 2019/01/01 v2.4 Span multiple rows of a table
 \multirow@colwidth=\skip62
 \multirow@cntb=\count113
 \multirow@dima=\skip63
 \bigstrutjot=\dimen122
 )
-(D:\MikTex\tex/latex/graphics\color.sty
+("C:\Users\laure\AppData\Local\Programs\MiKTeX 2.9\tex/latex/graphics\color.sty
+"
 Package: color 2016/07/10 v1.1e Standard LaTeX Color (DPC)
 
-(D:\MikTex\tex/latex/graphics-cfg\color.cfg
+("C:\Users\laure\AppData\Local\Programs\MiKTeX 2.9\tex/latex/graphics-cfg\color
+.cfg"
 File: color.cfg 2016/01/02 v1.6 sample color configuration
 )
 Package color Info: Driver file: pdftex.def on input line 147.
 )
-(D:\MikTex\tex/latex/geometry\geometry.sty
+("C:\Users\laure\AppData\Local\Programs\MiKTeX 2.9\tex/latex/geometry\geometry.
+sty"
 Package: geometry 2018/04/16 v5.8 Page Geometry
 
-(D:\MikTex\tex/generic/oberdiek\ifpdf.sty
+("C:\Users\laure\AppData\Local\Programs\MiKTeX 2.9\tex/generic/oberdiek\ifpdf.s
+ty"
 Package: ifpdf 2018/09/07 v3.3 Provides the ifpdf switch
 )
-(D:\MikTex\tex/generic/oberdiek\ifvtex.sty
+("C:\Users\laure\AppData\Local\Programs\MiKTeX 2.9\tex/generic/oberdiek\ifvtex.
+sty"
 Package: ifvtex 2016/05/16 v1.6 Detect VTeX and its facilities (HO)
 Package ifvtex Info: VTeX not detected.
 )
-(D:\MikTex\tex/generic/ifxetex\ifxetex.sty
+("C:\Users\laure\AppData\Local\Programs\MiKTeX 2.9\tex/generic/ifxetex\ifxetex.
+sty"
 Package: ifxetex 2010/09/12 v0.6 Provides ifxetex conditional
 )
 \Gm@cnth=\count114
@@ -330,8 +368,9 @@ Package: ifxetex 2010/09/12 v0.6 Provides ifxetex conditional
 \Gm@layoutvoffset=\dimen130
 \Gm@dimlist=\toks25
 
-(D:\MikTex\tex/latex/geometry\geometry.cfg))
-(D:\MikTex\tex/latex/base\textcomp.sty
+("C:\Users\laure\AppData\Local\Programs\MiKTeX 2.9\tex/latex/geometry\geometry.
+cfg"))
+("C:\Users\laure\AppData\Local\Programs\MiKTeX 2.9\tex/latex/base\textcomp.sty"
 Package: textcomp 2018/08/11 v2.0j Standard LaTeX package
 Package textcomp Info: Sub-encoding information:
 (textcomp)               5 = only ISO-Adobe without \textcurrency
@@ -345,13 +384,13 @@ Package textcomp Info: Sub-encoding information:
 (textcomp)             Family '?' is the default used for unknown fonts.
 (textcomp)             See the documentation for details.
 Package textcomp Info: Setting ? sub-encoding to TS1/1 on input line 79.
- (D:\MikTex\tex/latex/base\ts1enc.def
+("C:\Users\laure\AppData\Local\Programs\MiKTeX 2.9\tex/latex/base\ts1enc.def"
 File: ts1enc.def 2001/06/05 v3.0e (jk/car/fm) Standard LaTeX file
 Now handling font encoding TS1 ...
 ... processing UTF-8 mapping file for font encoding TS1
 
-(D:\MikTex\tex/latex/base\ts1enc.dfu
-File: ts1enc.dfu 2019/07/11 v1.2j UTF-8 support for inputenc
+("C:\Users\laure\AppData\Local\Programs\MiKTeX 2.9\tex/latex/base\ts1enc.dfu"
+File: ts1enc.dfu 2018/10/05 v1.2f UTF-8 support for inputenc
    defining Unicode char U+00A2 (decimal 162)
    defining Unicode char U+00A3 (decimal 163)
    defining Unicode char U+00A4 (decimal 164)
@@ -421,8 +460,6 @@ File: ts1enc.dfu 2019/07/11 v1.2j UTF-8 support for inputenc
    defining Unicode char U+25E6 (decimal 9702)
    defining Unicode char U+25EF (decimal 9711)
    defining Unicode char U+266A (decimal 9834)
-   defining Unicode char U+27E8 (decimal 10216)
-   defining Unicode char U+27E9 (decimal 10217)
    defining Unicode char U+FEFF (decimal 65279)
 ))
 LaTeX Info: Redefining \oldstylenums on input line 334.
@@ -488,6 +525,17 @@ Package textcomp Info: Setting pplx sub-encoding to TS1/3 on input line 406.
 Package textcomp Info: Setting pplj sub-encoding to TS1/3 on input line 407.
 Package textcomp Info: Setting ptmx sub-encoding to TS1/4 on input line 408.
 Package textcomp Info: Setting ptmj sub-encoding to TS1/4 on input line 409.
+) ("C:\Users\laure\AppData\Local\Programs\MiKTeX 2.9\tex/latex/soul\soul.sty"
+Package: soul 2003/11/17 v2.4 letterspacing/underlining (mf)
+\SOUL@word=\toks26
+\SOUL@lasttoken=\toks27
+\SOUL@cmds=\toks28
+\SOUL@buffer=\toks29
+\SOUL@token=\toks30
+\SOUL@spaceskip=\skip64
+\SOUL@ttwidth=\dimen131
+\SOUL@uldp=\dimen132
+\SOUL@ulht=\dimen133
 )
 
 LaTeX Warning: Unused global option(s):
@@ -496,69 +544,81 @@ LaTeX Warning: Unused global option(s):
 (edbv_ag_c3.aux)
 \openout1 = `edbv_ag_c3.aux'.
 
-LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 19.
-LaTeX Font Info:    ... okay on input line 19.
-LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 19.
-LaTeX Font Info:    ... okay on input line 19.
-LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 19.
-LaTeX Font Info:    ... okay on input line 19.
-LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 19.
-LaTeX Font Info:    ... okay on input line 19.
-LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 19.
-LaTeX Font Info:    ... okay on input line 19.
-LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 19.
-LaTeX Font Info:    ... okay on input line 19.
-LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 19.
-LaTeX Font Info:    Trying to load font information for TS1+cmr on input line 1
-9.
- (D:\MikTex\tex/latex/base\ts1cmr.fd
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 20.
+LaTeX Font Info:    ... okay on input line 20.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 20.
+LaTeX Font Info:    ... okay on input line 20.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 20.
+LaTeX Font Info:    ... okay on input line 20.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 20.
+LaTeX Font Info:    ... okay on input line 20.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 20.
+LaTeX Font Info:    ... okay on input line 20.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 20.
+LaTeX Font Info:    ... okay on input line 20.
+LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 20.
+LaTeX Font Info:    Try loading font information for TS1+cmr on input line 20.
+
+("C:\Users\laure\AppData\Local\Programs\MiKTeX 2.9\tex/latex/base\ts1cmr.fd"
 File: ts1cmr.fd 2014/09/29 v2.5h Standard LaTeX font definitions
 )
-LaTeX Font Info:    ... okay on input line 19.
+LaTeX Font Info:    ... okay on input line 20.
 
-(D:\MikTex\tex/context/base\supp-pdf.mkii
+("C:\Users\laure\AppData\Local\Programs\MiKTeX 2.9\tex/context/base\supp-pdf.mk
+ii"
 [Loading MPS to PDF converter (version 2006.09.02).]
 \scratchcounter=\count117
-\scratchdimen=\dimen131
+\scratchdimen=\dimen134
 \scratchbox=\box33
 \nofMPsegments=\count118
 \nofMParguments=\count119
-\everyMPshowfont=\toks26
+\everyMPshowfont=\toks31
 \MPscratchCnt=\count120
-\MPscratchDim=\dimen132
+\MPscratchDim=\dimen135
 \MPnumerator=\count121
 \makeMPintoPDFobject=\count122
-\everyMPtoPDFconversion=\toks27
-) (D:\MikTex\tex/latex/oberdiek\epstopdf-base.sty
+\everyMPtoPDFconversion=\toks32
+)
+("C:\Users\laure\AppData\Local\Programs\MiKTeX 2.9\tex/latex/oberdiek\epstopdf-
+base.sty"
 Package: epstopdf-base 2016/05/15 v2.6 Base part for package epstopdf
 
-(D:\MikTex\tex/generic/oberdiek\infwarerr.sty
+("C:\Users\laure\AppData\Local\Programs\MiKTeX 2.9\tex/generic/oberdiek\infware
+rr.sty"
 Package: infwarerr 2016/05/16 v1.4 Providing info/warning/error messages (HO)
 )
-(D:\MikTex\tex/latex/oberdiek\grfext.sty
+("C:\Users\laure\AppData\Local\Programs\MiKTeX 2.9\tex/latex/oberdiek\grfext.st
+y"
 Package: grfext 2016/05/16 v1.2 Manage graphics extensions (HO)
 
-(D:\MikTex\tex/generic/oberdiek\kvdefinekeys.sty
+("C:\Users\laure\AppData\Local\Programs\MiKTeX 2.9\tex/generic/oberdiek\kvdefin
+ekeys.sty"
 Package: kvdefinekeys 2016/05/16 v1.4 Define keys (HO)
 
-(D:\MikTex\tex/generic/oberdiek\ltxcmds.sty
+("C:\Users\laure\AppData\Local\Programs\MiKTeX 2.9\tex/generic/oberdiek\ltxcmds
+.sty"
 Package: ltxcmds 2016/05/16 v1.23 LaTeX kernel commands for general use (HO)
 )))
-(D:\MikTex\tex/latex/oberdiek\kvoptions.sty
+("C:\Users\laure\AppData\Local\Programs\MiKTeX 2.9\tex/latex/oberdiek\kvoptions
+.sty"
 Package: kvoptions 2016/05/16 v3.12 Key value format for package options (HO)
 
-(D:\MikTex\tex/generic/oberdiek\kvsetkeys.sty
+("C:\Users\laure\AppData\Local\Programs\MiKTeX 2.9\tex/generic/oberdiek\kvsetke
+ys.sty"
 Package: kvsetkeys 2016/05/16 v1.17 Key value parser (HO)
 
-(D:\MikTex\tex/generic/oberdiek\etexcmds.sty
+("C:\Users\laure\AppData\Local\Programs\MiKTeX 2.9\tex/generic/oberdiek\etexcmd
+s.sty"
 Package: etexcmds 2016/05/16 v1.6 Avoid name clashes with e-TeX commands (HO)
 
-(D:\MikTex\tex/generic/oberdiek\ifluatex.sty
+("C:\Users\laure\AppData\Local\Programs\MiKTeX 2.9\tex/generic/oberdiek\ifluate
+x.sty"
 Package: ifluatex 2016/05/16 v1.4 Provides the ifluatex switch (HO)
 Package ifluatex Info: LuaTeX not detected.
 ))))
-(D:\MikTex\tex/generic/oberdiek\pdftexcmds.sty
-Package: pdftexcmds 2019/07/25 v0.30 Utility functions of pdfTeX for LuaTeX (HO
+("C:\Users\laure\AppData\Local\Programs\MiKTeX 2.9\tex/generic/oberdiek\pdftexc
+mds.sty"
+Package: pdftexcmds 2018/09/10 v0.29 Utility functions of pdfTeX for LuaTeX (HO
 )
 Package pdftexcmds Info: LuaTeX not detected.
 Package pdftexcmds Info: \pdf@primitive is available.
@@ -609,78 +669,158 @@ Package caption Info: End \AtBeginDocument code.
 * \@reversemarginfalse
 * (1in=72.27pt=25.4mm, 1cm=28.453pt)
 
-LaTeX Font Info:    Trying to load font information for U+msa on input line 42.
-
-(D:\MikTex\tex/latex/amsfonts\umsa.fd
+LaTeX Font Info:    Try loading font information for U+msa on input line 43.
+("C:\Users\laure\AppData\Local\Programs\MiKTeX 2.9\tex/latex/amsfonts\umsa.fd"
 File: umsa.fd 2013/01/14 v3.01 AMS symbols A
 )
-LaTeX Font Info:    Trying to load font information for U+msb on input line 42.
-
- (D:\MikTex\tex/latex/amsfonts\umsb.fd
+LaTeX Font Info:    Try loading font information for U+msb on input line 43.
+("C:\Users\laure\AppData\Local\Programs\MiKTeX 2.9\tex/latex/amsfonts\umsb.fd"
 File: umsb.fd 2013/01/14 v3.01 AMS symbols B
 )
 <input.jpg, id=1, 3035.34pt x 2441.12pt>
 File: input.jpg Graphic file (type jpg)
 <use input.jpg>
-Package pdftex.def Info: input.jpg  used on input line 59.
+Package pdftex.def Info: input.jpg  used on input line 60.
 (pdftex.def)             Requested size: 167.29893pt x 134.54137pt.
 
-Underfull \hbox (badness 10000) in paragraph at lines 55--62
+Underfull \hbox (badness 10000) in paragraph at lines 56--63
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 55--62
+Underfull \hbox (badness 10000) in paragraph at lines 56--63
 
  []
 
 [1
 
 
-{C:/Users/Anand/AppData/Local/MiKTeX/2.9/pdftex/config/pdftex.map}] [2 <./input
+{C:/Users/laure/AppData/Local/MiKTeX/2.9/pdftex/config/pdftex.map}] [2 <./input
 .jpg>]
-Overfull \hbox (6.11858pt too wide) in paragraph at lines 119--122
+Overfull \hbox (6.11858pt too wide) in paragraph at lines 120--123
 \OT1/cmr/m/n/10.95 Ergebnis:|  B[]ucher-Koordinatensystem als 2D-Array mit Ur-s
 prung links-
  []
 
 [3]
-Overfull \hbox (27.20012pt too wide) in paragraph at lines 164--178
+Overfull \hbox (143.57446pt too wide) in paragraph at lines 167--181
  [] 
  []
 
 
-LaTeX Warning: Citation `lowe2004' on page 4 undefined on input line 188.
+LaTeX Warning: Citation `lowe2004' on page 4 undefined on input line 191.
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 187--197
+
+ []
 
 [4]
-Overfull \hbox (15.55054pt too wide) in paragraph at lines 206--213
+
+LaTeX Warning: Citation `harris' on page 5 undefined on input line 198.
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 198--202
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 198--202
+
+ []
+
+
+LaTeX Warning: Citation `integralimg' on page 5 undefined on input line 203.
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 203--206
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 203--206
+
+ []
+
+
+LaTeX Warning: Citation `otsu' on page 5 undefined on input line 207.
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 216--226
+
+ []
+
+[5]
+
+LaTeX Warning: Citation `harris' on page 6 undefined on input line 227.
+
+
+LaTeX Warning: Citation `otsu' on page 6 undefined on input line 227.
+
+
+LaTeX Warning: Citation `integralimg' on page 6 undefined on input line 228.
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 227--231
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 227--231
+
+ []
+
+
+Overfull \hbox (14.21219pt too wide) in paragraph at lines 232--237
+[]\OT1/cmr/m/n/10.95 Um die La-bels zu er-ken-nen, ha-ben wir uns auf-grund der
+ ver-schie-de-nen Label-Dimensionen
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 232--237
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 232--237
+
+ []
+
+
+Overfull \hbox (15.55054pt too wide) in paragraph at lines 240--247
 \OT1/cmr/m/n/10.95 Zur Eva-lu-ie-rung geh[]ort auch das Tes-ten der ein-zel-nen
  Me-tho-di-ken (se-pa-rat), mit Erw[]ahnung
  []
 
-No file edbv_ag_c3.bbl.
-[5] [6] (edbv_ag_c3.aux)
+[6] (edbv_ag_c3.bbl) [7] (edbv_ag_c3.aux)
 
 LaTeX Warning: There were undefined references.
 
+
+LaTeX Warning: Label(s) may have changed. Rerun to get cross-references right.
+
  ) 
 Here is how much of TeX's memory you used:
- 8303 strings out of 492453
- 138654 string characters out of 3138203
- 329600 words of memory out of 3000000
- 12536 multiletter control sequences out of 15000+200000
- 13363 words of font info for 51 fonts, out of 3000000 for 9000
+ 7698 strings out of 492946
+ 127704 string characters out of 3126266
+ 315315 words of memory out of 3000000
+ 11463 multiletter control sequences out of 15000+200000
+ 13676 words of font info for 52 fonts, out of 3000000 for 9000
  1141 hyphenation exceptions out of 8191
- 51i,8n,61p,10098b,320s stack positions out of 5000i,500n,10000p,200000b,50000s
- <C:\Users\Anand\AppData\Local\MiKTeX\2.9\fonts/pk/ljfour/jknappen/ec/dpi600\
-tcrm1095.pk><D:/MikTex/fonts/type1/public/amsfonts/cm/cmbx10.pfb><D:/MikTex/fon
-ts/type1/public/amsfonts/cm/cmmi10.pfb><D:/MikTex/fonts/type1/public/amsfonts/c
-m/cmr10.pfb><D:/MikTex/fonts/type1/public/amsfonts/cm/cmr12.pfb><D:/MikTex/font
-s/type1/public/amsfonts/cm/cmssbx10.pfb><D:/MikTex/fonts/type1/public/amsfonts/
-cm/cmsy10.pfb><D:/MikTex/fonts/type1/public/amsfonts/cm/cmti10.pfb>
-Output written on edbv_ag_c3.pdf (6 pages, 6490126 bytes).
+ 51i,10n,52p,9118b,332s stack positions out of 5000i,500n,10000p,200000b,50000s
+ <C:\Users\laure\AppData\Local\MiKTeX\2.9\fonts/pk/ljfour/jknappen/ec/dpi600\
+tcrm1095.pk><C:/Users/laure/AppData/Local/Programs/MiKTeX 2.9/fonts/type1/publi
+c/amsfonts/cm/cmbx10.pfb><C:/Users/laure/AppData/Local/Programs/MiKTeX 2.9/font
+s/type1/public/amsfonts/cm/cmmi10.pfb><C:/Users/laure/AppData/Local/Programs/Mi
+KTeX 2.9/fonts/type1/public/amsfonts/cm/cmr10.pfb><C:/Users/laure/AppData/Local
+/Programs/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmr12.pfb><C:/Users/laure/A
+ppData/Local/Programs/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmssbx10.pfb><C
+:/Users/laure/AppData/Local/Programs/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/
+cmsy10.pfb><C:/Users/laure/AppData/Local/Programs/MiKTeX 2.9/fonts/type1/public
+/amsfonts/cm/cmti10.pfb>
+Output written on edbv_ag_c3.pdf (7 pages, 6496152 bytes).
 PDF statistics:
- 56 PDF objects out of 1000 (max. 8388607)
+ 61 PDF objects out of 1000 (max. 8388607)
  0 named destinations out of 1000 (max. 500000)
  6 words of extra memory for PDF output out of 10000 (max. 10000000)
 

@@ -13,6 +13,7 @@
 \usepackage{color}
 \usepackage[]{geometry}
 \usepackage{textcomp}
+\usepackage{soul}
 
 \newcommand\tab[1][1cm]{\hspace*{#1}}
 
@@ -136,23 +137,25 @@ Methodik- Pipeline
 		\hline
 		Prototyp & 10.11. & 30\\
 		\hline
-		Hough-Transformation & 17.11. & 50\\
+		Hough-Transformation & \st{17.11.} 20.12. & \st{50} 2\\
 		\hline
-		Perspektivenkorrektur & 17.11. & 6\\
+		Perspektivenkorrektur & \st{17.11.} 23.12. & \st{6} 20\\
 		\hline
-		Labelerkennung & 25.11. & 80\\
+		Labelerkennung & \st{25.11.} 14.11. & 25\\
 		\hline
-		Labels in Buch-Koordinaten & 1.12. & 4\\
+		Labelerkennung - Verbesserungen & \st{25.11.} 5.1. & 30\\
 		\hline
-		Optical Character Recognition & 10.12. & 110\\
+		Labels in Buch-Koordinaten & \st{1.12.} 4.1. & \st{4} 0.2\\
 		\hline
-		Labels filtern & 15.12. & 6\\
+		Optical Character Recognition & \st{10.12.} 3.1. & \st{110} 40\\
 		\hline
-		Daten in Output-Format umwandeln & 15.12. & 4\\
+		Labels filtern & \st{15.12.} nicht abgeschl. & \st{6} nicht abgeschl.\\
 		\hline
-		Tests & 18.12. & 5\\
+		Daten in Output-Format umwandeln & 5.1. & \st{4} 0\\
 		\hline
-		Evaluierung & 20.12. & 5 \\
+		Tests & \st{18.12.} 5.1. & 5\\
+		\hline
+		Evaluierung & {20.12.} 5.1. & \st{5} 4 \\
 		\hline
 		\end{tabular}
 \end{table}
@@ -165,14 +168,14 @@ Methodik- Pipeline
     \hline
   Name & Tätigkeiten\\
     \hline
-    	Anna Nieto-Berezhinskaya & ?\\
+    	Anna Nieto-Berezhinskaya & Harris Eckendetektor (zu feinfühlig und kann deshalb nicht eingesetzt werden)\\
 		\hline
-		Anand Eichner & houghTransform (+ locals), PerspectiveCorrection (+ locals),\\
+		Anand Eichner & houghTransform (+ lokale Funktionen), PerspectiveCorrection (+ lokale Funktionen),\\
 		\hline
-		Laurenz Edmund Fiala & label\_detection (+ locals),\\
+		Laurenz Edmund Fiala & label\_detection (+ lokale Funktionen),\\
 		\hline
-		Aleksandar Vucenovic & ocr (+ locals), ncc, ssd\_naive (+ locals),\\
-		 & preprocessing (+ locals)\\
+		Aleksandar Vucenovic & ocr (+ locals), NCC, SSD\_naive (+ lokale Funktionen),\\
+		 & preprocessing (+ lokale Funktionen)\\
 		\hline
   \end{tabular}
 \end{center}
@@ -188,6 +191,24 @@ Die erwähnten Methoden werden zum größten Teil auf Beschreibungen in Büchern
 Ein Beispielsatz (inkl. entsprechender Literaturangabe am Ende des Berichts): Interest Points wurden mittels Scale Invariant Feature Transform \cite{lowe2004} detektiert.\\
 Bei der Verwendung von Latex gestaltet sich das Zitieren besonders einfach - siehe Beispielssatz im Source der Latex-Vorlage.\\
 \textbf{Wichtig in diesem Abschnitt ist, dass sich der Leser Eures Berichts mit den verwendeten Methodiken auskennt und weiß, weshalb ihr diese Methodiken verwendet habt und keine anderen. Es soll dem Leser helfen den nächsten Abschnitt des Berichts besser zu verstehen.}
+\\
+\\
+\textbf{Label Detection}
+
+\textit{Harris-Eckendetektor} \cite{harris}\\
+Der Harris-Eckendetektor wird genutzt, um die Ecken der einzelnen Labels zu erkennen.
+Ursprünglich war geplant, diese Methode selbst zu implementieren, jedoch war die selbst implementierte Variante zu sensibel und das konnte aufgrund von fehlenden Projektmitgliedern nicht mehr ausgebessert werden.\\
+\\
+
+\textit{Summed Area Table / Integral Imaging} \cite{integralimg}\\
+Das Integral Imaging wird benutzt, um die Intensität der einzelnen Label-Kandidaten effizient berechnen zu können. Im Programmverlauf wird das genutzt, um das Verhältnis von dunken zu hellen Bildabschnitten zu berechenen und damit bestimmen zu können, ob ein Bereich als Label gelten kann oder nicht.\\
+\\
+
+\textit{Otsu-Threshold} \cite{otsu}\\
+Es wird ein globaler Threshold benötigt um Labels vom Hintergrund abzugrenzen. Das Integral Image beruht auf dem Ergebnis der Bildmaske dieses Thresholds. Ein Otsu-Threshold eignet sich sehr gut um dynamisch in jedem Bild einen akzeptablen Threshold zu ermitteln.\\
+Der Threshold wird auch lokal pro Label-Kandidat angewandt, um den oft sehr hellgrauen Text vom Hintergrund (dem Label) abzugrenzen. Damit ist das Ergebnis des Programms wesentlich zuverlässiger.
+
+
 %%------------------------------------------------------
 
 %%------------------------------------------------------
@@ -199,6 +220,19 @@ Hier ist Platz für Implementierungsdetails wie zB. gewählte Parameter. \\
 Wie startet der User das Programm? Welche Parameter hat der User zu setzen?\\
 Auch in diesem Abschnitt können Referenzen und Zitate notwendig sein.\\
 \textbf{Wichtig in diesem Abschnitt ist, dass der Leser Eures Berichts versteht wie ihr Euer Projekt in MATLAB umgesetzt habt um sich auch im Quelltext leichter zurechtfinden zu können.}
+\\
+\\
+\textbf{Label Detection}
+
+Zuerst werden mit einem Harris-Eckendetektor (MATLAB-builtin) die Ecken im Bild gefunden \cite{harris}. Danach wird ein globaler Otsu-Threshold berechnet \cite{otsu}, der genutzt wird, um eine binäre Bildmaske zu erstellen, wobei alle Pixel mit größerer Intensität als der Threshold, auf 1 gesetzt werden, und alle anderen auf 0.\\
+Mit dieser Maske wird wiederum ein Summed Area Table erstellt \cite{integralimg}.\\
+Für alle gefundenen Ecken wird nun versucht Nachbarn zu finden, die ein plausibles Label ergeben könnten. Dabei wird aus dem Vorschitt der Persprektivenkorrektur die Höhe der Bücherregale berechnet und daraus die ungefähren Label-Dimensionen abgeleitet. Für alle gefundenen Ecken-Nachbar-Kombinationen wird nun überprüft, ob der Schwarzanteil dem eines typischen Labels entsprcht. Dafür wird ein lokaler Otsu-Threshold berechnet, der den Label-Text vom Hintergrund trennen soll. Im Falle eines schrägen Labels, werden mittels der MATLAB-Funktion "imclearborder" eventuell vorhandene Ränder ignoriert. Dann wird mit dieser Maske die anzahl an schwarzen Pixeln summiert und in Verhältnis zu dem Ergebnis des Integral Imaging (weiße Bildteile) verglichen. Wenn dieser Wert im Akzeptanzbereich liegt, nehmen wir an, im Bereich zwischen der Ecke-Nachbar-Kombination befindet sich ein Label.\\
+\\
+
+Um die Labels zu erkennen, haben wir uns aufgrund der verschiedenen Label-Dimensionen am Anfang des Projekts dazu entschieden, mittels Integral Imaging (Summed Area Table) zu bestimmen, ob ein Bereich als Label gelten kann oder nicht.\\
+Der Prototyp war auch recht erfolgversprechend. Jedoch sind wir im Verlauf des Projekts auf einige Limitationen bei dieser Herangehensweise gestoßen.\\
+Es hat sich herausgestellt, dass es oft nicht ganz trivial ist, bei verschiedenen Auflösungen die korrekten Ecken mit dem Harris-Eckendetector zu finden. Hier spielt das Preprocessing, welches ein einfacher Gaußfilter ist, eine große Rolle. Auch die Größe des Gauß-Konvolutionskernels für den Harris-Detektor ist wichtig. Aufgrund von Zeitmangel gegen Ende des Projekts, konnten diese Werte leider nicht mehr so genau bestimmt werden und deshalb ist das Ergebnis leider nicht so genau, wie eigentlich möglich bzw. gewünscht.\\
+\\
 %%------------------------------------------------------
 
 %%------------------------------------------------------
