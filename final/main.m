@@ -82,12 +82,12 @@ end
 %}
 function lines = sort_labels(labels)
     %% Group Labels into lines
-    THRES = (labels(1,3) - labels(1,1)) * 0.75;
-    lines = [struct("labels",[labels(1,:)],"average", (labels(1,1) + labels(1,3))/2)];
+    THRES = (labels(1,4) - labels(1,2)) * 0.75;
+    lines = [struct("labels",[labels(1,:)],"average", (labels(1,2) + labels(1,4))/2)];
     for i = 2:size(labels,1)
         found = false;
         for j = 1:length(lines)
-            lHeight = (labels(i,1) + labels(i,3))/2;
+            lHeight = (labels(i,2) + labels(i,4))/2;
             if (abs(lines(j).average-lHeight) < THRES)
                 lines(j).average = (lines(j).average * size(lines(j).labels,1) + lHeight) / (size(lines(j).labels,1)+1);
                 lines(j).labels = [lines(j).labels; labels(i,:)];
@@ -96,12 +96,12 @@ function lines = sort_labels(labels)
             end
         end
         if (found == false)
-            lines = [lines, struct("labels",[labels(i,:)],"average", (labels(i,1) + labels(i,3))/2)];
+            lines = [lines, struct("labels",[labels(i,:)],"average", (labels(i,2) + labels(i,4))/2)];
         end
     end
     
     %% Sort lines in ascending order
     for i = 1:length(lines)
-        lines(i).labels = sortrows(lines(i).labels,2);
+        lines(i).labels = sortrows(lines(i).labels,1);
     end
 end
