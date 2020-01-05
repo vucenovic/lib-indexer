@@ -164,18 +164,20 @@ Methodik- Pipeline
 %%------------------------------------------------------
 \section{Arbeitsteilung}
 \begin{center}
-  \begin{tabular}{ |l | c | }
+  \begin{tabular}{ |l | l | }
     \hline
   Name & Tätigkeiten\\
     \hline
-    	Anna Nieto-Berezhinskaya & Harris Eckendetektor (zu feinfühlig und kann deshalb nicht eingesetzt werden)\\
+    	Anna Nieto-Berezhinskaya & Harris Eckendetektor (zu feinfühlig und kann\\
+    	&deshalb nicht eingesetzt werden)\\
 		\hline
-		Anand Eichner & houghTransform (+ lokale Funktionen), PerspectiveCorrection (+ lokale Funktionen),\\
+		Anand Eichner & houghTransform (+ lokale Funktionen), PerspectiveCorrection\\
+		&(+ lokale Funktionen),\\
 		\hline
-		Laurenz Edmund Fiala & label\_detection (+ lokale Funktionen),\\
+		Laurenz Edmund Fiala & label\_detection (+ lokale Funktionen)\\
 		\hline
-		Aleksandar Vucenovic & ocr (+ locals), NCC, SSD\_naive (+ lokale Funktionen),\\
-		 & preprocessing (+ lokale Funktionen)\\
+		Aleksandar Vucenovic & ocr (+ locals), NCC, SSD\_naive\\
+		& (+ lokale Funktionen) preprocessing (+ lokale Funktionen)\\
 		\hline
   \end{tabular}
 \end{center}
@@ -253,7 +255,7 @@ Für die Perspektivenkorrekur ist die PerspectiveCorrection.m Datei zuständig. 
 Zuerst werden mit einem Harris-Eckendetektor (MATLAB-builtin) die Ecken im Bild gefunden \cite{harris}. Danach wird ein globaler Otsu-Threshold berechnet \cite{otsu}, der genutzt wird, um eine binäre Bildmaske zu erstellen, wobei alle Pixel mit größerer Intensität als der Threshold, auf 1 gesetzt werden, und alle anderen auf 0.\\
 Mit dieser Maske wird wiederum ein Summed Area Table erstellt \cite{integralimg}.\\
 Für alle gefundenen Ecken wird nun versucht Nachbarn zu finden, die ein plausibles Label ergeben könnten. Dabei wird aus dem Vorschitt der Persprektivenkorrektur die Höhe der Bücherregale berechnet und daraus die ungefähren Label-Dimensionen abgeleitet. Diese onstanten Umrechnungsfaktoren wurden durch analysieren von Bildern abgelesen und fix in das Programm eingetragen. So ist zum Beispiel der Faktor von Regalhöhe zu Labelhöhe 0.135.\\
-Für alle gefundenen Ecken-Nachbar-Kombinationen wird nun überprüft, ob der Schwarzanteil dem eines typischen Labels entsprcht. Dafür wird ein lokaler Otsu-Threshold berechnet, der den Label-Text vom Hintergrund trennt. Mit diesem . Im Falle eines schrägen Labels, werden mittels der MATLAB-Funktion "imclearborder" eventuell vorhandene Ränder ignoriert. Dann wird mit dieser Maske die anzahl an schwarzen Pixeln summiert und in Verhältnis zu dem Ergebnis des Integral Imaging (weiße Bildteile) verglichen. Wenn dieser Wert im Akzeptanzbereich liegt, nehmen wir an, im Bereich zwischen der Ecke-Nachbar-Kombination befindet sich ein Label.\\
+Für alle gefundenen Ecken-Nachbar-Kombinationen wird nun überprüft, ob der Schwarzanteil dem eines typischen Labels entsprcht. Nach einigen Tests stellte sich heraus, dass am wenigsten Labels übersprungen wurden  Dafür wird ein lokaler Otsu-Threshold berechnet, der den Label-Text vom Hintergrund trennt. Mit diesem . Im Falle eines schrägen Labels, werden mittels der MATLAB-Funktion "imclearborder" eventuell vorhandene Ränder ignoriert. Dann wird mit dieser Maske die anzahl an schwarzen Pixeln summiert und in Verhältnis zu dem Ergebnis des Integral Imaging (weiße Bildteile) verglichen. Wenn dieser Wert im Akzeptanzbereich liegt, nehmen wir an, im Bereich zwischen der Ecke-Nachbar-Kombination befindet sich ein Label.\\
 \\
 \\
 %%------------------------------------------------------
