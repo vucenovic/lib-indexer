@@ -41,7 +41,6 @@ edgeImg = edge(img, 'prewitt');
 se = strel('square',2);                
 edgeImgDilate = imdilate(edgeImg, se); 
 filledImg= imfill(edgeImgDilate,'holes');
-imshow(filledImg);
 
 % use regionprops to get bounding boxes of objects
 
@@ -55,20 +54,31 @@ box_corrected = deleteLines(box);
 
 box_sliced = sliceBoxes(box_corrected);
 
-% get centoids of characters
+% get centroids of characters
 centroidsXY = vertcat(box_sliced.Centroid);
 
-colors = hsv(length(box_sliced));
+% sort the indices column-wise
+% source: 
+% https://stackoverflow.com/questions/43076798/how-to-control-the-order-of-detected-objects-by-regionprops-in-matlab
+box_sliced = sortIndex(box_sliced, centroidsXY);
+[~, ~, centroidsXY(:, 2)] = histcounts(centroidsXY(:, 2), 3); 
+[~, sortIndex] = sortrows(centroidsXY, [2 1]);  
+box_sliced = box_sliced(sortIndex);  
+
+imshow(img);
+hold on;
+colors = hsv(numel(box_sliced));
 for k = 1:length(box_sliced)
     rectangle('position',box_sliced(k).BoundingBox, 'EdgeColor',colors(k,:));
 end
 
 % segment the regions by cropping image using bounding box rectangle
-% coordinates, save them as images in a temporary folder
+% coordinates, save the first three letters of a label first,
+% then the 3 digit code, then the author
 patches = []
 for k = 1:length(box_sliced)
-    subImage = imcrop(img, box_sliced(k).BoundingBox);
-    patches = [patches, struct("image",subImage)];
+        subImage = imcrop(img, box_sliced(k).BoundingBox);
+        patches = [patches, struct("image",subImage)];
 end
 
 end
