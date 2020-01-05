@@ -7,15 +7,28 @@
     Author:
         Laurenz Edmund Fiala (11807869)
 %}
-function result = label_detection(input_img, is_debug)
+function result = label_detection(input_img, shelf_height_px, is_debug)
 
     img_double = im2double(input_img);
     img_grey = rgb2gray(img_double);
     
+    %% APPROXIMATE LABEL DIMENSIONS / PROPERTIES
+    % based on shelf height
+    
+    approx_label_height = shelf_height_px * 0.135;
+    approx_label_width = approx_label_height * 0.583;
+    min_label_height = max(approx_label_height - 20, approx_label_height * 0.8);
+    max_label_height = min(approx_label_height + 20, approx_label_height * 1.2);
+    min_label_width = max(20, approx_label_width * 0.2);
+    max_label_width = min(approx_label_width + 20, approx_label_width * 1.2);
+    
+    brightness_amount_range = [7, 25];      % acceptable ratio between bright and dark areas of a label (see check_if_label())
+    x_diff_range = [min_label_width, max_label_width];
+    y_diff_range = [min_label_height, max_label_height];
+        
     %% GLOBAL THRESHOLD
-    % we apply the threshold twice. all pixels lower than the first th are
-    % clipped to that same th value. this makes the second th less likely to
-    % be too high, yet it is high enough to separate text from labels.
+    % we apply the global threshold. all pixels lower than the th are
+    % clipped to that same th value.
  
     th_img = img_grey;
     global_th = otsu_threshold(th_img);
@@ -27,11 +40,12 @@ function result = label_detection(input_img, is_debug)
 
 
     %% CORNER DETECTION
-
+    % unfortunately we could not implement this on our own, because
+    % the implementation of one of our colleagues was too sensitive.
+    
     img_grey_gaus = imgaussfilt(img_grey, 4);
     corners = corner(img_grey_gaus, 5000, 'FilterCoefficients', fspecial('gaussian',[9 1], 2));
     corners = [corners(:, 2), corners(:, 1)]; % swap columns so it's right
-    %corners = harris_corners(img_grey_gaus);
 
 
     %% INTEGRAL IMAGING
@@ -44,10 +58,7 @@ function result = label_detection(input_img, is_debug)
 
 
     %% FIND LABELS
-
-    brightness_amount_range = [7, 25];      % acceptable ratio between bright and dark areas of a label (see check_if_label())
-    x_diff_range = [20, 125];               % distance in px that two corners need to be apart in x direction [min, max]
-    y_diff_range = [100, 200];              % distance in px that two corners need to be apart in y direction [min, max]
+    
     labels = [];
     corners = sortrows(corners);            % sort corners by their y-axis
 
