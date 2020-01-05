@@ -148,7 +148,7 @@ function result = label_detection(input_img, shelf_height_px, is_debug)
         label_index = label_index + 1;
     end
 
-    result = labels;
+    result = [labels(:, 2), labels(:, 1), labels(:, 4), labels(:, 3)];
     
     %% DEBUG
     if is_debug
