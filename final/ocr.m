@@ -5,10 +5,16 @@
 % 1. Preprocessing
 % 2. NCC or SSD template matching algorithm
 
-% example:
+% example if using all templates:
 % actual = "MTA 900 MULLER"
-% SSD = "HTA SQQ YVLLR"
+% SSD = "HTA SQQ YVLLLR"
 % NNC = "LLL LLL FLJJR"
+
+% example if using only digits for second word:
+% actual = "MTA 900 MULLER"
+% SSD = "HTA 477 YVLLLLR"
+% NNC = "LLL 111 FLJJLR"
+
 
 function label = ocr(label)
 
@@ -25,7 +31,11 @@ label = [];
 for k = 1:numel(patch)
     bestCorrSSD = 10.0;
     bestCorrNCC = 0.0;
-    for j = 1:numel(templates)
+    iter = numel(templates);
+    if k > 3 && k <= 6
+        iter = 10;
+    end
+    for j = 1:iter
         if STRATEGY == "NCC"
             corrMatrix = ncc(templates(j).template, patch(k).image);
             value = max(corrMatrix, [], 'all');
@@ -58,6 +68,7 @@ label = [label, struct("wordOne", wordOne, "wordTwo", wordTwo, "author", wordThr
 end
 
 function templates = loadTemplates()
+% author: aleksandar vucenovic
 currentFolder = pwd;
 pathTemplate = strcat(pwd,'\templates\');
 files = dir(fullfile(pathTemplate,'*.bmp'));
