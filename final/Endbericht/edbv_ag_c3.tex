@@ -191,7 +191,41 @@ Bei der Verwendung von Latex gestaltet sich das Zitieren besonders einfach - sie
 
 Im Vorverarbeitungsschritt wird das Eingabebild in ein Graustufenbild umgewandelt und mit einem vertikalen und einem horizontalen Sobelfilter convoluted um Kantenbilder zu erhalten, dann wird der Betrag dieser Werte genommen um Kanten in beide Richtungen zu finden. Um dem Rauschen im Bild entgegenzuwirken werden alle verbundobjekte unter einer bestimmten Größe ausgefiltert um nur lange Kanten zu behalten. Bei den Vertikalen werden zusätzlich nur die 20 größten Verbundobjekte ausgewählt um dem Rauschen durch die vielen Vertikalen entgegenzuwirken.
 Die beiden Kantenbilder werden mit hilfe einer Hough-Transformation in den Parameterraum transformiert. Von dort werden folglich einige Maxmima ausgelesen um einige Geraden im Bild zu ermitteln.
-Aus den Linienscharen werden jeweils zwei Vertikale und zwei Horizontale Ausgewählt um ein Rechteck im Raum darzustellen. Die vier Eckpunkte dieses Rechtecks werden vor der geometrischen Verzerrung perspektivisch Korrekt hochskaliert um die unnötige erstellung redundanter Daten zu verhindern. Mit den skalierten Eckpunkten und den eigentlichen Eckpunkten des Bildes wird nun eine perpsektivische Transformationsmatrix gebildet und auf das Bild angewendet.
+Aus den Linienscharen werden jeweils zwei Vertikale und zwei Horizontale Ausgewählt um ein Rechteck im Raum darzustellen. Die vier Eckpunkte dieses Rechtecks werden vor der geometrischen Verzerrung perspektivisch Korrekt hochskaliert um die unnötige erstellung redundanter Daten zu verhindern. Mit den skalierten Eckpunkten und den eigentlichen Eckpunkten des Bildes wird nun eine perpsektivische Transformationsmatrix gebildet und auf das Bild angewendet.\\
+
+Image Thresholding (Adaptive):\\
+
+Das Binarizing des Labels fungiert als Noise Reduktion, zusätzlich ermöglicht es Template Matching mit weiß/schwarzen Bitmaps, da es ein schwarz/weiß Bild zurückliefert.\\
+
+Dilation:\\
+
+Dilation ermöglicht eine korrekte Regionproperties Funktion, da es die Löcher in den Components füllt, und diese damit sauber verbindet.\\
+
+Regionprops:\\
+
+Regionprops gibt uns die Centrtoids und Bounding boxes von collected components, die in unserem Fall potentielle character sind. Die Methode wird benutzt um die Charakter zu segmentieren, in dem man das Originalbild mit den Koordinaten der Bounding Boxes cropped. Zustätzlich verschafft es uns eine Sortiermethode, mithilfe der Centroids können wir die Wörter nämlich richtig von links oben nach rechts unten sortieren,
+da Centroids die XY-Koordinaten der Mitte eines Buchstabens im Bild liefert.\\
+
+Prewitt Edge-Detection:\\
+
+Prewitt Edge-Detection wird als preprocessing step für die Dilation und Hough Transformation genutzt, da diese ein Kantenbild als Eingabe brauchen und Prewitt dieses liefert.\\
+
+Normalized Cross Correlation (Template Matching):\\
+
+Der nxcorr/NCC Algorithmus ist ein sehr weit verbreiteter Algorithmus für das Template Matching. In Matlab selbst ist er als normxcorr2-Funktion durchführbar. 
+Er wird verwenden, um die korrelation zwischen template und original image zu finden, und normalisiert um richtige Ergebnisse unabhängig von Brightness 
+Unterschieden zu liefern. Das Ergebniss ist eine Korrelationsmatrix, die Werte zwischen -1 und 1 enthält, wobei 0 die wenigste Korrelation repräsentiert, 
+und 1 die meiste (-1, falls das Original oder Template negiert sind). Wir suchen das globale Maxima in der Matrix, da es den besten Korrelationswert liefert, 
+und vergleichen diesen mit allen Werten der Templates. Das Template mit dem höchsten Korrelationswert wird schließlich als matched character weitergegeben.\\
+
+Paper: http://scribblethink.org/Work/nvisionInterface/nip.pdf\\
+
+Sum of Squared Differences (Template Matching):\\
+
+Der SSD Algorithmus wird auch wie der nxcorr2-Algorithmus zum Template Matching verwendet. Der SSD Algorithmus beruht darauf, dass wenn man ein Template 
+über das Originalbild legt, und die Summe der quadrierten Differenzen der Pixelwerte bildet, ein möglichst kleiner Wert bei einem match rauskommen sollte (da 
+sich die Werte sehr ähnlich sein müssen). Wir haben eine naivere Variante implementiert, da unser Template
+und Bild immer gleichgroß sind, und immer beide Bilder die Character zur gänze umschließen, daher müssen wir keine Regionen nach absuchen und offsets ausprobieren.\\
 %%------------------------------------------------------
 
 %%------------------------------------------------------
