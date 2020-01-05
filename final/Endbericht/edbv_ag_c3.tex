@@ -181,37 +181,25 @@ Methodik- Pipeline
 
 %%------------------------------------------------------
 \section{Methodik}
-(2-3 Seiten)\\
-Hier wird die verwendete Methodik in der Theorie vorgestellt:\\
-Welche Methodik wurde verwendet? Warum eignet sich diese Methodik für die gewählte Problemstellung? Habt ihr Methoden verändert (Einschränkungen, Abwandlungen, Parameter), wenn ja wie? etc.\\
-Die erwähnten Methoden werden zum größten Teil auf Beschreibungen in Büchern oder wissenschaftlichen Artikeln beruhen. Daher ist hier auch der richtige Platz für Zitate. Die hier zitierten Publikationen sollten mittels Abkürzung bzw. Nummer referenziert sein und sich in der Referenzliste am Ende des Berichts über diese Bezeichnung finden lassen.\\
-Ein Beispielsatz (inkl. entsprechender Literaturangabe am Ende des Berichts): Interest Points wurden mittels Scale Invariant Feature Transform \cite{lowe2004} detektiert.\\
-Bei der Verwendung von Latex gestaltet sich das Zitieren besonders einfach - siehe Beispielssatz im Source der Latex-Vorlage.\\
-\textbf{Wichtig in diesem Abschnitt ist, dass sich der Leser Eures Berichts mit den verwendeten Methodiken auskennt und weiß, weshalb ihr diese Methodiken verwendet habt und keine anderen. Es soll dem Leser helfen den nächsten Abschnitt des Berichts besser zu verstehen.}
-
+\textbf{Perspektivenkorrektur:}\\
 Im Vorverarbeitungsschritt wird das Eingabebild in ein Graustufenbild umgewandelt und mit einem vertikalen und einem horizontalen Sobelfilter convoluted um Kantenbilder zu erhalten, dann wird der Betrag dieser Werte genommen um Kanten in beide Richtungen zu finden. Um dem Rauschen im Bild entgegenzuwirken werden alle verbundobjekte unter einer bestimmten Größe ausgefiltert um nur lange Kanten zu behalten. Bei den Vertikalen werden zusätzlich nur die 20 größten Verbundobjekte ausgewählt um dem Rauschen durch die vielen Vertikalen entgegenzuwirken.
 Die beiden Kantenbilder werden mit hilfe einer Hough-Transformation in den Parameterraum transformiert. Von dort werden folglich einige Maxmima ausgelesen um einige Geraden im Bild zu ermitteln.
 Aus den Linienscharen werden jeweils zwei Vertikale und zwei Horizontale Ausgewählt um ein Rechteck im Raum darzustellen. Die vier Eckpunkte dieses Rechtecks werden vor der geometrischen Verzerrung perspektivisch Korrekt hochskaliert um die unnötige erstellung redundanter Daten zu verhindern. Mit den skalierten Eckpunkten und den eigentlichen Eckpunkten des Bildes wird nun eine perpsektivische Transformationsmatrix gebildet und auf das Bild angewendet.\\
 
-Image Thresholding (Adaptive):\\
-
+\textbf{Image Thresholding (Adaptive):}\\
 Das Binarizing des Labels fungiert als Noise Reduktion, zusätzlich ermöglicht es Template Matching mit weiß/schwarzen Bitmaps, da es ein schwarz/weiß Bild zurückliefert.\\
 
-Dilation:\\
-
+\textbf{Dilation:}\\
 Dilation ermöglicht eine korrekte Regionproperties Funktion, da es die Löcher in den Components füllt, und diese damit sauber verbindet.\\
 
-Regionprops:\\
-
+\textbf{Regionprops:}\\
 Regionprops gibt uns die Centrtoids und Bounding boxes von collected components, die in unserem Fall potentielle character sind. Die Methode wird benutzt um die Charakter zu segmentieren, in dem man das Originalbild mit den Koordinaten der Bounding Boxes cropped. Zustätzlich verschafft es uns eine Sortiermethode, mithilfe der Centroids können wir die Wörter nämlich richtig von links oben nach rechts unten sortieren,
 da Centroids die XY-Koordinaten der Mitte eines Buchstabens im Bild liefert.\\
 
-Prewitt Edge-Detection:\\
-
+\textbf{Prewitt Edge-Detection:}\\
 Prewitt Edge-Detection wird als preprocessing step für die Dilation und Hough Transformation genutzt, da diese ein Kantenbild als Eingabe brauchen und Prewitt dieses liefert.\\
 
-Normalized Cross Correlation (Template Matching):\\
-
+\textbf{Normalized Cross Correlation (Template Matching):}\\
 Der nxcorr/NCC Algorithmus ist ein sehr weit verbreiteter Algorithmus für das Template Matching. In Matlab selbst ist er als normxcorr2-Funktion durchführbar. 
 Er wird verwenden, um die korrelation zwischen template und original image zu finden, und normalisiert um richtige Ergebnisse unabhängig von Brightness 
 Unterschieden zu liefern. Das Ergebniss ist eine Korrelationsmatrix, die Werte zwischen -1 und 1 enthält, wobei 0 die wenigste Korrelation repräsentiert, 
@@ -220,8 +208,7 @@ und vergleichen diesen mit allen Werten der Templates. Das Template mit dem höc
 
 Paper: http://scribblethink.org/Work/nvisionInterface/nip.pdf\\
 
-Sum of Squared Differences (Template Matching):\\
-
+\textbf{Sum of Squared Differences (Template Matching):}\\
 Der SSD Algorithmus wird auch wie der nxcorr2-Algorithmus zum Template Matching verwendet. Der SSD Algorithmus beruht darauf, dass wenn man ein Template 
 über das Originalbild legt, und die Summe der quadrierten Differenzen der Pixelwerte bildet, ein möglichst kleiner Wert bei einem match rauskommen sollte (da 
 sich die Werte sehr ähnlich sein müssen). Wir haben eine naivere Variante implementiert, da unser Template
