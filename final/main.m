@@ -48,8 +48,6 @@ function [] = main(imagePath)
             labels(i).labels = [labels(i).labels, label];
         end
     end
-
-    eliminate_duplicates();     % remove duplicate neighbors
     
     jsonData = jsonencode(labels);
 end
