@@ -6,9 +6,9 @@ function [] = main(imagePath)
     [image, distortionData] = PerspectiveCorrection(image);
     
     shelf_height_px = calc_shelf_height(distortionData);
-    %labelQuads = label_detection(image, shelf_height_px, true);
+    labelQuads = label_detection(image, shelf_height_px, true);
     
-    labelQuads = [50,100,400,500;100,50,500,300;700,50,1000,300];
+    %labelQuads = [50,100,400,500;100,50,500,300;700,50,1000,300];
     
     labelQuads = sort_labels(labelQuads);
     
@@ -57,15 +57,18 @@ function lines = sort_labels(labels)
     THRES = (labels(1,3) - labels(1,1)) * 0.75;
     lines = [struct("labels",[labels(1,:)],"average", (labels(1,1) + labels(1,3))/2)];
     for i = 2:size(labels,1)
+        found = false;
         for j = 1:length(lines)
             lHeight = (labels(i,1) + labels(i,3))/2;
             if (abs(lines(j).average-lHeight) < THRES)
                 lines(j).average = (lines(j).average * size(lines(j).labels,1) + lHeight) / (size(lines(j).labels,1)+1);
                 lines(j).labels = [lines(j).labels; labels(i,:)];
+                found = true;
                 break;
-            else
-                lines = [lines, struct("labels",[labels(i,:)],"average", (labels(i,1) + labels(i,3))/2)];
             end
+        end
+        if (found == false)
+            lines = [lines, struct("labels",[labels(i,:)],"average", (labels(i,1) + labels(i,3))/2)];
         end
     end
     
