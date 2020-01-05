@@ -1,6 +1,7 @@
 img = imread('input2.jpg');
 img_double = im2double(img);
 img_grey = rgb2gray(img_double);
+figure(2);
 
 %% GLOBAL THRESHOLD
 % we apply the threshold twice. all pixels lower than the first th are
@@ -10,7 +11,7 @@ img_grey = rgb2gray(img_double);
 th_img = img_grey;
 global_th = otsu_threshold(th_img);
 th_img(th_img < global_th) = global_th;
-global_th = otsu_threshold(th_img);
+%global_th = otsu_threshold(th_img);
 th_mask = img_grey >= global_th;
 
 %th_img = transform_clip_image(img_grey, global_th, 1);
@@ -45,11 +46,50 @@ for c = 1:size(corners, 1)
     
     neighbors = find_neighbors(corners, c, x_diff_range, y_diff_range);
     for n = 1:size(neighbors, 1)
-        if check_if_label(img_grey, th_mask, img_integral_brights, corners(c, :), neighbors(n, :), brightness_amount_range)
-            labels = [labels; corners(c, :), neighbors(n, :)];
+        label_quad = unify_coords(corners(c, :), neighbors(n, :));
+        if check_if_label(img_grey, img_integral_brights, label_quad, brightness_amount_range)
+            labels = [labels; label_quad];
         end
     end
     
+end
+
+
+label_index = 1;
+while label_index < size(labels, 1)
+    
+    neighbor_index = 1;
+    while neighbor_index < size(labels, 1)
+        
+        if label_index == neighbor_index
+            neighbor_index = neighbor_index + 1;
+            continue;
+        end
+        
+        label_1 = labels(label_index, :);
+        label_2 = labels(neighbor_index, :);
+        if intersects_label(label_1, label_2)
+            combined_label = [min([label_1(1), label_2(1)]), min([label_1(2), label_2(2)]), max([label_1(3), label_2(3)]), max([label_1(4), label_2(4)])];
+            %neighbor_index = neighbor_index - 1;
+            
+            if check_for_range(combined_label(1:2), combined_label(3:4), x_diff_range, y_diff_range) && ...
+               check_if_label(img_grey, img_integral_brights, combined_label, brightness_amount_range)
+           
+                first_index = min([label_index, neighbor_index]);
+                second_index = max([label_index, neighbor_index]);
+                labels = [labels(1:first_index-1, :); combined_label; labels(first_index+1:second_index-1, :); labels(second_index+1:end, :)];
+                neighbor_index = 1;
+                continue;
+            %else
+            %   labels = [labels(1:label_index-1, :); combined_label; labels(label_index+1:neighbor_index-1, :); labels(neighbor_index+1:end, :)];
+            end
+            
+        end
+        
+        neighbor_index = neighbor_index + 1;
+    end
+    
+    label_index = label_index + 1;
 end
 
 % labels contains final result
@@ -61,7 +101,11 @@ corners_t = [corners(:, 2), corners(:, 1)];
 imshow(img_grey);
 hold on;
 for t = 1:size(labels, 1)
-    plot([labels(t, 2), labels(t, 4)], [labels(t, 1), labels(t, 3)], 'LineWidth', 2);
+    topLeft = labels(t, 1:2);
+    topRight = [labels(t, 1), labels(t, 4)];
+    bottomLeft = [labels(t, 3), labels(t, 2)];
+    bottomRight = labels(t, 3:4);
+    plot(polyshape([topLeft(2), bottomLeft(2), bottomRight(2), topRight(2)], [topLeft(1), bottomLeft(1), bottomRight(1), topRight(1)]), 'EdgeColor', 'red', 'LineWidth', 1);
 end
 for c = 1:size(corners_t, 1)
     th = 0:pi/2:2*pi;
@@ -154,14 +198,12 @@ end
     Author:
         Laurenz Edmund Fiala (11807869)
 %}
-function result = check_if_label(img, img_mask, integral_image_brights, corner, neighbor, brights_darks_ratio_range)
+function result = check_if_label(img_grey, integral_image_brights, label_quad, brights_darks_ratio_range)
     
-    % ### TODO REMOVE ### label_candidate = img(min([corner(1), neighbor(1)]):max([corner(1), neighbor(1)]), min([corner(2), neighbor(2)]):max([corner(2), neighbor(2)]));
-    
-    label_candidate_th = img_mask(min([corner(1), neighbor(1)]):max([corner(1), neighbor(1)]), min([corner(2), neighbor(2)]):max([corner(2), neighbor(2)]));
-    dark_amount = sum(1-clear_label_border(label_candidate_th), 1:2);
+    label_candidate = img_grey(label_quad(1):label_quad(3), label_quad(2):label_quad(4));
+    dark_amount = sum(1-clear_label_border(label_candidate), 1:2);
 
-    ii_brightness_amount = integral_image_result(integral_image_brights, corner, neighbor);    
+    ii_brightness_amount = integral_image_result(integral_image_brights, label_quad);    
     brightness_ratio = ii_brightness_amount / dark_amount;
     
     result = brightness_ratio >= brights_darks_ratio_range(1) && ...
@@ -185,7 +227,9 @@ end
     Author:
         Laurenz Edmund Fiala (11807869)
 %}
-function result = clear_label_border(label_binary)
+function result = clear_label_border(label_grey)
+
+    label_binary = label_grey >= otsu_threshold(label_grey);
 
     label_binary_inverted = 1-label_binary; % before: bright areas = 1; now: dark areas = 1
     label_binary_inverted_cleared = imclearborder(label_binary_inverted);
@@ -209,8 +253,7 @@ end
 
 %{
     Calculate and return the sum of intensity levels contained within the two
-    given corners (must be diagonal corners; either top-left:bottom-right
-    (and vice-versa) or top-right:bottom-left (and vice-versa).
+    given corners (must be top-left and bottom-right corners).
 
     Sources:
         http://delivery.acm.org/10.1145/810000/808600/p207-crow.pdf
@@ -223,30 +266,15 @@ end
     Author:
         Laurenz Edmund Fiala (11807869)
 %}
-function result = integral_image_result(integral_image, corner, neighbor)
+function result = integral_image_result(integral_image, label_quad)
 
-    ii_coords_1 = integral_image(corner(1), corner(2));
-    ii_coords_12 = integral_image(corner(1), neighbor(2));
-    ii_coords_2 = integral_image(neighbor(1), neighbor(2));
-    ii_coords_21 = integral_image(neighbor(1), corner(2));
-    
-    % neighbor lies to the bottom left
-    if corner(1) < neighbor(1) && corner(2) > neighbor(2)
-        A = ii_coords_12;
-        B = ii_coords_1;
-        C = ii_coords_2;
-        D = ii_coords_21;
-        
-    % neighbor lies to the bottom right
-    elseif corner(1) < neighbor(1) && corner(2) < neighbor(2)
-        A = ii_coords_1;
-        B = ii_coords_12;
-        C = ii_coords_21;
-        D = ii_coords_2;
-        
-    else
-        error('We assume the corners are sorted by Y-axis and neighbors have a Y greater than and X not equal to corner.');
-    end
+    corner = label_quad(1:2);
+    neighbor = label_quad(3:4);
+
+    A = integral_image(corner(1), corner(2));
+    B = integral_image(corner(1), neighbor(2));
+    C = integral_image(neighbor(1), corner(2));
+    D = integral_image(neighbor(1), neighbor(2));
     
     result = D + A - B - C;
     
@@ -431,4 +459,25 @@ function result = harris_corners(greyscale_image)
     end
     [posc, posr] = find(result == 1);
     result = [posc, posr];
+end
+
+function result = intersects_label(label, label_2)
+    
+    result = label(1) <= label_2(3) && label(2) <= label_2(4) && ...
+             label(3) >= label_2(1) && label(4) >= label_2(2);
+
+end
+
+function result = unify_coords(corner, neighbor)
+
+    ii_coords_1 = [corner(1), corner(2)];
+    ii_coords_12 = [corner(1), neighbor(2)];
+    ii_coords_2 = [neighbor(1), neighbor(2)];
+    ii_coords_21 = [neighbor(1), corner(2)];
+    
+    result = [min([ii_coords_1(1), ii_coords_12(1), ii_coords_2(1), ii_coords_21(1)]), ...
+              min([ii_coords_1(2), ii_coords_12(2), ii_coords_2(2), ii_coords_21(2)]), ...
+              max([ii_coords_1(1), ii_coords_12(1), ii_coords_2(1), ii_coords_21(1)]), ...
+              max([ii_coords_1(2), ii_coords_12(2), ii_coords_2(2), ii_coords_21(2)])];
+    
 end
