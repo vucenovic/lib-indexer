@@ -3,7 +3,7 @@
 %}
 function [] = main(imagePath)
     image = imread(imagePath);
-    %% Fix fucky jpg standard bullshit
+    %% fix jpg orientation
     info = imfinfo(imagePath);
     if isfield(info,'Format') && info(1).Format == "jpg" && isfield(info,'Orientation')
        orient = info(1).Orientation;
