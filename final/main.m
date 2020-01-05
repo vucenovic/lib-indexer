@@ -12,21 +12,16 @@ function [] = main(imagePath)
     
     labelQuads = sort_labels(labelQuads);
     
-    STRATEGY = "NCC";
-    for i = 1:size(labelQuads, 1)
-        quad = labelQuads(i, :);
-        subImg = image(quad(2):quad(4),quad(1):quad(3), :);
-        patches = preprocessing(subImg);
-        for j = 1:length(patches)
-            if(STRATEGY=="NCC")
-               ncc(); 
-            elseif(STRATEGY=="SSD")
-                
-            end
+    labels = [];
+    for i = 1:length(labelQuads)
+        labels = [labels, struct("labels",[])];
+        for j = 1:size(labelQuads(i).labels,1)
+            label = ocr(imcrop(image,labelQuads(i).labels(j,:)));
+            label.bounds = labelQuads(i).labels(j,:);
+            labels(i).labels = [labels(i).labels, label];
         end
     end
-    
-    sort_labels();              % labels to shelf coords
+
     eliminate_duplicates();     % remove duplicate neighbors
     
 end
@@ -58,6 +53,7 @@ end
         Anand Eichner (11808244)
 %}
 function lines = sort_labels(labels)
+    %% Group Labels into lines
     THRES = (labels(1,3) - labels(1,1)) * 0.75;
     lines = [struct("labels",[labels(1,:)],"average", (labels(1,1) + labels(1,3))/2)];
     for i = 2:size(labels,1)
@@ -71,5 +67,10 @@ function lines = sort_labels(labels)
                 lines = [lines, struct("labels",[labels(i,:)],"average", (labels(i,1) + labels(i,3))/2)];
             end
         end
+    end
+    
+    %% Sort lines in ascending order
+    for i = 1:length(lines)
+        lines(i).labels = sortrows(lines(i).labels,2);
     end
 end
