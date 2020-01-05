@@ -91,8 +91,6 @@ correlation(correlation < -1) = 0;
 end
 
 function localsum = localSum(I,T_size)
-% calculates the correlation between template
-% and image by using fast fourier transform
 % author:  Dirk-Jan Kroon (2020). Fast/Robust Template Matching
 %(https://www.mathworks.com/matlabcentral/fileexchange/24925-fast-robust-template-matching),
 % MATLAB Central File Exchange. Retrieved January 3, 2020. 

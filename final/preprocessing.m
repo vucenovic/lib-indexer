@@ -38,8 +38,8 @@ img = 1-imclearborder(1 - img);
 % dilate and fill 
 
 edgeImg = edge(img, 'prewitt');
-se = strel('square',2);                
-edgeImgDilate = imdilate(edgeImg, se); 
+struct = strel('square',2);                
+edgeImgDilate = imdilate(edgeImg, struct); 
 filledImg= imfill(edgeImgDilate,'holes');
 
 % use regionprops to get bounding boxes of objects
@@ -64,13 +64,6 @@ box_sliced = sortIndex(box_sliced, centroidsXY);
 [~, ~, centroidsXY(:, 2)] = histcounts(centroidsXY(:, 2), 3); 
 [~, sortIndex] = sortrows(centroidsXY, [2 1]);  
 box_sliced = box_sliced(sortIndex);  
-
-imshow(img);
-hold on;
-colors = hsv(numel(box_sliced));
-for k = 1:length(box_sliced)
-    rectangle('position',box_sliced(k).BoundingBox, 'EdgeColor',colors(k,:));
-end
 
 % segment the regions by cropping image using bounding box rectangle
 % coordinates, save the first three letters of a label first,

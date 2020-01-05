@@ -20,8 +20,8 @@ pathTemplate = strcat(pwd,'\templates\');
 files = dir(fullfile(pathTemplate,'*.bmp'));
 templates = [];
 for k = 1:numel(files)
-    file = fullfile(myPath, files(k).name);
+    file = fullfile(pathTemplate, files(k).name);
     template = imread(file);
-    templates = [templates, struct("template", template), struct("char", files(k).name)];
+    templates = [templates, struct("template", template, "char", files(k).name)];
 end
 end
