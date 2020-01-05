@@ -7,18 +7,18 @@
 
 % example if using all templates:
 % actual = "MTA 900 MULLER"
-% SSD = "HTA SQQ YVLLR"
+% SSD = "HTA SQQ YVLLLR"
 % NNC = "LLL LLL FLJJR"
 
 % example if using only digits for second word:
 % actual = "MTA 900 MULLER"
-% SSD = "HTA 477 YVLLR"
-% NNC = "LLL 111 FLJJR"
+% SSD = "HTA 477 YVLLLLR"
+% NNC = "LLL 111 FLJJLR"
 
 
 function label = ocr(label)
 
-STRATEGY = "NCC";
+STRATEGY = "SSD";
 label = imread('label_1.png');
 patch = preprocessing(label);
 templates = loadTemplates();
@@ -68,6 +68,7 @@ label = [label, struct("wordOne", wordOne, "wordTwo", wordTwo, "author", wordThr
 end
 
 function templates = loadTemplates()
+% author: aleksandar vucenovic
 currentFolder = pwd;
 pathTemplate = strcat(pwd,'\templates\');
 files = dir(fullfile(pathTemplate,'*.bmp'));
