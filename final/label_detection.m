@@ -29,11 +29,8 @@ function result = label_detection(input_img, shelf_height_px, is_debug)
     %% GLOBAL THRESHOLD
     % we apply the global threshold. all pixels lower than the th are
     % clipped to that same th value.
- 
-    th_img = img_grey;
-    global_th = otsu_threshold(th_img);
-    %th_img(th_img < global_th) = global_th;
-    %global_th = otsu_threshold(th_img);
+
+    global_th = otsu_threshold(img_grey);
     th_mask = img_grey >= global_th;
 
 
@@ -364,6 +361,8 @@ end
 %{
     Calculates the greyscale_img's threshold using otsu's method.
 
+    -- THIS IS PRELIMINARY HALF-HALF COPY OF MATLABS TH-FUNCTION --
+
     Sources:
         https://engineering.purdue.edu/kak/computervision/ECE661.08/OTSU_paper.pdf
         accessed on 2020/01/04
@@ -372,7 +371,8 @@ end
         accessed on 2020/01/04
 
     Author:
-        Laurenz Edmund Fiala (11807869)
+        MATLAB's otsuthresh-method
+        (Laurenz Edmund Fiala (11807869))
 %}
 function result = otsu_threshold(greyscale_img)
     
