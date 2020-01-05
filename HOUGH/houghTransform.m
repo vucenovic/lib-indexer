@@ -6,7 +6,7 @@
     Returns: The accumulator image in hough space and the LUTs for both
     axes
 
-    @Author Anand Eichner
+    Author:         Anand Eichner (11808244)
 %}
 function [HS,THETA,RHO] = houghTransform(input,dRes,THETA)
     [sX,sY,~] = size(input);
