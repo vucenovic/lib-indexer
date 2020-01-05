@@ -43,7 +43,8 @@ function [] = main(imagePath)
     for i = 1:length(labelQuads)
         labels = [labels, struct("labels",[])];
         for j = 1:size(labelQuads(i).labels,1)
-            label = ocr(imcrop(image,labelQuads(i).labels(j,:)));
+            labelQuad = labelQuads(i).labels(j,:);
+            label = ocr(image(labelQuad(2):labelQuad(4), labelQuad(1):labelQuad(3)));
             label.bounds = labelQuads(i).labels(j,:);
             labels(i).labels = [labels(i).labels, label];
         end

@@ -19,7 +19,6 @@
 function label = ocr(label)
 
 STRATEGY = "SSD";
-label = imread('label_1.png');
 patch = preprocessing(label);
 templates = loadTemplates();
 wordOne = '';
