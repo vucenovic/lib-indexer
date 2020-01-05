@@ -18,9 +18,9 @@ function result = label_detection(input_img, shelf_height_px, is_debug)
     approx_label_height = shelf_height_px * 0.135;
     approx_label_width = approx_label_height * 0.583;
     min_label_height = approx_label_height * 0.65;
-    max_label_height = min(approx_label_height + 20, approx_label_height * 1.1);
+    max_label_height = approx_label_height * 1.2;
     min_label_width = max(20, approx_label_width * 0.2);
-    max_label_width = min(approx_label_width + 20, approx_label_width * 1.2);
+    max_label_width = approx_label_width * 1.2;
     
     brightness_amount_range = [7, 25];      % acceptable ratio between bright and dark areas of a label (see check_if_label())
     x_diff_range = [min_label_width, max_label_width];
@@ -32,19 +32,21 @@ function result = label_detection(input_img, shelf_height_px, is_debug)
  
     th_img = img_grey;
     global_th = otsu_threshold(th_img);
-    th_img(th_img < global_th) = global_th;
-    global_th = otsu_threshold(th_img);
+    %th_img(th_img < global_th) = global_th;
+    %global_th = otsu_threshold(th_img);
     th_mask = img_grey >= global_th;
-
-    %th_img = transform_clip_image(img_grey, global_th, 1);
 
 
     %% CORNER DETECTION
     % unfortunately we could not implement this on our own, because
     % the implementation of one of our colleagues was too sensitive.
     
-    img_grey_gaus = imgaussfilt(img_grey, 4);
-    corners = corner(img_grey_gaus, 5000, 'FilterCoefficients', fspecial('gaussian',[23 1], 2));
+    %img_grey_gauss = imgaussfilt(img_grey, round(val_range([3, 7], [2700, 2000], shelf_height_px)));
+    %corners = corner(img_grey_gauss, 5000, ...
+    %                 'FilterCoefficients', fspecial('gaussian',[round(val_range([7, 17], [2000, 2700], shelf_height_px)) 1], 2), ...
+    %                 'SensitivityFactor', val_range([0.01, 0.06], [2700, 2000], shelf_height_px));
+    img_grey_gaus = imgaussfilt(img_grey, 7);
+    corners = corner(img_grey_gaus, 5000, 'FilterCoefficients', fspecial('gaussian',[17 1], 2), 'SensitivityFactor', 0.01);
     corners = [corners(:, 2), corners(:, 1)]; % swap columns so it's right
 
 
@@ -52,9 +54,7 @@ function result = label_detection(input_img, shelf_height_px, is_debug)
     % create integral image for brightness values.
     % pixels higher than the global th are assumed to be white
 
-    bright_th = img_grey;
-    bright_th(bright_th >= global_th) = 1;
-    img_integral_brights = generate_integral_image(bright_th);
+    img_integral_brights = generate_integral_image(double(th_mask));
 
 
     %% FIND LABELS
@@ -242,17 +242,15 @@ function result = check_if_label(img_grey, integral_image_brights, label_quad, b
     dark_amount = sum(1-clear_label_border(label_candidate), 1:2);
     
     
-    label_width = label_candidate(4) - label_candidate(2);
-    label_height = label_candidate(3) - label_candidate(1);
+    label_width = label_quad(4) - label_quad(2);
+    label_height = label_quad(3) - label_quad(1);
     brightness_max_value  = label_width * label_height;
     
     ii_brightness_amount = integral_image_result(integral_image_brights, label_quad);    
     brightness_ratio = ii_brightness_amount / dark_amount;
     
-    % ### TODO ###
-    %if ii_brightness_amount < brightness_max_value / 2 % at least half of the label must be considered white
-    
-    result = brightness_ratio >= brights_darks_ratio_range(1) && ...
+    result = ii_brightness_amount >= brightness_max_value / 2 && ... % at least half of the label must be considered white
+             brightness_ratio >= brights_darks_ratio_range(1) && ...
              brightness_ratio <= brights_darks_ratio_range(2);
 
 end
