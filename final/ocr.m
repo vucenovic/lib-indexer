@@ -8,9 +8,25 @@
 function label = ocr(label)
 
 STRATEGY = "NCC";
-
-%patches = preprocessing(label);
+label = imread('label_1.png');
+patches = preprocessing(label);
 templates = loadTemplates();
+
+for k = 1:numel(patches)
+    values = []
+    wordOne = '';
+    wordTwo = '';
+    wordThree = '';
+    for j = 1:numel(templates)
+        if STRATEGY == "NCC";
+            value = ncc(templates(j).template, patches(k).image);
+            values = [values, value];
+            [bestCorr, index] = max(values, [], 'all');
+            matchedChar = templates(index).char;
+        end
+    end
+end
+
 
 end
 
@@ -22,6 +38,7 @@ templates = [];
 for k = 1:numel(files)
     file = fullfile(pathTemplate, files(k).name);
     template = imread(file);
-    templates = [templates, struct("template", template, "char", files(k).name)];
+    charname = extractBefore(files(k).name, ".");
+    templates = [templates, struct("template", template, "char", charname)];
 end
 end

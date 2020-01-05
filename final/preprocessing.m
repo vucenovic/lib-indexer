@@ -60,7 +60,6 @@ centroidsXY = vertcat(box_sliced.Centroid);
 % sort the indices column-wise
 % source: 
 % https://stackoverflow.com/questions/43076798/how-to-control-the-order-of-detected-objects-by-regionprops-in-matlab
-box_sliced = sortIndex(box_sliced, centroidsXY);
 [~, ~, centroidsXY(:, 2)] = histcounts(centroidsXY(:, 2), 3); 
 [~, sortIndex] = sortrows(centroidsXY, [2 1]);  
 box_sliced = box_sliced(sortIndex);  
@@ -70,8 +69,8 @@ box_sliced = box_sliced(sortIndex);
 % then the 3 digit code, then the author
 patches = []
 for k = 1:length(box_sliced)
-        subImage = imcrop(img, box_sliced(k).BoundingBox);
-        patches = [patches, struct("image",subImage)];
+    subImage = imcrop(img, box_sliced(k).BoundingBox);
+    patches = [patches, struct("image",subImage)];
 end
 
 end
