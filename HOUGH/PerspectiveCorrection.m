@@ -94,6 +94,7 @@ function [correctedImage,spaceData] = PerspectiveCorrection(baseImage)
     
     %% Write additional return data
     spaceData.imRef = spacialRef;
+    spaceData.transform = transformMatrix;
     imOffset = [-spacialRef.XWorldLimits(1),-spacialRef.YWorldLimits(1)];
     spaceData.originalBounds = [0 0; imageSize(2) 0; imageSize(2) imageSize(1); 0 imageSize(1)] + repmat(imOffset,4,1);
     spaceData.horizontals = transformLines(linesHorizontal,transformMatrix,imOffset);

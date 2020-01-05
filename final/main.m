@@ -24,6 +24,7 @@ function [] = main(imagePath)
 
     eliminate_duplicates();     % remove duplicate neighbors
     
+    jsonData = jsonencode(labels);
 end
 
 %{
