@@ -27,6 +27,8 @@ wordThree = '';
 matchedChar = '';
 label = [];
 
+THRESHOLD = 5;
+
 for k = 1:numel(patch)
     bestCorrSSD = 10.0;
     bestCorrNCC = 0.0;
@@ -38,14 +40,14 @@ for k = 1:numel(patch)
         if STRATEGY == "NCC"
             corrMatrix = ncc(templates(j).template, patch(k).image);
             value = max(corrMatrix, [], 'all');
-            if value > bestCorrNCC
+            if value > bestCorrNCC && value > THRESHOLD
                 bestCorrNCC = value;
                 bestIndex = j;
             matchedChar = templates(bestIndex).char;
             end
         elseif STRATEGY == "SSD"
             value = ssd_naive(templates(j).template, patch(k).image);
-            if value < bestCorrSSD
+            if value < bestCorrSSD && value < THRESHOLD
                 bestCorrSSD = value;
                 bestIndex = j;
             matchedChar = templates(bestIndex).char;

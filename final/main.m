@@ -1,7 +1,7 @@
 %{
 
 %}
-function [] = main(imagePath)
+function jsonData = main(imagePath)
     image = imread(imagePath);
     %% fix jpg orientation
     info = imfinfo(imagePath);

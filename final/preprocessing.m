@@ -67,7 +67,7 @@ end
 % segment the regions by cropping image using bounding box rectangle
 % coordinates, save the first three letters of a label first,
 % then the 3 digit code, then the author
-patches = []
+patches = [];
 for k = 1:length(box_sliced)
     subImage = imcrop(img, box_sliced(k).BoundingBox);
     patches = [patches, struct("image",imresize(subImage, [42,24]))];
@@ -115,7 +115,7 @@ function box_sliced = sliceBoxes(box_corrected)
 % the characters are monospaced, and the width should always be smaller
 % than the height
 
-box_sliced = []
+box_sliced = [];
 for i = 1:length(box_corrected)
     b = box_corrected(i);
     coord = b.BoundingBox;
