@@ -305,6 +305,21 @@ Insgesamt 14 Bilder von Bücherregalen in der Universitätsbibliothek, aufgenomm
 		  Unsere OCR-Implementierung returniert keine zuverlässigen Konfidenzwerte, weshalb es uns nicht möglich war die Korrektheit der Labels bzw. Buchstaben/Zahlen aufgrund dieser Eigenschaft zu messen. Die Konfidenzwerte hatten eine zu niedrige Variabilität und dadurch konnte kein genereller Threshold für das Akzeptieren bzw. Verweigern von Labels gefunden werden. Die Konfidenz war immer im gleichen Bereich, auch bei offensichtlich falschen Resultaten.
 		  
 \end{itemize}
+\subsection{Generelle Evaluierung}
+Wir erhalten bei keinem Bild wirklich korrekte Ergebnisse. Je gerader das Bild und je stärker der Kontrast der Etiketten ist desto besser sind die Ergebnisse, jedoch erhalten wir dennoch viele falsche Zeichen vom OCR. Ein großes Upgrade wäre vermutlich noch den deterministischen OCR durch einen Machine-learning Algorithmus zu ersetzen, beziehungsweise die Templates noch etwas anzupassen.\\
+
+\textbf{Die einzelnen Module}\\
+Die einzelnen Module sind so aufgebaut, dass sie nicht direkt voneinander abhängen. Jedoch müssen die jeweiligen Vorbedingungen stets erfüllt sein.\\
+
+\textbf{Perpsektivenkorrektur}\\
+Die Perspektivenkorrekt funktioniert bei allen Bildern im Datensatz relativ gut. Wichtig ist hier jedoch dass die Bilder in der richtigen Orientierung geladen werden.\\
+
+\textbf{Label Erkennung}\\
+Wenn ein Bild mit minimaler perspektivischer Verzerrung eingespeist wird, dann funktioniert die Labelerkennung nominal. Je besser der Kontrast, desto besser die Ergebnisse.\\
+
+\textbf{OCR}\\
+Der OCR benötigt ein bild von einem möglichst unverzerrtem Label mit gutem Kontrast und einer guten Auflösung.\\
+
 %%------------------------------------------------------
 
 %%------------------------------------------------------
