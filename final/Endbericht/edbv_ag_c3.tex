@@ -47,7 +47,7 @@ Aleksandar Vucenovic (01635282)}
 (1-1,5 Seiten)\\
 entspricht dem (aktualisierten) Konzept
 \subsection{Ziel}
-Der Lib-Indexer soll aus einem Bild eines Bücherregels der TU Wien, Bücher erkennen und den Inhalt der Etiketten als strukturiereten Text ausgeben.
+Das Projekt soll Bücher in einem Bücherregal erkennen, in Bücher-Koordinaten umwandeln und nach ihrem Label abspeichern.
 
 \subsection{Eingabe}
 JPG-Bild eines Bücherregals mit Büchern, auf denen eindeutige TU-Bibliotheks-Labels (schwarz-auf-weiß) kleben.
@@ -273,9 +273,33 @@ Die Optical Character Recognition ist eine Zusammensetzung aus dem Preprocessing
 
 %%------------------------------------------------------
 \section{Evaluierung}
-(2-X Seiten)\\
-Hier stellt ihr Euren Datensatz vor und beantwortet Evaluierungsfragen:\\
-z.B. Fakten zum Datensatz: Anzahl der Bilder, Größe der Bilder, Quelle des Datensatzes (falls selbst aufgenommen: Aufnahmegerät, Einstellungen,... / falls nicht selbst erstellt: Datenbank vorstellen... $\to$ Referenzen!)\\
+\subsection{Datensatz}
+Insgesamt 14 Bilder von Bücherregalen in der Universitätsbibliothek, aufgenommen mit einem Xiaomi Mi MIX 2S.\\Auflösung : 4032 x 3024 px, und alle anderen Einstellungen auf Auto.
+\subsection{Evaluierungsfragen}
+\textbf{Interaktion zwischen den Komponenten:}
+\begin{itemize}
+	\item \textit{Werden die Regalfächer korrekt erkannt?}\\
+		  Die Erkennung von Regalfächern wurde aufgrund von Schwierigkeiten bei der korrekten Erkennung dieser durch eine ungefähre Heuristik approximiert. Dies reicht aus um die Bücher in Zeilen einzuordnen.
+		  
+	\item \textit{Wird die Perspektive korrekt angepasst?}\\
+		  Die Perspektive wird bei allen Bildern im Datensatz in akzeptablem Maß korrigiert.
+		  
+	\item \textit{Werden alle Labels erkannt?}\\
+		  Es gibt mehr Probleme mit False-positives als mit nicht erkannten Labels. In seltenen Fällen wird ein Label nicht gar nicht erkannt, in den meisten Fällen werden die Labels mehrfach markiert.
+		  
+	\item \textit{Sind die Bounding Boxes der gefundenen Labels korrekt? Ist der gesamte Text darin enthalten?}\\
+		  Wir erhalten viele false-positives beziehungsweise unvollständige Bounding-areas, diese fallen jedoch bei der Optical Character Recognition durch, da aufgrund von fehlendem Texts oder eines zu kleinen Bereichs entweder zu wenige Zeichen, oder aufgrund des Rauschens von zu großen Bereichen zu viele Zeichen erkannt werden.
+		  
+	\item \textit{Werden die Labels korrekt in Bücher-Koordinaten umgewandelt?}\\
+		  Bücher werden aufgrund ihrer Labelkoordinaten in Zeilen einsortiert.
+		  
+	\item \textit{Werden die Labels der TU-Bibliothek korrekt gelesen und in Text umgewandelt?}\\
+		  Aufgrund der vielen False-positives aus dem vorherigen Schritt und der hohen variabilität der einzelnen Zeichen auf dem Bild, erhalten wir oft zu viele, zu wenige, oder gar die falschen Zeichen.\\(Sehr beliebt sind "Y" und "L" was falsche Zeichen angeht).
+		  
+	\item \textit{Wird die Wahrscheinlichkeit der Label-Korrektheit angemessen berechnet?}\\
+		  Wurde aufgrund von zu niedriger Variabilität entfernt. Die Konfidenz war immer im gleichen Bereich, auch bei offensichtlich falschen Resultaten.
+		  
+\end{itemize}
 Diskussion der Evaluierungsfragen: Beantwortung der Fragen, Diskussion anhand von Beispielen, Diskussion von Grenzfällen: für welche Bilder funktioniert die Implementierung, für welche nicht? Worin unterscheiden sich diese Bilder? Warum funktionieren sie nicht? etc.\\
 Evaluiert wird der ganze Datensatz, nicht nur einzelne Bilder. Einzelne Bilder können zum Aufzeigen von Fehlern/Problemen/besonders guten Ergebnissen... genutzt werden.\\
 Zur Evaluierung gehört auch das Testen der einzelnen Methodiken (separat), mit Erwähnung eventueller Einschränkungen.
@@ -283,7 +307,9 @@ Zur Evaluierung gehört auch das Testen der einzelnen Methodiken (separat), mit 
 
 %%------------------------------------------------------
 \section{Schlusswort}
-Unser EDBV-Projekt hat uns mit vielen, unterschiedlichen Problemstellungen konfrontiert. Vom korrekten Datensatz bis hin zur Optimierung mussten wir mit originellen und bestehenden Ideen, die auf unser gewähltes Programm zugeschnitten werden mussten, arbeiten. Letztdendlich konnten wir jedoch den Großteil unserer Evaluationsfragen erarbeiten und schließlich beantworten. Die Herausforderungen bestanden hauptsächlich darin, sich eine sinnvolle Struktur - sowohl organisatorisch, als auch implementierungstechnisch - auszudenken und weiters mit Problemen, die spezifisch in unserem Program und mit unseren Datensätzen auftreten zu analysieren und zu beheben. Zum Schluss wollen wir herausheben, dass die Erfahrungen, die wir gemacht haben, sowohl unsere Theorie- und Implementierungskentnisse, als auch Teamarbeit und Kommunikationsskills gestärkt haben.
+(max. 1 Seite)\\
+Hier fasst ihr Ergebnisse Eures Projekt zusammen:\\
+Welche Schlussfolgerung lässt sich ziehen? Gibt es offene Probleme? Wie lässt sich Eure Lösung noch verbessern? etc.
 %%------------------------------------------------------
 
 %%------------------------------------------------------
