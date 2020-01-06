@@ -48,6 +48,8 @@ function jsonData = main(imagePath)
         end
     end
     
+    labels = remove_invalid_labels(labels);
+    
     jsonData = jsonencode(labels);
 end
 
@@ -68,6 +70,34 @@ function shelf_height = calc_shelf_height(distortion_data)
     horizontals_positions = sort(horizontals_positions(2:2:end));
     horizontals_distances = diff(horizontals_positions);
     shelf_height = max(horizontals_distances);
+
+end
+
+%{
+    Book labels only have at max 8 chars for their author.
+    So we eiminate all labels with more chars than that. They are no valid
+    labels.
+
+    Sources:
+        -
+
+    Author:
+        Laurenz Edmund Fiala (11807869)
+%}
+function result = remove_invalid_labels(labels)
+    
+    result = [];
+    for i = 1:size(labels, 2)
+        for j = 1:size(labels(i).labels, 2)
+            label = labels(i).labels(j);
+            if strlength(label.author) <= 8 && ...
+               strlength(label.wordOne) > 0 && ...
+               strlength(label.wordTwo) > 0 && ...
+               strlength(label.author) > 0
+                result = [result; label];
+            end
+        end
+    end
 
 end
 
