@@ -44,8 +44,6 @@ Aleksandar Vucenovic (01635282)}
 
 %%------------------------------------------------------
 \section{Gewählte Problemstellung}
-(1-1,5 Seiten)\\
-entspricht dem (aktualisierten) Konzept
 \subsection{Ziel}
 Das Projekt soll Bücher in einem Bücherregal erkennen, in Bücher-Koordinaten umwandeln und nach ihrem Label abspeichern.
 
@@ -276,7 +274,7 @@ Die Optical Character Recognition ist eine Zusammensetzung aus dem Preprocessing
 \subsection{Datensatz}
 Insgesamt 14 Bilder von Bücherregalen in der Universitätsbibliothek, aufgenommen mit einem Xiaomi Mi MIX 2S.\\Auflösung : 4032 x 3024 px, und alle anderen Einstellungen auf Auto.
 \subsection{Evaluierungsfragen}
-\textbf{Interaktion zwischen den Komponenten:}
+\textbf{Interaktion zwischen den Komponenten}
 \begin{itemize}
 	\item \textit{Werden die Regalfächer korrekt erkannt?}\\
 		  Die Erkennung von Regalfächern wurde aufgrund von Schwierigkeiten bei der korrekten Erkennung dieser durch eine ungefähre Heuristik approximiert. Dies reicht aus um die Bücher in Zeilen einzuordnen.
@@ -285,7 +283,7 @@ Insgesamt 14 Bilder von Bücherregalen in der Universitätsbibliothek, aufgenomm
 		  Die Perspektive wird bei allen Bildern im Datensatz in akzeptablem Maß korrigiert.
 		  
 	\item \textit{Werden alle Labels erkannt?}\\
-		  Es gibt mehr Probleme mit False-positives als mit nicht erkannten Labels. In seltenen Fällen wird ein Label nicht gar nicht erkannt, in den meisten Fällen werden die Labels mehrfach markiert.
+		  Es gibt mehr Probleme mit False-positives als mit nicht erkannten Labels. In seltenen Fällen wird ein Label nicht  erkannt, in den meisten Fällen werden die Labels mehrfach markiert.
 		  
 	\item \textit{Sind die Bounding Boxes der gefundenen Labels korrekt? Ist der gesamte Text darin enthalten?}\\
 		  Wir erhalten viele false-positives beziehungsweise unvollständige Bounding-areas, diese fallen jedoch bei der Optical Character Recognition durch, da aufgrund von fehlendem Texts oder eines zu kleinen Bereichs entweder zu wenige Zeichen, oder aufgrund des Rauschens von zu großen Bereichen zu viele Zeichen erkannt werden.
@@ -294,15 +292,12 @@ Insgesamt 14 Bilder von Bücherregalen in der Universitätsbibliothek, aufgenomm
 		  Bücher werden aufgrund ihrer Labelkoordinaten in Zeilen einsortiert.
 		  
 	\item \textit{Werden die Labels der TU-Bibliothek korrekt gelesen und in Text umgewandelt?}\\
-		  Aufgrund der vielen False-positives aus dem vorherigen Schritt und der hohen variabilität der einzelnen Zeichen auf dem Bild, erhalten wir oft zu viele, zu wenige, oder gar die falschen Zeichen.\\(Sehr beliebt sind "Y" und "L" was falsche Zeichen angeht).
+		  Aufgrund der vielen False-positives aus dem vorherigen Schritt und der hohen Variabilität der einzelnen Zeichen auf dem Bild, erhalten wir oft zu viele, zu wenige, oder gar die falschen Zeichen.\\(Sehr beliebt sind "Y\dq  und "L" was falsche Zeichen angeht).
 		  
 	\item \textit{Wird die Wahrscheinlichkeit der Label-Korrektheit angemessen berechnet?}\\
 		  Wurde aufgrund von zu niedriger Variabilität entfernt. Die Konfidenz war immer im gleichen Bereich, auch bei offensichtlich falschen Resultaten.
 		  
 \end{itemize}
-Diskussion der Evaluierungsfragen: Beantwortung der Fragen, Diskussion anhand von Beispielen, Diskussion von Grenzfällen: für welche Bilder funktioniert die Implementierung, für welche nicht? Worin unterscheiden sich diese Bilder? Warum funktionieren sie nicht? etc.\\
-Evaluiert wird der ganze Datensatz, nicht nur einzelne Bilder. Einzelne Bilder können zum Aufzeigen von Fehlern/Problemen/besonders guten Ergebnissen... genutzt werden.\\
-Zur Evaluierung gehört auch das Testen der einzelnen Methodiken (separat), mit Erwähnung eventueller Einschränkungen.
 %%------------------------------------------------------
 
 %%------------------------------------------------------
