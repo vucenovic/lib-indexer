@@ -288,6 +288,13 @@ Insgesamt 14 Bilder von Bücherregalen in der Universitätsbibliothek, aufgenomm
 	\item \textit{Sind die Bounding Boxes der gefundenen Labels korrekt? Ist der gesamte Text darin enthalten?}\\
 		  Wir erhalten viele false-positives beziehungsweise unvollständige Bounding-areas, diese fallen jedoch bei der Optical Character Recognition durch, da aufgrund von fehlendem Texts oder eines zu kleinen Bereichs entweder zu wenige Zeichen, oder aufgrund des Rauschens von zu großen Bereichen zu viele Zeichen erkannt werden.
 		  
+\begin{figure}[H]
+ \centering
+ \includegraphics[width=0.4\textwidth]{label_det.jpg}
+ \caption{Erkannte Labels}
+ \label{fig:img}
+\end{figure}
+		  
 	\item \textit{Werden die Labels korrekt in Bücher-Koordinaten umgewandelt?}\\
 		  Bücher werden aufgrund ihrer Labelkoordinaten in Zeilen einsortiert. Im Ergebnisdatensatz wird jedoch nicht mehr zwischen den einzelnen Regalfächern unterschieden, es werde nur die Bounding Boxes der Labels zurückgegeben.
 		  
