@@ -237,7 +237,7 @@ Der Threshold wird auch lokal pro Label-Kandidat angewandt, um den oft sehr hell
 \section{Implementierung}
 \subsection{Main}
 Um das Framwork auszuführen muss main.m mit dem Pfad zum Bild als einziges Argument ausgeführt werden. Die main Funktion gibt dann den json String zurück.\\
-\textit{Beispielaufruf:} \texttt{main('Dataset/01.jpg');}\\
+\textit{Beispielaufruf:} \texttt{main('Dataset/01.jpg')}\\
 \\
 \subsection{Perspektivenkorrektur}
 Für die Perspektivenkorrekur ist die PerspectiveCorrection.m Datei zuständig. Diese nutzt einige Builtins für das Preprocessing und eine selbstgeschriebene Implementierung der Hough-Transformation (houghTransform.m). Zum Skalieren der Eckpunkte wurden einige Funktionen implementiert um geometrische Operationen mit Linien in Parameterform durchzuführen. Bei der Hough-Transform wird nur ein Wertebereich von -30 bis +30 Grad genutzt um den Parameterraum möglichst klein zu halten. Weiters wird nur nach 5 Maxima gesucht, dies bietet ein gutes Mittelding zwischen schlechten Ergebnissen und zu wenigen Ergebnissen. Es werden bei den Vertikalen Kanten die jeweils 20 Größten behalten dies bietet auch hier wieder ein gutes Mittelding zu viel Rauschen und einer zu geringen Chance eine gute Kante zu erhalten.\\
@@ -289,13 +289,13 @@ Insgesamt 14 Bilder von Bücherregalen in der Universitätsbibliothek, aufgenomm
 		  Wir erhalten viele false-positives beziehungsweise unvollständige Bounding-areas, diese fallen jedoch bei der Optical Character Recognition durch, da aufgrund von fehlendem Texts oder eines zu kleinen Bereichs entweder zu wenige Zeichen, oder aufgrund des Rauschens von zu großen Bereichen zu viele Zeichen erkannt werden.
 		  
 	\item \textit{Werden die Labels korrekt in Bücher-Koordinaten umgewandelt?}\\
-		  Bücher werden aufgrund ihrer Labelkoordinaten in Zeilen einsortiert.
+		  Bücher werden aufgrund ihrer Labelkoordinaten in Zeilen einsortiert. Im Ergebnisdatensatz wird jedoch nicht mehr zwischen den einzelnen Regalfächern unterschieden, es werde nur die Bounding Boxes der Labels zurückgegeben.
 		  
 	\item \textit{Werden die Labels der TU-Bibliothek korrekt gelesen und in Text umgewandelt?}\\
 		  Aufgrund der vielen False-positives aus dem vorherigen Schritt und der hohen Variabilität der einzelnen Zeichen auf dem Bild, erhalten wir oft zu viele, zu wenige, oder gar die falschen Zeichen.\\(Sehr beliebt sind "Y\dq  und "L" was falsche Zeichen angeht).
 		  
 	\item \textit{Wird die Wahrscheinlichkeit der Label-Korrektheit angemessen berechnet?}\\
-		  Wurde aufgrund von zu niedriger Variabilität entfernt. Die Konfidenz war immer im gleichen Bereich, auch bei offensichtlich falschen Resultaten.
+		  Unsere OCR-Implementierung returniert keine zuverlässigen Konfidenzwerte, weshalb es uns nicht möglich war die Korrektheit der Labels bzw. Buchstaben/Zahlen aufgrund dieser Eigenschaft zu messen. Die Konfidenzwerte hatten eine zu niedrige Variabilität und dadurch konnte kein genereller Threshold für das Akzeptieren bzw. Verweigern von Labels gefunden werden. Die Konfidenz war immer im gleichen Bereich, auch bei offensichtlich falschen Resultaten.
 		  
 \end{itemize}
 %%------------------------------------------------------
