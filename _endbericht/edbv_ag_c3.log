@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.20 (MiKTeX 2.9.6960 64-bit) (preloaded format=pdflatex 2019.1.30)  6 JAN 2020 15:55
+This is pdfTeX, Version 3.14159265-2.6-1.40.20 (MiKTeX 2.9.6960 64-bit) (preloaded format=pdflatex 2019.1.30)  6 JAN 2020 16:22
 entering extended mode
 **./edbv_ag_c3.tex
 (edbv_ag_c3.tex
@@ -541,7 +541,11 @@ Package: soul 2003/11/17 v2.4 letterspacing/underlining (mf)
 LaTeX Warning: Unused global option(s):
     [deutsch].
 
-(edbv_ag_c3.aux)
+(edbv_ag_c3.aux
+
+LaTeX Warning: Label `fig:img' multiply defined.
+
+)
 \openout1 = `edbv_ag_c3.aux'.
 
 LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 20.
@@ -558,8 +562,7 @@ LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 20.
 LaTeX Font Info:    ... okay on input line 20.
 LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 20.
 LaTeX Font Info:    Try loading font information for TS1+cmr on input line 20.
-
-("C:\Users\laure\AppData\Local\Programs\MiKTeX 2.9\tex/latex/base\ts1cmr.fd"
+ ("C:\Users\laure\AppData\Local\Programs\MiKTeX 2.9\tex/latex/base\ts1cmr.fd"
 File: ts1cmr.fd 2014/09/29 v2.5h Standard LaTeX font definitions
 )
 LaTeX Font Info:    ... okay on input line 20.
@@ -824,32 +827,66 @@ Underfull \hbox (badness 10000) in paragraph at lines 262--271
 
  []
 
-[8] [9] (edbv_ag_c3.bbl) [10] (edbv_ag_c3.aux) ) 
+[8] [9]
+<label_det.jpg, id=42, 628.3475pt x 563.60562pt>
+File: label_det.jpg Graphic file (type jpg)
+<use label_det.jpg>
+Package pdftex.def Info: label_det.jpg  used on input line 293.
+(pdftex.def)             Requested size: 167.29893pt x 150.05997pt.
+
+Underfull \hbox (badness 10000) in paragraph at lines 309--310
+
+ []
+
+[10 <./label_det.jpg>]
+Underfull \hbox (badness 10000) in paragraph at lines 311--313
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 314--316
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 317--319
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 320--322
+
+ []
+
+(edbv_ag_c3.bbl [11]) [12] (edbv_ag_c3.aux)
+
+LaTeX Warning: There were multiply-defined labels.
+
+ ) 
 Here is how much of TeX's memory you used:
- 7722 strings out of 492946
- 127932 string characters out of 3126266
- 315331 words of memory out of 3000000
- 11480 multiletter control sequences out of 15000+200000
+ 7727 strings out of 492946
+ 128016 string characters out of 3126266
+ 315371 words of memory out of 3000000
+ 11484 multiletter control sequences out of 15000+200000
  16034 words of font info for 62 fonts, out of 3000000 for 9000
  1141 hyphenation exceptions out of 8191
- 51i,10n,52p,9118b,332s stack positions out of 5000i,500n,10000p,200000b,50000s
- <C:\Users\laure\AppData\Local\
-MiKTeX\2.9\fonts/pk/ljfour/jknappen/ec/dpi600\tcrm1095.pk><C:/Users/laure/AppDa
-ta/Local/Programs/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmbx10.pfb><C:/User
-s/laure/AppData/Local/Programs/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmmi10
+ 51i,10n,52p,9118b,389s stack positions out of 5000i,500n,10000p,200000b,50000s
+ <C:\Users\laure\AppData\Local\MiKTeX\2.9\fonts/pk/ljfour/jknappen/ec/dpi600\
+tcrm1095.pk><C:/Users/laure/AppData/Local/Programs/MiKTeX 2.9/fonts/type1/publi
+c/amsfonts/cm/cmbx10.pfb><C:/Users/laure/AppData/Local/Programs/MiKTeX 2.9/font
+s/type1/public/amsfonts/cm/cmmi10.pfb><C:/Users/laure/AppData/Local/Programs/Mi
+KTeX 2.9/fonts/type1/public/amsfonts/cm/cmr10.pfb><C:/Users/laure/AppData/Local
+/Programs/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmr12.pfb><C:/Users/laure/A
+ppData/Local/Programs/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmr6.pfb><C:/Us
+ers/laure/AppData/Local/Programs/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmr8
 .pfb><C:/Users/laure/AppData/Local/Programs/MiKTeX 2.9/fonts/type1/public/amsfo
-nts/cm/cmr10.pfb><C:/Users/laure/AppData/Local/Programs/MiKTeX 2.9/fonts/type1/
-public/amsfonts/cm/cmr12.pfb><C:/Users/laure/AppData/Local/Programs/MiKTeX 2.9/
-fonts/type1/public/amsfonts/cm/cmr6.pfb><C:/Users/laure/AppData/Local/Programs/
-MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmr8.pfb><C:/Users/laure/AppData/Loca
-l/Programs/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmr9.pfb><C:/Users/laure/A
-ppData/Local/Programs/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmssbx10.pfb><C
-:/Users/laure/AppData/Local/Programs/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/
-cmti10.pfb><C:/Users/laure/AppData/Local/Programs/MiKTeX 2.9/fonts/type1/public
-/amsfonts/cm/cmtt10.pfb>
-Output written on edbv_ag_c3.pdf (10 pages, 6540788 bytes).
+nts/cm/cmr9.pfb><C:/Users/laure/AppData/Local/Programs/MiKTeX 2.9/fonts/type1/p
+ublic/amsfonts/cm/cmssbx10.pfb><C:/Users/laure/AppData/Local/Programs/MiKTeX 2.
+9/fonts/type1/public/amsfonts/cm/cmti10.pfb><C:/Users/laure/AppData/Local/Progr
+ams/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmtt10.pfb>
+Output written on edbv_ag_c3.pdf (12 pages, 6899357 bytes).
 PDF statistics:
- 82 PDF objects out of 1000 (max. 8388607)
+ 89 PDF objects out of 1000 (max. 8388607)
  0 named destinations out of 1000 (max. 500000)
- 6 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 11 words of extra memory for PDF output out of 10000 (max. 10000000)
 
