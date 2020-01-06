@@ -36,7 +36,7 @@ function result = label_detection(input_img, shelf_height_px, is_debug)
 
     %% CORNER DETECTION
     % unfortunately we could not implement this on our own, because
-    % the implementation of one of our colleagues was too sensitive.
+    % the implementation of one of our colleague was too sensitive.
     
     %img_grey_gauss = imgaussfilt(img_grey, round(val_range([3, 7], [2700, 2000], shelf_height_px)));
     %corners = corner(img_grey_gauss, 5000, ...
@@ -72,44 +72,6 @@ function result = label_detection(input_img, shelf_height_px, is_debug)
     end
     
     %% INTERSECT & REMOVE REDUNDANT LABELS
-    %{
-    label_index = 1;
-    while label_index < size(labels, 1)
-
-        neighbor_index = 1;
-        while neighbor_index < size(labels, 1)
-
-            if label_index == neighbor_index
-                neighbor_index = neighbor_index + 1;
-                continue;
-            end
-
-            label_1 = labels(label_index, :);
-            label_2 = labels(neighbor_index, :);
-            if intersects_label(label_1, label_2)
-                combined_label = [min([label_1(1), label_2(1)]), min([label_1(2), label_2(2)]), max([label_1(3), label_2(3)]), max([label_1(4), label_2(4)])];
-                %neighbor_index = neighbor_index - 1;
-
-                if check_for_range(combined_label(1:2), combined_label(3:4), x_diff_range, y_diff_range) && ...
-                   check_if_label(img_grey, img_integral_brights, combined_label, brightness_amount_range)
-
-                    first_index = min([label_index, neighbor_index]);
-                    second_index = max([label_index, neighbor_index]);
-                    labels = [labels(1:first_index-1, :); combined_label; labels(first_index+1:second_index-1, :); labels(second_index+1:end, :)];
-                    neighbor_index = 1;
-                    continue;
-                %else
-                %   labels = [labels(1:label_index-1, :); combined_label; labels(label_index+1:neighbor_index-1, :); labels(neighbor_index+1:end, :)];
-                end
-
-            end
-
-            neighbor_index = neighbor_index + 1;
-        end
-
-        label_index = label_index + 1;
-    end
-    %}
     
     label_index = 1;
     while label_index < size(labels, 1)
@@ -173,6 +135,25 @@ end
 
 
 %% FUNCTIONS
+
+function result = test()
+
+    img_grey = rgb2gray(im2double(imread('Dataset/01.jpg')));
+    otsu_threshold(img_grey)
+    
+    otsu_test(img_grey)
+end
+
+function result = otsu_test(img)
+
+    [histogram, bins] = imhist(img);
+    pixel_amount = size(img, 1) * size(img, 2);
+    
+    p = histogram / size(double(bins));
+    
+    %for 
+    
+end
 
 %{
     Find neighboring corners that satisfy our distance diff range.
@@ -360,68 +341,51 @@ end
 
 %{
     Calculates the greyscale_img's threshold using otsu's method.
-
-    -- THIS IS PRELIMINARY HALF-HALF COPY OF MATLABS TH-FUNCTION --
+    Output is in interval [0, 1];
 
     Sources:
         https://engineering.purdue.edu/kak/computervision/ECE661.08/OTSU_paper.pdf
         accessed on 2020/01/04
+
+        http://www.labbookpages.co.uk/software/imgProc/otsuThreshold.html
+        accessed on 2020/01/05
         
         MATLAB's otsuthresh-method
         accessed on 2020/01/04
 
     Author:
-        MATLAB's otsuthresh-method
-        (Laurenz Edmund Fiala (11807869))
+        Laurenz Edmund Fiala (11807869)
 %}
 function result = otsu_threshold(greyscale_img)
     
-    [bin_amounts, bins] = imhist(greyscale_img);
+    [histogram, bins] = imhist(greyscale_img);
+    pixel_amount = size(greyscale_img, 1) * size(greyscale_img, 2);
+    bin_amount = size(double(bins), 1);
     
-    bin_size = size(bins, 1);
-    bin_amounts = double(bin_amounts);
-
-    probabilities = bin_amounts / sum(bin_amounts);
-    omega = cumsum(probabilities);
-    mu = cumsum(probabilities .* (1:bin_size)');
-    mu_t = mu(end);
-
-    sigma_b_squared = (mu_t * omega - mu).^2 ./ (omega .* (1 - omega));
-
-    % Find the location of the maximum value of sigma_b_squared.
-    % The maximum may extend over several bins, so average together the
-    % locations.  If maxval is NaN, meaning that sigma_b_squared is all NaN,
-    % then return 0.
-    maxval = max(sigma_b_squared);
-    isfinite_maxval = isfinite(maxval);
-    if isfinite_maxval
-        idx = mean(find(sigma_b_squared == maxval));
-        % Normalize the threshold to the range [0, 1].
-        t = (idx - 1) / (bin_size - 1);
-    else
-        t = 0.0;
+    p = histogram / sum(histogram);
+    p_class = [p(1)]; % omega
+    k = bin_amount;
+    for i = 2:k
+        p_class = [p_class(1:i-1); p_class(i-1) + p(i)];
     end
-
-result = t;
-% TODO ### rewrite ###
-
-end
-
-%{
-    Checks if one quad intersects the other.
-    Quads must be of style: [top-left y, top-left x, bottom-right y, bottom-right x]
-
-    Sources:
-        <ANANDS SOURCE>
-        accessed on 2020/01/04
-
-    Author:
-        Laurenz Edmund Fiala (11807869)
-%}
-function result = intersects_label(label, label_2)
     
-    result = label(1) <= label_2(3) && label(2) <= label_2(4) && ...
-             label(3) >= label_2(1) && label(4) >= label_2(2);
+    mean = [p(1)]; % mu
+    for i = 2:k
+        mean = [mean(1:i-1); mean(i-1) + i * p(i)];
+    end
+    mean_max = mean(end); % mu T
+    
+    class_means = (mean_max * p_class - mean) .^ 2 ./ (p_class .* (1 - p_class)); % sigma B ^2; see (18) in paper
+    
+    optimal_th = max(class_means);
+    optimal_th_bin = 0;
+    for i = 1:k
+        if optimal_th == class_means(i)
+            optimal_th_bin = i;
+        end
+    end
+    
+    result = (optimal_th_bin - 1) / (bin_amount - 1);
 
 end
 

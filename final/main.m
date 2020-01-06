@@ -33,9 +33,7 @@ function [] = main(imagePath)
     [image, distortionData] = PerspectiveCorrection(image);
     
     shelf_height_px = calc_shelf_height(distortionData);
-    labelQuads = label_detection(image, shelf_height_px, true);
-    
-    %labelQuads = [50,100,400,500;100,50,500,300;700,50,1000,300];
+    labelQuads = label_detection(image, shelf_height_px, false);
     
     labelQuads = sort_labels(labelQuads);
     
