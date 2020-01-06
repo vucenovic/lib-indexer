@@ -186,39 +186,32 @@ Methodik- Pipeline
 
 %%------------------------------------------------------
 \section{Methodik}
-\subsection{Perspektivenkorrektur:}
-Im Vorverarbeitungsschritt wird das Eingabebild in ein Graustufenbild umgewandelt und mit einem vertikalen und einem horizontalen Sobelfilter convoluted um Kantenbilder zu erhalten, dann wird der Betrag dieser Werte genommen um Kanten in beide Richtungen zu finden. Um dem Rauschen im Bild entgegenzuwirken werden alle verbundobjekte unter einer bestimmten Größe ausgefiltert um nur lange Kanten zu behalten. Bei den Vertikalen werden zusätzlich nur die 20 größten Verbundobjekte ausgewählt um dem Rauschen durch die vielen Vertikalen entgegenzuwirken.
-Die beiden Kantenbilder werden mit hilfe einer Hough-Transformation in den Parameterraum transformiert. Von dort werden folglich einige Maxmima ausgelesen um einige Geraden im Bild zu ermitteln.
+
+\subsection{Perspektivenkorrektur}
+Im Vorverarbeitungsschritt wird das Eingabebild in ein Graustufenbild umgewandelt und mit einem vertikalen und einem horizontalen Sobelfilter convoluted um Kantenbilder zu erhalten, dann wird der Betrag dieser Werte genommen um Kanten in beide Richtungen zu finden. Um dem Rauschen im Bild entgegenzuwirken werden alle verbundobjekte unter einer bestimmten Größe ausgefiltert um nur lange Kanten zu behalten. Bei den Vertikalen werden zusätzlich nur die 20 größten Verbundobjekte ausgewählt um dem Rauschen durch die vielen Vertikalen entgegenzuwirken.\\
+Die beiden Kantenbilder werden mit hilfe einer Hough-Transformation in den Parameterraum transformiert. Von dort werden folglich einige Maxmima ausgelesen um einige Geraden im Bild zu ermitteln.\\
 Aus den Linienscharen werden jeweils zwei Vertikale und zwei Horizontale Ausgewählt um ein Rechteck im Raum darzustellen. Die vier Eckpunkte dieses Rechtecks werden vor der geometrischen Verzerrung perspektivisch Korrekt hochskaliert um die unnötige erstellung redundanter Daten zu verhindern. Mit den skalierten Eckpunkten und den eigentlichen Eckpunkten des Bildes wird nun eine perpsektivische Transformationsmatrix gebildet und auf das Bild angewendet.\\
 
-\subsection{Optical Character Recognition:}
-\textbf{Image Thresholding (Adaptive):}\\
+\subsection{Optical Character Recognition}
+\textbf{Image Thresholding (Adaptive)}\\
 Das Binarizing des Labels fungiert als Noise Reduktion, zusätzlich ermöglicht es Template Matching mit weiß/schwarzen Bitmaps, da es ein schwarz/weiß Bild zurückliefert.\\
-
-\textbf{Dilation:}\\
+\\
+\textbf{Dilation}\\
 Dilation ermöglicht eine korrekte Regionproperties Funktion, da es die Löcher in den Components füllt, und diese damit sauber verbindet.\\
-
-\textbf{Regionprops:}\\
+\\
+\textbf{Regionprops}\\
 Regionprops gibt uns die Centrtoids und Bounding boxes von collected components, die in unserem Fall potentielle character sind. Die Methode wird benutzt um die Charakter zu segmentieren, in dem man das Originalbild mit den Koordinaten der Bounding Boxes cropped. Zustätzlich verschafft es uns eine Sortiermethode, mithilfe der Centroids können wir die Wörter nämlich richtig von links oben nach rechts unten sortieren,
 da Centroids die XY-Koordinaten der Mitte eines Buchstabens im Bild liefert.\\
-
-\textbf{Prewitt Edge-Detection:}\\
+\\
+\textbf{Prewitt Edge-Detection}\\
 Prewitt Edge-Detection wird als preprocessing step für die Dilation und Hough Transformation genutzt, da diese ein Kantenbild als Eingabe brauchen und Prewitt dieses liefert.\\
-
-\textbf{Normalized Cross Correlation (Template Matching):}\\
+\\
+\textbf{Normalized Cross Correlation (Template Matching)} \cite{nip}\\
 Der nxcorr/NCC Algorithmus ist ein sehr weit verbreiteter Algorithmus für das Template Matching. In Matlab selbst ist er als normxcorr2-Funktion durchführbar. 
-Er wird verwenden, um die korrelation zwischen template und original image zu finden, und normalisiert um richtige Ergebnisse unabhängig von Brightness 
-Unterschieden zu liefern. Das Ergebniss ist eine Korrelationsmatrix, die Werte zwischen -1 und 1 enthält, wobei 0 die wenigste Korrelation repräsentiert, 
-und 1 die meiste (-1, falls das Original oder Template negiert sind). Wir suchen das globale Maxima in der Matrix, da es den besten Korrelationswert liefert, 
-und vergleichen diesen mit allen Werten der Templates. Das Template mit dem höchsten Korrelationswert wird schließlich als matched character weitergegeben.\\
-
-Paper: http://scribblethink.org/Work/nvisionInterface/nip.pdf\\
-
-\textbf{Sum of Squared Differences (Template Matching):}\\
-Der SSD Algorithmus wird auch wie der nxcorr2-Algorithmus zum Template Matching verwendet. Der SSD Algorithmus beruht darauf, dass wenn man ein Template 
-über das Originalbild legt, und die Summe der quadrierten Differenzen der Pixelwerte bildet, ein möglichst kleiner Wert bei einem match rauskommen sollte (da 
-sich die Werte sehr ähnlich sein müssen). Wir haben eine naivere Variante implementiert, da unser Template
-und Bild immer gleichgroß sind, und immer beide Bilder die Character zur gänze umschließen, daher müssen wir keine Regionen nach absuchen und offsets ausprobieren.\\
+Er wird verwendet, um die Korrelation zwischen template und original image zu finden, und normalisiert um richtige Ergebnisse unabhängig von Brightness-Unterschieden zu liefern. Das Ergebnis ist eine Korrelationsmatrix, die Werte zwischen -1 und 1 enthält, wobei 0 die kleinste Korrelation repräsentiert und 1 die größte (-1, falls das Original oder Template negiert ist). Wir suchen das globale Maxima in der Matrix, da es den besten Korrelationswert liefert, und vergleichen diesen mit allen Werten der Templates. Das Template mit dem größten Korrelationswert wird schließlich als matched character weitergegeben.\\
+\\
+\textbf{Sum of Squared Differences (Template Matching)}\\
+Der SSD Algorithmus wird auch, wie der nxcorr2-Algorithmus, zum Template Matching verwendet. Der SSD Algorithmus beruht darauf, dass, wenn man ein Template über das Originalbild legt, und die Summe der quadrierten Differenzen der Pixelwerte bildet, ein möglichst kleiner Wert bei einem Match herauskommen sollte (da sich die Werte sehr ähnlich sein müssen). Wir haben eine naivere Variante implementiert, da unser Template und Bild immer gleich groß sind und immer beide Bilder die Buchstaben zur Gänze umschließen. Daher müssen wir keine Regionen absuchen und Offsets ausprobieren.\\
 %%------------------------------------------------------
 \\
 
@@ -228,17 +221,14 @@ Um die Labels zu erkennen, haben wir uns aufgrund der verschiedenen Label-Dimens
 Der Prototyp war auch recht erfolgversprechend. Jedoch sind wir im Verlauf des Projekts auf einige Limitationen bei dieser Herangehensweise gestoßen.\\
 Es hat sich herausgestellt, dass es oft nicht ganz trivial ist, bei verschiedenen Auflösungen die korrekten Ecken mit dem Harris-Eckendetector zu finden. Hier spielt das Preprocessing, welches ein einfacher Gaußfilter ist, eine große Rolle. Auch die Größe des Gauß-Konvolutionskernels für den Harris-Detektor ist wichtig. Aufgrund von Zeitmangel gegen Ende des Projekts, konnten diese Werte leider nicht mehr so genau bestimmt werden und deshalb ist das Ergebnis leider nicht so genau, wie eigentlich möglich bzw. gewünscht.\\
 \\
-
-\textit{Harris-Eckendetektor} \cite{harris}\\
+\textbf{Harris-Eckendetektor} \cite{harris}\\
 Der Harris-Eckendetektor wird genutzt, um die Ecken der einzelnen Labels zu erkennen.
 Ursprünglich war geplant, diese Methode selbst zu implementieren, jedoch war die selbst implementierte Variante zu sensibel und das konnte aufgrund von fehlenden Projektmitgliedern nicht mehr ausgebessert werden.\\
 \\
-
-\textit{Summed Area Table / Integral Imaging} \cite{integralimg}\\
+\textbf{Summed Area Table / Integral Imaging} \cite{integralimg}\\
 Das Integral Imaging wird benutzt, um die Intensität der einzelnen Label-Kandidaten effizient berechnen zu können. Im Programmverlauf wird das genutzt, um das Verhältnis von dunken zu hellen Bildabschnitten zu berechenen und damit bestimmen zu können, ob ein Bereich als Label gelten kann oder nicht.\\
 \\
-
-\textit{Otsu-Threshold} \cite{otsu}\\
+\textbf{Otsu-Threshold} \cite{otsu}\\
 Es wird ein globaler Threshold benötigt um Labels vom Hintergrund abzugrenzen. Das Integral Image beruht auf dem Ergebnis der Bildmaske dieses Thresholds. Ein Otsu-Threshold eignet sich sehr gut um dynamisch in jedem Bild einen akzeptablen Threshold zu ermitteln.\\
 Der Threshold wird auch lokal pro Label-Kandidat angewandt, um den oft sehr hellgrauen Text vom Hintergrund (dem Label) abzugrenzen. Damit ist das Ergebnis des Programms wesentlich zuverlässiger.
 
@@ -248,26 +238,44 @@ Der Threshold wird auch lokal pro Label-Kandidat angewandt, um den oft sehr hell
 %%------------------------------------------------------
 \section{Implementierung}
 \subsection{Main}
-Um das Framwork auszuführen muss main.m mit dem Pfad zum Bild als einziges Argument ausgeführt werden. Die main Funktion gibt dann den json String zurück.
+Um das Framwork auszuführen muss main.m mit dem Pfad zum Bild als einziges Argument ausgeführt werden. Die main Funktion gibt dann den json String zurück.\\
+\textit{Beispielaufruf:} \texttt{main('Dataset/01.jpg');}\\
+\\
 \subsection{Perspektivenkorrektur}
-Für die Perspektivenkorrekur ist die PerspectiveCorrection.m Datei zuständig. Diese nutzt einige Builtins für das Preprocessing und eine selbstgeschriebene Implementierung der Hough-Transformation (houghTransform.m). Zum Skalieren der Eckpunkte wurden einige Funktionen implementiert um geometrische Operationen mit Linien in Parameterform durchzuführen. Bei der Hough-Transform wird nur ein Wertebereich von -30 bis +30 Grad genutzt um den Parameterraum möglichst klein zu halten. Weiters wird nur nach 5 Maxima gesucht, dies bietet ein gutes Mittelding zwischen schlechten Ergebnissen und zu wenigen Ergebnissen. Es werden bei den Vertikalen Kanten die jeweils 20 Größten behalten dies bietet auch hier wieder ein gutes Mittelding zu viel Rauschen und einer zu geringen Chance eine gute Kante zu erhalten.
+Für die Perspektivenkorrekur ist die PerspectiveCorrection.m Datei zuständig. Diese nutzt einige Builtins für das Preprocessing und eine selbstgeschriebene Implementierung der Hough-Transformation (houghTransform.m). Zum Skalieren der Eckpunkte wurden einige Funktionen implementiert um geometrische Operationen mit Linien in Parameterform durchzuführen. Bei der Hough-Transform wird nur ein Wertebereich von -30 bis +30 Grad genutzt um den Parameterraum möglichst klein zu halten. Weiters wird nur nach 5 Maxima gesucht, dies bietet ein gutes Mittelding zwischen schlechten Ergebnissen und zu wenigen Ergebnissen. Es werden bei den Vertikalen Kanten die jeweils 20 Größten behalten dies bietet auch hier wieder ein gutes Mittelding zu viel Rauschen und einer zu geringen Chance eine gute Kante zu erhalten.\\
+\\
 \subsection{Label Detection}
+Die Erkennung der Labels wird in label\_detection.m gehandhabt.\\
 Zuerst werden mit einem Harris-Eckendetektor (MATLAB-builtin) die Ecken im Bild gefunden \cite{harris}. Danach wird ein globaler Otsu-Threshold berechnet \cite{otsu}, der genutzt wird, um eine binäre Bildmaske zu erstellen, wobei alle Pixel mit größerer Intensität als der Threshold, auf 1 gesetzt werden, und alle anderen auf 0.\\
 Mit dieser Maske wird wiederum ein Summed Area Table erstellt \cite{integralimg}.\\
-Für alle gefundenen Ecken wird nun versucht Nachbarn zu finden, die ein plausibles Label ergeben könnten. Dabei wird aus dem Vorschitt der Persprektivenkorrektur die Höhe der Bücherregale berechnet und daraus die ungefähren Label-Dimensionen abgeleitet. Diese onstanten Umrechnungsfaktoren wurden durch analysieren von Bildern abgelesen und fix in das Programm eingetragen. So ist zum Beispiel der Faktor von Regalhöhe zu Labelhöhe 0.135.\\
-Für alle gefundenen Ecken-Nachbar-Kombinationen wird nun überprüft, ob der Schwarzanteil dem eines typischen Labels entsprcht. Nach einigen Tests stellte sich heraus, dass am wenigsten Labels übersprungen wurden  Dafür wird ein lokaler Otsu-Threshold berechnet, der den Label-Text vom Hintergrund trennt. Mit diesem . Im Falle eines schrägen Labels, werden mittels der MATLAB-Funktion "imclearborder" eventuell vorhandene Ränder ignoriert. Dann wird mit dieser Maske die anzahl an schwarzen Pixeln summiert und in Verhältnis zu dem Ergebnis des Integral Imaging (weiße Bildteile) verglichen. Wenn dieser Wert im Akzeptanzbereich liegt, nehmen wir an, im Bereich zwischen der Ecke-Nachbar-Kombination befindet sich ein Label.\\
-Zum Schluss werden noch alle gefundenen Labels eliminiert, die innerhalb eines anderen Labels liegen. Es wurde auch versucht überschneidende Labels zu verwerfen, jedoch gäbe es hier ein Problem: wenn zwei Bücher extram nah beieinander stehen, kann es passieren, dass damit mehrere Labels zu einem verschmolzen werden und somit korrekte Information verloren geht.
+Für alle gefundenen Ecken wird nun versucht Nachbarn zu finden, die ein plausibles Label ergeben könnten. Dabei wird aus dem Vorschitt der Persprektivenkorrektur die Höhe der Bücherregale berechnet und daraus die ungefähren Label-Dimensionen abgeleitet. Diese konstanten Umrechnungsfaktoren wurden durch das Analysieren von Bildern abgelesen und fix in das Programm eingetragen. So ist zum Beispiel der Faktor von Regalhöhe zu Labelhöhe 0.135. Da manche Bücher weiter hinten stehen oder leicht aus dem Regal herausstehen, wird für die Label-Dimensionen ein Akzeptanzbereich erstellt, in dem sich alle im Bild befindlichen Labels befinden sollten.\\
+Für alle gefundenen und erfolgreichen Ecken-Nachbar-Kombinationen wird nun ein Label-Kandidat erstellt - das ist der Bereich zwischen den zwei Punkten. Es wird überprüft, ob der Schwarzanteil dem eines typischen Labels entspricht.\\
+Für diesen Schwarzanteil wird zuerst ein lokaler Label-Threshold, ebenfalls mit der Methode von Otsu, berechnet. Dann werden die schwarzen Randbereiche mittels der MATLAB-Funktion \texttt{imclearborder} bereinigt. Das hilft auch sehr bei schief stehenden Büchern.\\
+Weiters wird die Summe der weißen Bereiche im Label, mittels Integral Imaging (und dem zuvorerstellten Summed Area Table), berechnet.\\
+Als Ergebnis erhalten wir somit die Anzahl der Pixel mit lokalen dunklen Bereichen und globalen hellen Bereichen. Diese zwei Werte werden dann in Verhältnis zueinander gestellt und das Ergebnis muss zwischen 7 und 25 liegen (die Werte wurden fix eingetragen und mittels Testen bestimmt).\\
+Falls, diese Überprüfung erfolgreich ist, nehmen wir an, dass der betrachtete Bereich ein Label ist.\\
+Zum Schluss werden noch alle gefundenen Labels eliminiert, die innerhalb eines anderen Labels liegen. Es wurde auch versucht überschneidende Labels zu verwerfen, jedoch gäbe es hier ein Problem: wenn zwei Bücher extram nah beieinander stehen, kann es passieren, dass damit mehrere Labels zu einem verschmolzen werden und somit korrekte Information verloren geht.\\
+\\
+Anmerkung: \textit{Wieso benutzen wir den globalen Weißwert und den lokalen Schwarzwert?}\\
+Wenn wir den lokalen Weißwert (lokaler Threshold) nutzen würden, verlieren wir jegliche Relation zum Originalbild. Als Ergebnis bekäme man dann viel zu viele false-positives, weil dann auch dunkelgraue Bereiche eventuell als weiß gelten würden.\\
 \\
 \\
+\subsection{Optical Character Recognition}
+\textbf{Normalized Cross Correlation (Template Matching)}\\
+Der nxcorr2 Algorithmus wurde mithilfe einer Publikation implementiert \cite{nip}. Die Preconditions beinhalten, dass man zwei Binärbilder vergleicht, und dass das Template gleich groß oder kleiner als das Originalbild ist. Zuerst habe ich die lokalen Summen berechnet, was uns durch einen Blogpost von Matlab zu ihrer normxcorr2 Implementierung vorgeschlagen wurde\footnote{https://blogs.mathworks.com/steve/2006/05/02/fast-local-sums/}. Die Berechnung dieser lokalen Summen ist von einem veröffentlichten Matlab Code auf Matworks übernommen, da dieser komplizierte Optimierungen beinhaltet, wie das sequentielle Berechnen der cumulative sums\footnote{https://www.mathworks.com/matlabcentral/fileexchange/24925-fast-robust-template-matching}. Weiters muss  die initiale Korrelationsmatrix mithilfe von zwei Fouriertransformationen berechnet werden, wie in der Publikation beschrieben wird. Nach langem rumprobieren mit der fft-Funktion von Matlab, was nicht funktionierte, haben wir bei anderen Implementierung nachgesehen, und gesehen dass man fft2 verwenden muss, und diesen Teil des Codes verändert (und an den autoren gecreditted). Die Korrelationsmatrix wird dann mithilfe von den Durchschnittwerten des Templates normiert. Zu guter letzt wird die mathematische Formel, die in der Publikation beschrieben wird implementiert um die normierte Matrix zu erhalten.\\
+\\
+\textbf{Sum of Squared Differences}\\
+Der SSD Algorithmus ist wie schon beschrieben in einer simpleren Variante implementiert, da unsere Preconditions das ermöglichen. Man legt das Template über das Bild, dass in unserem Fall gleich groß ist, und benutzt die übereinanderliegenden Pixelwerte um eine quadrierte Differenz dieser zu berechnen. Schließlich summiert man diese und erhaltet einen Wert, der pseudonormiert wird, um schönere/kleinere Werte zu erhalten.\\
+\\
+\textbf{OCR}
+Die Optical Character Recognition ist eine Zusammensetzung aus dem Preprocessing und eine der gewählten Template Matching Varianten. Dabei werden alle Patches/Character, die vom Preprocessing zurückgegeben werden mit den Templates verglichen, und das jeweils beste Template wird als matched character angenommen.
 %%------------------------------------------------------
 
 %%------------------------------------------------------
 \section{Evaluierung}
 (2-X Seiten)\\
 Hier stellt ihr Euren Datensatz vor und beantwortet Evaluierungsfragen:\\
-\subsection{Datensatz}
-Insgesamt 14 Bilder der Bücherregale aus der Unibibliothek alle mit einem Xiaomi Mi MIX 2S aufgenommen.\\
-Auflösung : 4032 x 3024\\
+z.B. Fakten zum Datensatz: Anzahl der Bilder, Größe der Bilder, Quelle des Datensatzes (falls selbst aufgenommen: Aufnahmegerät, Einstellungen,... / falls nicht selbst erstellt: Datenbank vorstellen... $\to$ Referenzen!)\\
 Diskussion der Evaluierungsfragen: Beantwortung der Fragen, Diskussion anhand von Beispielen, Diskussion von Grenzfällen: für welche Bilder funktioniert die Implementierung, für welche nicht? Worin unterscheiden sich diese Bilder? Warum funktionieren sie nicht? etc.\\
 Evaluiert wird der ganze Datensatz, nicht nur einzelne Bilder. Einzelne Bilder können zum Aufzeigen von Fehlern/Problemen/besonders guten Ergebnissen... genutzt werden.\\
 Zur Evaluierung gehört auch das Testen der einzelnen Methodiken (separat), mit Erwähnung eventueller Einschränkungen.
@@ -285,7 +293,6 @@ Welche Schlussfolgerung lässt sich ziehen? Gibt es offene Probleme? Wie lässt 
 \bibliography{edbv_lit}
 %%Bei verwendung von Latex schreibt ihr eure Referenzen in ein eigenes bib-File (siehe hier edbv_lit.bib). Jene Referenzen, die ihr im Bericht mittels \cite zitiert, werden automatisch in die Referenzliste übernommen. Weitere Information zum Einbinden von BibTex gibt es hier: http://www.bibtex.org/Using/de/
 %%------------------------------------------------------
-\textbf{Webseiten werden als Fußzeilen (an jener Stelle wo sie verwendet werden) eingebunden, nicht als Literature!}
 
 \end{document}
 \grid
