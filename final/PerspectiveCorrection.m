@@ -52,13 +52,13 @@ function [correctedImage,spaceData] = PerspectiveCorrection(baseImage)
     %% Hough Transform
     %Transpose Image to reduce the houghspace to -20 to +20 degrees instead
     %of having to use a full -90 to 89 degrees
-    %[H,T,R] = hough(edgeImageHorizontal','RhoResolution',2,'Theta',-32.25:0.5:32);
-    [H,T,R] = houghTransform(edgeImageHorizontal',1,-32.25:0.5:32);
+    [H,T,R] = hough(edgeImageHorizontal','RhoResolution',2,'Theta',-32.25:0.5:32);
+    %[H,T,R] = houghTransform(edgeImageHorizontal',1,-32.25:0.5:32);
     P  = houghpeaks(H,peakCount,'threshold',ceil(thres*max(H(:))));
     
     %Removing the zero angle seems to improve the results quite significantly
-    %[H2,T2,R2] = hough(edgeImageVertical,'RhoResolution',2,'Theta',-32.25:0.5:32);
-    [H2,T2,R2] = houghTransform(edgeImageVertical,1,-32.25:0.5:32);
+    [H2,T2,R2] = hough(edgeImageVertical,'RhoResolution',2,'Theta',-32.25:0.5:32);
+    %[H2,T2,R2] = houghTransform(edgeImageVertical,1,-32.25:0.5:32);
     P2  = houghpeaks(H2,peakCount,'threshold',ceil(thres*max(H2(:))));
     
     %% Find a rectangle in the plane of the shelf

@@ -2,7 +2,7 @@
 
 %}
 function jsonData = main(imagePath)
-    image = imread(imagePath);
+    baseimage = imread(imagePath);
     %% fix jpg orientation
     info = imfinfo(imagePath);
     if isfield(info,'Format') && info(1).Format == "jpg" && isfield(info,'Orientation')
@@ -11,31 +11,34 @@ function jsonData = main(imagePath)
          case 1
             %normal, leave the data alone
          case 2
-            image = image(:,end:-1:1,:);         %right to left
+            baseimage = baseimage(:,end:-1:1,:);         %right to left
          case 3
-            image = image(end:-1:1,end:-1:1,:);  %180 degree rotation
+            baseimage = baseimage(end:-1:1,end:-1:1,:);  %180 degree rotation
          case 4
-            image = image(end:-1:1,:,:);         %bottom to top
+            baseimage = baseimage(end:-1:1,:,:);         %bottom to top
          case 5
-            image = permute(image, [2 1 3]);     %counterclockwise and upside down
+            baseimage = permute(baseimage, [2 1 3]);     %counterclockwise and upside down
          case 6
-            image = rot90(image,3);              %undo 90 degree by rotating 270
+            baseimage = rot90(baseimage,3);              %undo 90 degree by rotating 270
          case 7
-            image = rot90(image(end:-1:1,:,:));  %undo counterclockwise and left/right
+            baseimage = rot90(baseimage(end:-1:1,:,:));  %undo counterclockwise and left/right
          case 8
-            image = rot90(image);                %undo 270 rotation by rotating 90
+            baseimage = rot90(baseimage);                %undo 270 rotation by rotating 90
          otherwise
             warning(sprintf('unknown orientation %g ignored\n', orient));
        end
     end
     
     %% actual stuff
-    [image, distortionData] = PerspectiveCorrection(image);
+    tic
+    [image, distortionData] = PerspectiveCorrection(baseimage);
+    toc
     
     shelf_height_px = calc_shelf_height(distortionData);
     labelQuads = label_detection(image, shelf_height_px, false);
     
     labelQuads = sort_labels(labelQuads);
+    toc
     
     labels = [];
     for i = 1:length(labelQuads)
@@ -43,14 +46,17 @@ function jsonData = main(imagePath)
         for j = 1:size(labelQuads(i).labels,1)
             labelQuad = labelQuads(i).labels(j,:);
             label = ocr(image(labelQuad(2):labelQuad(4), labelQuad(1):labelQuad(3)));
-            label.bounds = labelQuads(i).labels(j,:);
+            label.bounds = backcorrectLabel(labelQuads(i).labels(j,:),distortionData);
             labels(i).labels = [labels(i).labels, label];
         end
     end
+    toc
     
     labels = remove_invalid_labels(labels);
     
     jsonData = jsonencode(labels);
+    
+    displayOutput(labels,baseimage);
 end
 
 %{
@@ -71,6 +77,41 @@ function shelf_height = calc_shelf_height(distortion_data)
     horizontals_distances = diff(horizontals_positions);
     shelf_height = max(horizontals_distances);
 
+end
+
+%{
+    Takes the label bounds outputted by the label detection and
+    backcorrects them to a bounding quad in the original image
+
+    Takes:
+%}
+function quad = backcorrectLabel(labelQuad,spaceData)
+    points = [labelQuad([1,2]);labelQuad([3,2]);labelQuad([3,4]);labelQuad([1,4])];
+    imOffset = [spaceData.imRef.XWorldLimits(1),spaceData.imRef.YWorldLimits(1)];
+    points = points + repmat(imOffset,4,1);
+    quad = transformPointsInverse(spaceData.transform,points);
+    quad = round(quad);
+end
+
+%{
+    Visualizes our results
+%}
+function [] = displayOutput(labels,image)
+    figure;
+    imshow(image), hold on;
+    %{
+    for i = 1:length(labels);
+        labels2 = labels(i).labels;
+        for j = 1:length(labels2);
+            label = labels2(j);
+            plot(polyshape(label.bounds(:,1),label.bounds(:,2)), 'EdgeColor', 'red', 'LineWidth', 1);
+        end
+    end
+    %}
+    for i = 1:length(labels);
+        label = labels(i);
+        plot(polyshape(label.bounds(:,1),label.bounds(:,2)), 'EdgeColor', 'red', 'LineWidth', 1);
+    end
 end
 
 %{
