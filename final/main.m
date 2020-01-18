@@ -45,7 +45,7 @@ function jsonData = main(imagePath)
         labels = [labels, struct("labels",[])];
         for j = 1:size(labelQuads(i).labels,1)
             labelQuad = labelQuads(i).labels(j,:);
-            label = ocrCustom(image(labelQuad(2):labelQuad(4), labelQuad(1):labelQuad(3)));
+            label = ocrWrapper(image(labelQuad(2):labelQuad(4), labelQuad(1):labelQuad(3)));
             label.bounds = backcorrectLabel(labelQuads(i).labels(j,:),distortionData);
             labels(i).labels = [labels(i).labels, label];
         end
@@ -80,6 +80,51 @@ function shelf_height = calc_shelf_height(distortion_data)
 end
 
 %{
+    A wrapper around the builtin ocr to convert its results to our format
+    and execute sanity checks
+
+    Takes: an image of the label
+%}
+function label = ocrWrapper(subImage)
+    result = ocr(subImage);
+    stringsRaw = splitlines(string(result.Text));
+    strings = [];
+    word = 1;
+    for i = 1:length(stringsRaw)
+        str = stringsRaw(i);
+        if word == 1
+            r = regexp(str, "[A-Za-z]{3}");
+            if length(r) == 1
+                strings = [strings,str];
+                word = 2;
+            end
+        elseif word == 2
+            r = regexp(str, "[\dO]{3}");
+            if length(r) == 1
+                strings = [strings,str];
+                word = 3;
+            end
+        else
+            r = regexp(str, "[A-Za-z]{3,}");
+            if length(r) == 1
+                strings = [strings,str];
+                word = 4;
+            end
+        end
+    end
+    
+    if length(strings)<3
+        label.wordOne = "";
+        label.wordTwo = "";
+        label.author = "";
+    else
+        label.wordOne = strings(1);
+        label.wordTwo = strings(2);
+        label.author = strings(3);
+    end
+end
+
+%{
     Takes the label bounds outputted by the label detection and
     backcorrects them to a bounding quad in the original image
 
@@ -99,18 +144,14 @@ end
 function [] = displayOutput(labels,image)
     figure;
     imshow(image), hold on;
-    %{
-    for i = 1:length(labels);
-        labels2 = labels(i).labels;
-        for j = 1:length(labels2);
-            label = labels2(j);
-            plot(polyshape(label.bounds(:,1),label.bounds(:,2)), 'EdgeColor', 'red', 'LineWidth', 1);
-        end
-    end
-    %}
-    for i = 1:length(labels);
+    for i = 1:length(labels)
         label = labels(i);
-        plot(polyshape(label.bounds(:,1),label.bounds(:,2)), 'EdgeColor', 'red', 'LineWidth', 1);
+        clr = sscanf("6DBDC9",'%2x%2x%2x',[1 3])/255;
+        plot(polyshape(label.bounds(:,1),label.bounds(:,2)),"FaceAlpha",1, "FaceColor", "white", "EdgeColor", clr, "LineWidth", 2);
+        t = text((label.bounds(1,1) + label.bounds(3,1))/2,(label.bounds(1,2) + label.bounds(3,2))/2,...
+            [label.wordOne,label.wordTwo,label.author],...
+            "HorizontalAlignment","center",'FontSize',10);
+        uistack(t, 'top');
     end
 end
 
@@ -132,8 +173,8 @@ function result = remove_invalid_labels(labels)
         for j = 1:size(labels(i).labels, 2)
             label = labels(i).labels(j);
             if strlength(label.author) <= 8 && ...
-               strlength(label.wordOne) > 0 && ...
-               strlength(label.wordTwo) > 0 && ...
+               strlength(label.wordOne) == 3 && ...
+               strlength(label.wordTwo) == 3 && ...
                strlength(label.author) > 0
                 result = [result; label];
             end
