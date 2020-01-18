@@ -45,7 +45,7 @@ function jsonData = main(imagePath)
         labels = [labels, struct("labels",[])];
         for j = 1:size(labelQuads(i).labels,1)
             labelQuad = labelQuads(i).labels(j,:);
-            label = ocr(image(labelQuad(2):labelQuad(4), labelQuad(1):labelQuad(3)));
+            label = ocrCustom(image(labelQuad(2):labelQuad(4), labelQuad(1):labelQuad(3)));
             label.bounds = backcorrectLabel(labelQuads(i).labels(j,:),distortionData);
             labels(i).labels = [labels(i).labels, label];
         end
