@@ -15,20 +15,12 @@ Additionally a dataset or image of choice must be provided. The following criter
 
 ## Usage
 
-To use the program, change the image path in "main.m" to match the image you want to be processed and run the program. 
+To use the program, change the image path in "main.m" to match the image you want to be processed and run the program. You can use two strategies for the OCR, nncor2 and ssd. 
 
 ## Output 
 
 The program will output a .json file containing the results of the optical character recognition applied on each label.
 The labels are indexed with **1 to n**, whereas n is the number of labels/books displayed in the image.
-
-## To-Do
-
-1. Complete OCR 
-2. Change the program structure to release
-3. Documentation
-4. Prepare and provide a dataset
-5. Test program on dataset and validate results and output
 
 ## Authors
 
